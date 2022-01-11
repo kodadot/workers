@@ -1,7 +1,7 @@
 name = "durable-jpeg"
 # type = "javascript" is required to use the `[build]` section
 type = "javascript"
-account_id = ""
+account_id = "b3f9fdfd827152316d080a5ddee59915"
 workers_dev = true
 route = ""
 zone_id = ""
@@ -15,8 +15,8 @@ format = "modules"
 main = "./index.mjs"
 
 [durable_objects]
-bindings = [{name = "COUNTER", class_name = "CounterTs"}]
+bindings = [{name = "JPEG", class_name = "DurableJpeg"}]
 
 [[migrations]]
-tag = "v1" # Should be unique for each entry
-new_classes = ["CounterTs"]
+tag = "v0" # Should be unique for each entry
+new_classes = ["DurableJpeg"]
