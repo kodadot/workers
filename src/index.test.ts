@@ -1,7 +1,10 @@
 import 'isomorphic-fetch'
+import isObjectEmpty from './isEmpty'
 
-test('an example test', () => {
-  expect(23).toBe(23)
+
+test('empty object', () => {
+  expect(isObjectEmpty({})).toBe(true)
+  expect(isObjectEmpty({ a: 'a' })).toBe(false)
 })
 
 test('make sure test polyfills for fetch api work', () => {
