@@ -7,12 +7,6 @@ export class DurableJpeg {
 
   constructor(state: DurableObjectState, env: Env) {
     this.state = state
-    // `blockConcurrencyWhile()` ensures no requests are delivered until
-    // initialization completes.
-    // this.state.blockConcurrencyWhile(async () => {
-    //     let stored = await this.state.storage?.get<number>("value");
-    //     this.value = stored || 0;
-    // })
   }
 
   // Handle HTTP requests from clients.
