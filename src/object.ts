@@ -1,6 +1,5 @@
-type Value = string
-type KeyValue = Map<string, Value>
-type Optional<T> = T | undefined
+import { KeyValue, KeyValueObject, KeyValueRequest, Optional, Value } from './types'
+import isObjectEmpty from './isEmpty'
 
 export class DurableJpeg {
   state: DurableObjectState
@@ -20,15 +19,15 @@ export class DurableJpeg {
         return this.handleBatch(request)
       case '/query':
         return this.handleQuery(request)
-        // Just serve the current value. No storage calls needed!
-        break
+      case '/write':
+        return this.handleWrite(request)
       default:
         return new Response('Method not allowed', { status: 405 })
     }
   }
 
   async handleUpload(request: Request): Promise<Response> {
-    const { key, value } = await request.json()
+    const { key, value } = await request.json<KeyValueRequest>()
     if (!(key && value)) {
       return new Response('Invalid request', { status: 400 })
     }
@@ -38,7 +37,7 @@ export class DurableJpeg {
   }
 
   async handleBatch(request: Request): Promise<Response> {
-    const { keys } = await request.json()
+    const { keys } = await request.json<{ keys: string[] }>()
     if (!keys && !Array.isArray(keys)) {
       return new Response('Missing keys', { status: 400 })
     }
@@ -60,6 +59,17 @@ export class DurableJpeg {
     const value: Optional<Value> = await this.state.storage?.get<Value>(key)
   
     return new Response(JSON.stringify({ [key]: value }), { status: 200 })
+  }
+
+  async handleWrite(request: Request) {
+    const value = await request.json<KeyValueObject>()
+
+    if (!value || isObjectEmpty(value)) {
+      return new Response('Invalid request', { status: 400 })
+    }
+
+    await this.state.storage?.put(value)
+    return new Response('OK')
   }
   
 }
