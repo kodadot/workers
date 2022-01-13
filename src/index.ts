@@ -1,13 +1,14 @@
 // In order for the workers runtime to find the class that implements
 // our Durable Object namespace, we must export it from the root module.
 export { DurableJpeg } from './object'
+import headers from './header'
 
 export default {
   async fetch(request: Request, env: Env) {
     try {
       return await handleRequest(request, env)
     } catch (e) {
-      return new Response(`${e}`)
+      return new Response(`${e}`, { status: 500, headers })
     }
   },
 }
