@@ -11,6 +11,9 @@ export class DurableJpeg {
 
   // Handle HTTP requests from clients.
   async fetch(request: Request) {
+    if (request.method === 'OPTIONS') {
+      return new Response('OK', { status: 200, headers })
+    }
     // Apply requested action.
     let url = new URL(request.url)
     switch (url.pathname) {
@@ -38,9 +41,9 @@ export class DurableJpeg {
   }
 
   async handleBatch(request: Request): Promise<Response> {
-    const { keys } = await request.json<{ keys: string[] }>()
+    const keys = await request.json<{ keys: string[] }>().then(({ keys }) => keys).catch(() => null)
     if (!keys && !Array.isArray(keys)) {
-      return new Response('Missing keys', { status: 400 })
+      return new Response('Missing keys', { status: 400, headers })
     }
 
     const values: string[] = keys.map(String).filter(Boolean)

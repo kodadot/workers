@@ -8,7 +8,7 @@ export default {
     try {
       return await handleRequest(request, env)
     } catch (e) {
-      return new Response(`${e}`, { status: 500, headers })
+      return new Response(`${e}`, { headers })
     }
   },
 }
