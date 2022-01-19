@@ -9,6 +9,11 @@ mod utils;
 
 type JsonResponse = HashMap<String, String>;
 
+struct PinningKey {
+    token: String,
+    expiry: Date,
+}
+
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug)]
 struct EstuaryApiResponse {
@@ -108,6 +113,45 @@ async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
     }
 }
 
+
+async fn remove_expired_user_key<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> {
+    let token = get_token(&ctx).unwrap();
+
+    let client = Client::new();
+    let response = client.get(ESTUARY_BASE_API.to_string() + "user/api-keys")
+        .header("Authorization", "Bearer ".to_string() + &token)
+        .send()
+        .await
+        .unwrap()
+        .json::<Vec<JsonResponse>>()
+        .await;
+
+    let keys: Vec<JsonResponse> = match response {
+        Ok(vec) => vec,
+        Err(_) => Vec::new(),
+    };
+
+    let now = Date::now().as_millis();
+    let expired_keys: Vec<PinningKey> = keys.into_iter().map(|x| {
+        let expiry = DateInit::String(x["expiry"].to_string()).into();
+        let token = x["token"].to_string();
+        PinningKey {
+            token,
+            expiry,
+        }
+    }).filter(|x| x.expiry.as_millis() <= now).collect();
+
+    for key in expired_keys {
+        let client = Client::new();
+        let _ = client.delete(ESTUARY_BASE_API.to_string() + "user/api-keys/" + &key.token)
+            .header("Authorization", "Bearer ".to_string() + &token)
+            .send().await;
+    };
+
+
+    return CorsHeaders::response();
+}
+
 fn empty_response<D>(_: Request, _: RouteContext<D>) ->  Result<Response> {
     CorsHeaders::response()
 }
@@ -135,8 +179,12 @@ pub async fn main(req: Request, env: Env) -> Result<Response> {
         .get_async("/getKey/:account", get_user_key)
         .post_async("/pinJson/:name", pin_json_to_ipfs)
         .post_async("/pinJson", pin_json_to_ipfs)
+        // .get_async("/unpin/:hash", get_user_key)
+        .get_async("/removeExpired", remove_expired_user_key)
         .options("/getKey/:account", empty_response)
         .options("/pinJson/:name", empty_response)
+        .options("/pinJson", empty_response)
+        .options("/removeExpired", empty_response)
         .run(req, env)
         .await
 }
