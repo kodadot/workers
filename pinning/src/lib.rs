@@ -98,7 +98,7 @@ async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
     let token = get_token(&ctx).unwrap();
 
     let client = Client::new();
-    let response = client.post("https://shuttle-4.estuary.tech/content/add")
+    let response = client.post("https://shuttle-5.estuary.tech/content/add")
         .header("Authorization", "Bearer ".to_string() + &token)
         .multipart(form)
         .send()
