@@ -517,6 +517,7 @@ name = "nft-storage"
 version = "0.1.0"
 dependencies = [
  "cfg-if 0.1.10",
+ "chrono",
  "console_error_panic_hook",
  "reqwest",
  "serde",
