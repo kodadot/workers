@@ -123,6 +123,31 @@ async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
     }
 }
 
+async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
+    let val = req.bytes().await?;
+    let content_type = req.headers().get("Content-Type").unwrap().unwrap();
+
+    let body = Body::from(val);
+
+    let token = get_token(&ctx).unwrap();
+
+    let client = Client::new();
+    let response = client.post(NFT_STORAGE_BASE_API.to_string() + "/upload")
+        .header("Authorization", "Bearer ".to_string() + &token)
+        .header("Content-Type", content_type)
+        .body(body)
+        .send()
+        .await
+        .unwrap()
+        .json::<StorageApiResponse>()
+        .await;
+
+    match response {
+        Ok(json) => CorsHeaders::update(Response::from_json(&json)),
+        Err(e) => CorsHeaders::update(Response::error(e.to_string(), 500))
+    }
+}
+
 fn empty_response<D>(_: Request, _: RouteContext<D>) ->  Result<Response> {
     CorsHeaders::response()
 }
@@ -150,9 +175,11 @@ pub async fn main(req: Request, env: Env) -> Result<Response> {
         .get_async("/getKey/:account", get_user_key)
         .post_async("/pinJson/:name", pin_json_to_ipfs)
         .post_async("/pinJson", pin_json_to_ipfs)
+        .post_async("/pinFile", pin_file_to_ipfs)
         .options("/getKey/:account", empty_response)
         .options("/pinJson/:name", empty_response)
         .options("/pinJson", empty_response)
+        .options("/pinFile", empty_response)
         .run(req, env)
         .await
 }
