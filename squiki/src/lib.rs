@@ -1,22 +1,11 @@
-use serde::{Deserialize, Serialize };
 use serde::de::DeserializeOwned;
 use worker::*;
 use reqwest::{ Client };
 use std::result::{ Result as StdResult };
+use types::{ SquidList, SubsquidVersionResponse };
 
 mod utils;
-
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug)]
-struct SubsquidSimpleResponse {
-    id: u64,
-    description: Option<String>,
-    name: String,
-    title: Option<String>,
-    logoUrl: Option<String>
-}
-
-type SquidList = Vec<SubsquidSimpleResponse>;
+mod types;
 
 
 #[derive(Debug)]
@@ -55,19 +44,24 @@ fn log_request(req: &Request) {
 
 const SUBSQUID_BASE_API: &str = "https://saas.infra.gc.subsquid.io/api/client/";
 
-async fn status<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> {
-    // let id = match ctx.param("id") {
-    //     Some(account_id) => account_id,
-    //     None => return CorsHeaders::update(Response::error("Missing Account Id", 400)),
-    // };
-
+async fn list<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> {
     let token = get_token(&ctx).unwrap();
-
     let response = call_fetch::<SquidList>("squid".to_owned(), &token).await;
 
     match response {
         Ok(json) => CorsHeaders::update(Response::from_json(&json)),
         Err(_) => CorsHeaders::update(Response::error("Failed to get user key", 500))
+    }
+}
+
+async fn indexer_status<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> {
+    let id = ctx.param("id").unwrap();
+    let token = get_token(&ctx).unwrap();
+    let response = call_fetch::<SubsquidVersionResponse>("squid/".to_owned() + &id, &token).await;
+
+    match response {
+        Ok(json) => CorsHeaders::update(Response::from_json(&json)),
+        Err(_) => CorsHeaders::update(Response::error("Failed to fetch data from Squid", 500))
     }
 }
 
@@ -108,12 +102,13 @@ pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Respo
     // functionality and a `RouteContext` which you can use to  and get route parameters and
     // Environment bindings like KV Stores, Durable Objects, Secrets, and Variables.
     router
-        .get("/", |_, _| Response::ok("Hello from Workers!"))
-        .get_async("/status", status)
+        .get_async("/list", list)
+        .get_async("/status/:id", indexer_status)
         // .post_async("/pinJson/:name", pin_json_to_ipfs)
         // .post_async("/pinJson", pin_json_to_ipfs)
         // .post_async("/pinFile", pin_file_to_ipfs)
-        .options("/status", empty_response)
+        .options("/list", empty_response)
+        .options("/status/:id", empty_response)
         // .options("/pinJson/:name", empty_response)
         // .options("/pinJson", empty_response)
         // .options("/pinFile", empty_response)
