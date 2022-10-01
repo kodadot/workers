@@ -41,12 +41,14 @@ pub struct SubsquidStatus {
     status: String
 }
 
+#[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SubsquidSync {
     totalBlocks: u128,
     currentBlock: u128
 }
 
+#[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SubsquidProcessorStatus {
     status: String,
