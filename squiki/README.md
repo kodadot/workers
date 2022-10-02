@@ -1,41 +1,58 @@
-# Getting Started
+# Squiki
 
-A template for kick starting a Cloudflare worker project using [`workers-rs`](https://github.com/cloudflare/workers-rs).
+Get the status of KodaDot's SubSquid indexers via simple API.
 
-This template is designed for compiling Rust to WebAssembly and publishing the resulting worker to 
-Cloudflare's [edge infrastructure](https://www.cloudflare.com/network/).
+![](./squiki.jpg)
 
-## Usage 
 
-This template starts you off with a `src/lib.rs` file, acting as an entrypoint for requests hitting
-your Worker. Feel free to add more code in this file, or create Rust modules anywhere else for this
-project to use. 
+# FAQ
 
-With `wrangler`, you can build, test, and deploy your Worker with the following commands: 
+## API
 
-```bash
-# compiles your project to WebAssembly and will warn of any issues
-wrangler build 
-
-# run your Worker in an ideal development workflow (with a local server, file watcher & more)
-wrangler dev
-
-# deploy your Worker globally to the Cloudflare network (update your wrangler.toml file for configuration)
-wrangler publish
+```
+- /list - get all available squids
+- /status/:id - get info about our current squids
 ```
 
-Read the latest `worker` crate documentation here: https://docs.rs/worker
+## Dev
 
-## WebAssembly
+1. Instal `wrangler` CLI V2
 
-`workers-rs` (the Rust SDK for Cloudflare Workers used in this template) is meant to be executed as 
-compiled WebAssembly, and as such so **must** all the code you write and depend upon. All crates and
-modules used in Rust-based Workers projects have to compile to the `wasm32-unknown-unknown` triple. 
+```bash
+npx wrangler
+```
 
-Read more about this on the [`workers-rs` project README](https://github.com/cloudflare/workers-rs).
+2. Login
 
-## Issues
+```bash
+npx wrangler login
+```
 
-If you have any problems with the `worker` crate, please open an issue on the upstream project 
-issue tracker on the [`workers-rs` repository](https://github.com/cloudflare/workers-rs).
+3. Import `SUBSQUID_API_TOKEN`
 
+```bash
+npx wrangler secret
+```
+
+4. Run dev
+
+```bash
+npx wrangler dev
+```
+
+
+9999. Publish
+
+```bash
+npx wrangler publish
+```
+
+## Caveats
+
+1. Make sure you setup correct `account_id` in `wrangler.toml`
+2. Make sure you have `SUBSQUID_API_TOKEN`
+
+## Fun fact
+
+That plush squid is our mascot in [SubWork Bled](https://subwork.xyz).
+What's the origin of the name? It's a combination of Squid and Viki.
