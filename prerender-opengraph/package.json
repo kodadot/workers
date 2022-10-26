@@ -1,0 +1,15 @@
+{
+  "name": "prerender-opengraph",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Render opengraph on edge with workers + netlify",
+  "scripts": {
+    "deploy": "wrangler publish",
+    "start": "wrangler dev"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^3.18.0",
+    "typescript": "^4.8.4",
+    "wrangler": "^2.1.13"
+  }
+}
