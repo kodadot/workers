@@ -1,5 +1,5 @@
 name = "prerender-opengraph"
-main = "src/index.ts"
+main = "src/netlify.ts"
 compatibility_date = "2022-06-24"
 routes = [
   "kodadot.xyz/rmrk/collection/*",
