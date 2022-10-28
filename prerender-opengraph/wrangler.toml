@@ -1,0 +1,17 @@
+name = "prerender-opengraph"
+main = "src/index.ts"
+compatibility_date = "2022-06-24"
+routes = [
+  "kodadot.xyz/rmrk/collection/*",
+  "kodadot.xyz/rmrk/gallery/*",
+  "kodadot.xyz/rmrk/detail/*",
+  "kodadot.xyz/bsx/collection/*",
+  "kodadot.xyz/bsx/gallery/*",
+  "kodadot.xyz/bsx/detail/*",
+  "kodadot.xyz/snek/collection/*",
+  "kodadot.xyz/snek/gallery/*",
+  "kodadot.xyz/snek/detail/*",
+  "kodadot.xyz/glmr/collection/*",
+  "kodadot.xyz/glmr/gallery/*",
+  "kodadot.xyz/glmr/detail/*",
+]
