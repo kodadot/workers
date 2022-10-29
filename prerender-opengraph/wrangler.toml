@@ -1,4 +1,5 @@
 name = "prerender-opengraph"
+account_id = "b3f9fdfd827152316d080a5ddee59915"
 main = "src/index.ts"
 compatibility_date = "2022-06-24"
 routes = [
