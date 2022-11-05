@@ -1,4 +1,4 @@
-use cors::CorsHeaders;
+use cors::{CorsHeaders, empty_response};
 // use reqwest::Client
 use worker::*;
 
@@ -21,10 +21,6 @@ async fn call_fetch<D>(_: Request, ctx: RouteContext<D>) -> Result<Response> {
 
 
 
-    CorsHeaders::response()
-}
-
-fn empty_response<D>(_: Request, _: RouteContext<D>) -> Result<Response> {
     CorsHeaders::response()
 }
 
