@@ -1,8 +1,5 @@
 use cors::CorsHeaders;
-use reqwest::Client;
-use serde::de::DeserializeOwned;
-use std::result::Result as StdResult;
-use types::{SquidList, SubsquidVersionResponse};
+// use reqwest::Client
 use worker::*;
 
 mod cors;
@@ -22,7 +19,9 @@ fn log_request(req: &Request) {
 async fn call_fetch<D>(_: Request, ctx: RouteContext<D>) -> Result<Response> {
     let id = ctx.param("id").unwrap();
 
-    empty_response()
+
+
+    CorsHeaders::response()
 }
 
 fn empty_response<D>(_: Request, _: RouteContext<D>) -> Result<Response> {
