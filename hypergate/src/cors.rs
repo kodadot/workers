@@ -1,5 +1,4 @@
-use serde::Debug;
-use worker::Response;
+use worker::{Response, Headers, Result};
 
 #[derive(Debug)]
 pub struct CorsHeaders {}
