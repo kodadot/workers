@@ -6,6 +6,7 @@ main = "build/worker/shim.mjs"
 
 [vars]
 WORKERS_RS_VERSION = "0.0.11"
+PINATA_GATEWAY = 'https://kodadot.mypinata.cloud'
 
 [build]
 command = "cargo install -q worker-build && worker-build --release" # required
@@ -13,6 +14,12 @@ command = "cargo install -q worker-build && worker-build --release" # required
 [[rules]]
 globs = ["**/*.wasm"]
 type = "CompiledWasm"
+
+
+[[r2_buckets]]
+binding = 'MY_BUCKET'
+bucket_name = 'ipfs-assets'
+preview_bucket_name = 'ipfs-assets-dev'
 
 # read more about configuring your Worker via wrangler.toml at:
 # https://developers.cloudflare.com/workers/cli-wrangler/configuration
