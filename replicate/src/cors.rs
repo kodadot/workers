@@ -1,4 +1,4 @@
-use worker::{Response, Headers, Result, Request, RouteContext};
+use worker::{Headers, Request, Response, Result, RouteContext};
 
 #[derive(Debug)]
 pub struct CorsHeaders {}
@@ -22,7 +22,6 @@ impl CorsHeaders {
         return Ok(resp);
     }
 }
-
 
 pub fn empty_response<D>(_: Request, _: RouteContext<D>) -> Result<Response> {
     CorsHeaders::response()

@@ -1,16 +1,14 @@
-
-use cors::{CorsHeaders, empty_response};
+use cors::{empty_response, CorsHeaders};
 // use http::StatusCode::OK;
-use worker::*;
 use replicate::Replicate;
-use types::{PredictionRequest};
-
+use types::PredictionRequest;
+use worker::*;
 
 mod cors;
+mod fetch;
+mod replicate;
 mod types;
 mod utils;
-mod replicate;
-mod fetch;
 
 fn log_request(req: &Request) {
     console_log!(
