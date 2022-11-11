@@ -34,7 +34,6 @@ pub struct PredictionRequestStatus {
     id: String,
     input: Input,
     logs: Option<String>,
-    started_at: String,
     status: String,
     version: String,
 }

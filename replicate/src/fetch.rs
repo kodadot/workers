@@ -13,7 +13,7 @@ pub async fn call_post<T: DeserializeOwned, B: Serialize>(
     let client = Client::new();
     let response = client
         .post(format!("{}{}", REPLICATE_BASE_API, url))
-        .header(AUTHORIZATION, format!("Bearer {}", token))
+        .header(AUTHORIZATION, format!("Token {}", token))
         .json(body)
         .send()
         .await;

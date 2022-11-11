@@ -24,7 +24,7 @@ impl Replicate {
         &self,
         prediction: &PredictionRequest,
     ) -> Result<PredictionRequestStatus, Error> {
-        let url = "/predictions";
+        let url = format!("/{}", "predictions");
         let response =
             call_post::<PredictionRequestStatus, PredictionRequest>(&url, &self.token, prediction)
                 .await;
