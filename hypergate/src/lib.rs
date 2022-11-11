@@ -16,12 +16,20 @@ fn log_request(req: &Request) {
     );
 }
 
-async fn call_fetch<D>(_: Request, ctx: RouteContext<D>) -> Result<Response> {
+async fn call_fetch<D>(req: Request, ctx: RouteContext<D>) -> Result<Response> {
     let id = ctx.param("id").unwrap();
+
+    
 
 
 
     CorsHeaders::response()
+}
+
+async fn try_from_cache(req: Request) -> Result<Response> {
+    let cache = Cache::default();
+    let cache_key = req.url().to_string();
+    
 }
 
 // fn get_bucket<D>(ctx: &RouteContext<D>) -> Result<String> {
