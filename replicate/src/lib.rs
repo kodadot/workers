@@ -3,6 +3,7 @@ use cors::{CorsHeaders, empty_response};
 // use http::StatusCode::OK;
 use worker::*;
 use replicate::Replicate;
+use types::{PredictionRequest};
 
 
 mod cors;
@@ -21,10 +22,16 @@ fn log_request(req: &Request) {
     );
 }
 
-async fn predict<D>(_req: Request, _ctx: RouteContext<D>) -> Result<Response> {
-    // let id = ctx.param("id").unwrap();
-    
-    CorsHeaders::response()
+async fn predict<D>(mut req: Request, ctx: RouteContext<D>) -> Result<Response> {
+    let body: PredictionRequest = req.json().await?;
+    let token = get_token(&ctx)?;
+    let replicate = Replicate::new(&token);
+    let response = replicate.predict(&body).await;
+
+    match response {
+        Ok(json) => CorsHeaders::update(Response::from_json(&json)),
+        Err(err) => CorsHeaders::update(Response::error(err.to_string(), 500)),
+    }
 }
 
 async fn status<D>(_req: Request, ctx: RouteContext<D>) -> Result<Response> {
@@ -60,9 +67,9 @@ pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Respo
     // Environment bindings like KV Stores, Durable Objects, Secrets, and Variables.
     router
         .get_async("/status/:id", status)
-        .post_async("/predict/:id", predict)
+        .post_async("/predict", predict)
         .options("/status/:id", empty_response)
-        .options("/predict/:id", empty_response)
+        .options("/predict", empty_response)
         .run(req, env)
         .await
 }

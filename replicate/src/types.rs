@@ -20,3 +20,21 @@ pub struct PredictionStatus {
 pub struct Input {
     pub prompt: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PredictionRequest {
+    version: String,
+    input: Input,
+}
+
+#[allow(non_snake_case)]
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PredictionRequestStatus {
+    created_at: String,
+    id: String,
+    input: Input,
+    logs: Option<String>,
+    started_at: String,
+    status: String,
+    version: String,
+}

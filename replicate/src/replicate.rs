@@ -1,7 +1,7 @@
 
 
-use crate::types::PredictionStatus;
-use crate::fetch::call_fetch;
+use crate::types::{PredictionStatus, PredictionRequest, PredictionRequestStatus};
+use crate::fetch::{call_fetch, call_post};
 use reqwest::Error;
 
 #[derive(Debug)]
@@ -20,7 +20,9 @@ impl Replicate {
         response
     }
 
-    // pub async fn predict(input: String) -> Result<> {
-
-    // }
+    pub async fn predict(&self, prediction: &PredictionRequest) -> Result<PredictionRequestStatus, Error> {
+        let url = "/predictions";
+        let response = call_post::<PredictionRequestStatus, PredictionRequest>(&url, &self.token, prediction).await;
+        response
+    }
 }
