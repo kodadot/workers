@@ -1,5 +1,4 @@
 use cors::{empty_response, CorsHeaders};
-// use http::StatusCode::OK;
 use replicate::Replicate;
 use types::PredictionRequest;
 use worker::*;
