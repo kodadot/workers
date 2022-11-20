@@ -1,4 +1,4 @@
-use reqwest::{header::AUTHORIZATION, Client, Error, Response};
+use reqwest::{header::AUTHORIZATION, Client, Error};
 use serde::{de::DeserializeOwned, Serialize};
 use std::result::Result as StdResult;
 use worker::console_debug;

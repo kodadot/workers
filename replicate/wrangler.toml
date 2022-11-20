@@ -6,7 +6,6 @@ main = "build/worker/shim.mjs"
 
 [vars]
 WORKERS_RS_VERSION = "0.0.11"
-PINATA_GATEWAY = 'https://kodadot.mypinata.cloud'
 
 [build]
 command = "cargo install -q worker-build && worker-build --release" # required
