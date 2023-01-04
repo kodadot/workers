@@ -12,7 +12,7 @@ interface Env {
   CF_IMAGE_ID: string;
 
   // wrangler secret
-  TOKEN: string;
+  IMAGE_API_TOKEN: string;
 }
 
 const app = new Hono<{ Bindings: Env }>();
@@ -55,7 +55,7 @@ app.all('/ipfs/:cid', async (c) => {
         // put object to cf-images
         const imageUrl = await uploadToCloudflareImages({
           cid,
-          token: c.env.TOKEN,
+          token: c.env.IMAGE_API_TOKEN,
           gateway: c.env.DEDICATED_GATEWAY,
           imageAccount: c.env.CF_IMAGE_ACCOUNT,
           imageId: c.env.CF_IMAGE_ID,
@@ -87,7 +87,7 @@ app.all('/ipfs/:cid', async (c) => {
       // else, redirect to cf-images or render existing r2 object
       const imageUrl = await uploadToCloudflareImages({
         cid,
-        token: c.env.TOKEN,
+        token: c.env.IMAGE_API_TOKEN,
         gateway: c.env.DEDICATED_GATEWAY,
         imageAccount: c.env.CF_IMAGE_ACCOUNT,
         imageId: c.env.CF_IMAGE_ID,
