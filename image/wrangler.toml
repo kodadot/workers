@@ -12,5 +12,5 @@ CF_IMAGE_ID = 'jk5b6spi_m_-9qC4VTnjpg'
 
 [[r2_buckets]]
 binding = 'MY_BUCKET'
-bucket_name = 'r2-assets'
-preview_bucket_name = 'test-ipfs-assets'
+bucket_name = 'stockpile'
+preview_bucket_name = 'alpha-stockpile'
