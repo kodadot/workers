@@ -1,4 +1,5 @@
 name = "image"
+account_id = "b3f9fdfd827152316d080a5ddee59915"
 main = "src/index.ts"
 compatibility_date = "2023-01-03"
 
@@ -6,8 +7,8 @@ compatibility_date = "2023-01-03"
 DEDICATED_GATEWAY = 'https://r2.infura-ipfs.io'
 DEDICATED_BACKUP_GATEWAY = 'https://r2-backup.infura-ipfs.io'
 CLOUDFLARE_GATEWAY = 'https://cloudflare-ipfs.com'
-CF_IMAGE_ACCOUNT = '307ebd51f6c21a90c3873587c11a2913'
-CF_IMAGE_ID = 'fiV5JoD3FPU2zP0MrEGjlA'
+CF_IMAGE_ACCOUNT = 'b3f9fdfd827152316d080a5ddee59915'
+CF_IMAGE_ID = 'jk5b6spi_m_-9qC4VTnjpg'
 
 [[r2_buckets]]
 binding = 'MY_BUCKET'
