@@ -25,6 +25,8 @@ export class DurableJpeg {
         return this.handleQuery(request)
       case '/write':
         return this.handleWrite(request)
+      case '/list':
+          return this.handleList(request)
       default:
         return new Response('Method not allowed', { status: 405, headers })
     }
@@ -74,6 +76,14 @@ export class DurableJpeg {
 
     await this.state.storage?.put(value)
     return new Response('OK', { status: 200, headers })
+  }
+
+  async handleList(_: Request): Promise<Response> {
+    const keys: Map<string, Value> | undefined = await this.state.storage?.list<Value>()
+    console.log(keys)
+    const result = Array.from(keys || new Map())
+    .map(([key, value]) => ({ key, value }))
+    return new Response(JSON.stringify(result), { status: 200, headers: {...headers, 'Content-Type': 'application/json' } })
   }
   
 }
