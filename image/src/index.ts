@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
-import { Env, CACHE_MONTH } from './utils/constants';
+import { Env, CACHE_MONTH, CACHE_TTL_BY_STATUS } from './utils/constants';
 import { uploadToCloudflareImages } from './utils/cloudflare-images';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -76,13 +76,7 @@ app.all('/ipfs/:cid', async (c) => {
       const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${cid}/public`;
       const currentImage = await fetch(cfImage, {
         method: 'HEAD',
-        cf: {
-          cacheTtlByStatus: {
-            '200-299': CACHE_MONTH,
-            '404': 1,
-            '500-599': 0,
-          },
-        },
+        cf: CACHE_TTL_BY_STATUS,
       });
 
       // return early to cf-images
