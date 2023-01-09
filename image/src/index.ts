@@ -1,19 +1,8 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
+import { Env, CACHE_MONTH, CACHE_TTL_BY_STATUS } from './utils/constants';
 import { uploadToCloudflareImages } from './utils/cloudflare-images';
-
-interface Env {
-  MY_BUCKET: R2Bucket;
-  DEDICATED_GATEWAY: string;
-  DEDICATED_BACKUP_GATEWAY: string;
-  CLOUDFLARE_GATEWAY: string;
-  CF_IMAGE_ACCOUNT: string;
-  CF_IMAGE_ID: string;
-
-  // wrangler secret
-  IMAGE_API_TOKEN: string;
-}
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -84,7 +73,18 @@ app.all('/ipfs/:cid', async (c) => {
     }
 
     if (!response) {
-      // else, redirect to cf-images or render existing r2 object
+      const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${cid}/public`;
+      const currentImage = await fetch(cfImage, {
+        method: 'HEAD',
+        cf: CACHE_TTL_BY_STATUS,
+      });
+
+      // return early to cf-images
+      if (currentImage.ok) {
+        return Response.redirect(cfImage, 302);
+      }
+
+      // else, upload to cf-images
       const imageUrl = await uploadToCloudflareImages({
         cid,
         token: c.env.IMAGE_API_TOKEN,
@@ -109,7 +109,7 @@ app.all('/ipfs/:cid', async (c) => {
         headers,
       });
 
-      response.headers.append('Cache-Control', 's-maxage=86400');
+      response.headers.append('Cache-Control', `s-maxage=${CACHE_MONTH}`);
       c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
     }
 
