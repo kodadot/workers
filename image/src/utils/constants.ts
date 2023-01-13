@@ -22,3 +22,5 @@ export const CACHE_TTL_BY_STATUS = {
     '500-599': 0,
   },
 };
+
+export const ORIGIN = 'https://kodadot.xyz';
