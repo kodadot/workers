@@ -3,12 +3,13 @@ import { cors } from 'hono/cors';
 
 import { Env, CACHE_MONTH, CACHE_TTL_BY_STATUS } from './utils/constants';
 import { uploadToCloudflareImages } from './utils/cloudflare-images';
+import { allowedOrigin } from './utils/cors'
 
 const app = new Hono<{ Bindings: Env }>();
 
 app.get('/', (c) => c.text('Hello! cf-workers!'));
 
-app.use('/ipfs/*', cors());
+app.use('/ipfs/*', cors({ origin: allowedOrigin }));
 
 app.all('/ipfs/:cid', async (c) => {
   const cid = c.req.param('cid');
