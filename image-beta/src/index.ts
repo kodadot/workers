@@ -3,7 +3,7 @@ import { cors } from 'hono/cors';
 
 import { Env, CACHE_MONTH, CACHE_TTL_BY_STATUS } from './utils/constants';
 import { uploadToCloudflareImages } from './utils/cloudflare-images';
-import { allowedOrigin } from './utils/cors'
+import { allowedOrigin } from './utils/cors';
 
 const app = new Hono<{ Bindings: Env }>();
 
