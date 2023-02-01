@@ -1,13 +1,13 @@
 export async function uploadToCloudflareImages({
   token,
   gateway,
-  ipfsFile,
+  path,
   imageAccount,
   imageId,
 }: {
   token: string;
   gateway: string;
-  ipfsFile: string;
+  path: string;
   imageAccount: string;
   imageId: string;
 }) {
@@ -15,8 +15,8 @@ export async function uploadToCloudflareImages({
   uploadHeaders.append('Authorization', `Bearer ${token}`);
 
   const uploadFormData = new FormData();
-  uploadFormData.append('url', `${gateway}/ipfs/${ipfsFile}`);
-  uploadFormData.append('id', ipfsFile);
+  uploadFormData.append('url', `${gateway}/ipfs/${path}`);
+  uploadFormData.append('id', path);
 
   const requestOptions = {
     method: 'POST',
@@ -35,8 +35,8 @@ export async function uploadToCloudflareImages({
 
   // if image supported by cf-images or already exists, redirect to cf-images
   if (uploadStatus === 200 || uploadStatus === 409) {
-    // return Response.redirect(`https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${ipfsFile}/public`, 302)
-    return `https://imagedelivery.net/${imageId}/${ipfsFile}/public`;
+    // return Response.redirect(`https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`, 302)
+    return `https://imagedelivery.net/${imageId}/${path}/public`;
   }
 
   return '';
