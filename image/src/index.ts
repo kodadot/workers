@@ -3,7 +3,7 @@ import { cors } from 'hono/cors';
 
 import { Env, CACHE_MONTH, CACHE_TTL_BY_STATUS } from './utils/constants';
 import { uploadToCloudflareImages } from './utils/cloudflare-images';
-import { allowedOrigin } from './utils/cors';
+import { allowedOrigin } from './utils/cors'
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -11,33 +11,28 @@ app.get('/', (c) => c.text('Hello! cf-workers!'));
 
 app.use('/ipfs/*', cors({ origin: allowedOrigin }));
 
-app.all('/ipfs/*', async (c) => {
+app.all('/ipfs/:cid', async (c) => {
+  const cid = c.req.param('cid');
   const method = c.req.method;
-
-  const url = new URL(c.req.url);
-  const cid = url.pathname.split('/')[2];
-  const path = url.pathname.replace('/ipfs/', '');
 
   const request = c.req;
   const cacheUrl = new URL(request.url);
-  const cacheVersion = '2023-01-31';
-  const cacheKey = new Request(cacheUrl.toString() + cacheVersion, request);
+  const cacheKey = new Request(cacheUrl.toString(), request);
   const cache = caches.default;
 
   let response = await cache.match(cacheKey);
 
   console.log('response', response);
-  console.log('path', path);
 
   if (method === 'GET') {
-    const objectName = `ipfs/${path}`;
+    const objectName = `ipfs/${cid}`;
     const object = await c.env.MY_BUCKET.get(objectName);
 
     // if r2 object not exists, fetch from ipfs gateway
     if (object === null) {
       const fetchIPFS = await Promise.any([
-        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${path}`),
-        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${path}`),
+        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${cid}`),
+        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${cid}`),
       ]);
       const statusCode = fetchIPFS.status;
 
@@ -49,7 +44,7 @@ app.all('/ipfs/*', async (c) => {
 
         // put object to cf-images
         const imageUrl = await uploadToCloudflareImages({
-          path,
+          cid,
           token: c.env.IMAGE_API_TOKEN,
           gateway: c.env.DEDICATED_GATEWAY,
           imageAccount: c.env.CF_IMAGE_ACCOUNT,
@@ -57,7 +52,7 @@ app.all('/ipfs/*', async (c) => {
         });
 
         if (imageUrl) {
-          return c.redirect(imageUrl);
+          return Response.redirect(imageUrl, 302);
         }
 
         // else, render r2 object
@@ -75,11 +70,11 @@ app.all('/ipfs/*', async (c) => {
       }
 
       // fallback to cf-ipfs
-      return c.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`);
+      return Response.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${cid}`, 302);
     }
 
     if (!response) {
-      const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`;
+      const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${cid}/public`;
       const currentImage = await fetch(cfImage, {
         method: 'HEAD',
         cf: CACHE_TTL_BY_STATUS,
@@ -87,12 +82,12 @@ app.all('/ipfs/*', async (c) => {
 
       // return early to cf-images
       if (currentImage.ok) {
-        return c.redirect(cfImage);
+        return Response.redirect(cfImage, 302);
       }
 
       // else, upload to cf-images
       const imageUrl = await uploadToCloudflareImages({
-        path,
+        cid,
         token: c.env.IMAGE_API_TOKEN,
         gateway: c.env.DEDICATED_GATEWAY,
         imageAccount: c.env.CF_IMAGE_ACCOUNT,
@@ -102,7 +97,7 @@ app.all('/ipfs/*', async (c) => {
       // redirect to cf-images
       if (imageUrl) {
         // how to cache redirect response?
-        return c.redirect(imageUrl);
+        return Response.redirect(imageUrl, 302);
       }
 
       // else, render r2 object and cache it
@@ -123,13 +118,13 @@ app.all('/ipfs/*', async (c) => {
   }
 
   if (method === 'HEAD') {
-    const objectName = `ipfs/${path}`;
+    const objectName = `ipfs/${cid}`;
     const object = await c.env.MY_BUCKET.get(objectName);
 
     if (object === null) {
       const fetchIPFS = await Promise.any([
-        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${path}`),
-        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${path}`),
+        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${cid}`),
+        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${cid}`),
       ]);
       const statusCode = fetchIPFS.status;
 
@@ -138,7 +133,7 @@ app.all('/ipfs/*', async (c) => {
       }
 
       // fallback to cf-ipfs
-      return c.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`);
+      return Response.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${cid}`, 302);
     }
 
     const headers = new Headers();

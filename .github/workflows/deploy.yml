@@ -3,11 +3,8 @@ on:
   workflow_dispatch:
     inputs:
       worker:
-        description: 'Name of the worker'
+        description: 'Name of the worker'     
         required: true
-      commands:
-        description: 'Precommands'
-        default: 'npm install'
 
 jobs:
   deploy:
@@ -15,10 +12,8 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@v3
-
       - name: Publish
         uses: cloudflare/wrangler-action@2.0.0
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          preCommands: ${{ github.event.inputs.commands }}
+          apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: ${{ github.event.inputs.worker }}
