@@ -11,9 +11,11 @@ app.get('/', (c) => c.text('Hello! cf-workers!'));
 
 app.use('/ipfs/*', cors({ origin: allowedOrigin }));
 
-app.all('/ipfs/:cid', async (c) => {
-  const cid = c.req.param('cid');
+app.all('/ipfs/*', async (c) => {
   const method = c.req.method;
+
+  const url = new URL(c.req.url);
+  const path = url.pathname.replace('/ipfs/', '');
 
   const request = c.req;
   const cacheUrl = new URL(request.url);
@@ -25,14 +27,14 @@ app.all('/ipfs/:cid', async (c) => {
   console.log('response', response);
 
   if (method === 'GET') {
-    const objectName = `ipfs/${cid}`;
+    const objectName = `ipfs/${path}`;
     const object = await c.env.MY_BUCKET.get(objectName);
 
     // if r2 object not exists, fetch from ipfs gateway
     if (object === null) {
       const fetchIPFS = await Promise.any([
-        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${cid}`),
-        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${cid}`),
+        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${path}`),
+        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${path}`),
       ]);
       const statusCode = fetchIPFS.status;
 
@@ -44,7 +46,7 @@ app.all('/ipfs/:cid', async (c) => {
 
         // put object to cf-images
         const imageUrl = await uploadToCloudflareImages({
-          cid,
+          path,
           token: c.env.IMAGE_API_TOKEN,
           gateway: c.env.DEDICATED_GATEWAY,
           imageAccount: c.env.CF_IMAGE_ACCOUNT,
@@ -70,11 +72,11 @@ app.all('/ipfs/:cid', async (c) => {
       }
 
       // fallback to cf-ipfs
-      return Response.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${cid}`, 302);
+      return Response.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`, 302);
     }
 
     if (!response) {
-      const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${cid}/public`;
+      const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`;
       const currentImage = await fetch(cfImage, {
         method: 'HEAD',
         cf: CACHE_TTL_BY_STATUS,
@@ -87,7 +89,7 @@ app.all('/ipfs/:cid', async (c) => {
 
       // else, upload to cf-images
       const imageUrl = await uploadToCloudflareImages({
-        cid,
+        path,
         token: c.env.IMAGE_API_TOKEN,
         gateway: c.env.DEDICATED_GATEWAY,
         imageAccount: c.env.CF_IMAGE_ACCOUNT,
@@ -118,13 +120,13 @@ app.all('/ipfs/:cid', async (c) => {
   }
 
   if (method === 'HEAD') {
-    const objectName = `ipfs/${cid}`;
+    const objectName = `ipfs/${path}`;
     const object = await c.env.MY_BUCKET.get(objectName);
 
     if (object === null) {
       const fetchIPFS = await Promise.any([
-        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${cid}`),
-        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${cid}`),
+        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${path}`),
+        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${path}`),
       ]);
       const statusCode = fetchIPFS.status;
 
@@ -133,7 +135,7 @@ app.all('/ipfs/:cid', async (c) => {
       }
 
       // fallback to cf-ipfs
-      return Response.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${cid}`, 302);
+      return Response.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`, 302);
     }
 
     const headers = new Headers();
