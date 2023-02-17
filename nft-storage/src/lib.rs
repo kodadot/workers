@@ -4,10 +4,13 @@ use reqwest::{ Client, Body };
 mod utils;
 mod cors;
 mod types;
+mod fetch;
+mod storage;
 
 
-use types::{StorageApiResponse, PinningKey, PinningKeyResponse};
+use types::{StorageApiResponse, PinningKey, PinningKeyResponse, Metadata};
 use cors::{CorsHeaders, empty_response};
+use fetch::{NFT_STORAGE_BASE_API};
 
 
 fn log_request(req: &Request) {
@@ -19,8 +22,6 @@ fn log_request(req: &Request) {
         req.cf().region().unwrap_or("unknown region".into())
     );
 }
-
-const NFT_STORAGE_BASE_API: &str = "https://api.nft.storage/";
 
 
 async fn get_user_key<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> {
@@ -98,6 +99,21 @@ async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
     }
 }
 
+async fn pin_metadata_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
+    let val = &req.bytes().await?;
+    let _schema_valid: Metadata = req.json().await?;
+    let content_type = String::from("application/json");
+    let token = get_token(&ctx)?;
+
+    let storage = storage::Storage::new(&token);
+    let response = storage.pin_file(val, &content_type).await;
+
+    match response {
+        Ok(json) => CorsHeaders::update(Response::from_json(&json)),
+        Err(err) => CorsHeaders::update(Response::error(err.to_string(), 500)),
+    }
+}
+
 fn get_token<D>(ctx: &RouteContext<D>) -> Result<String> {
     return Ok(ctx.secret("NFT_STORAGE_API_TOKEN")?.to_string());
 }
@@ -121,10 +137,12 @@ pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Respo
         .get_async("/getKey/:account", get_user_key)
         .post_async("/pinJson/:name", pin_json_to_ipfs)
         .post_async("/pinJson", pin_json_to_ipfs)
+        .post_async("/pinMetadata", pin_metadata_to_ipfs)
         .post_async("/pinFile", pin_file_to_ipfs)
         .options("/getKey/:account", empty_response)
         .options("/pinJson/:name", empty_response)
         .options("/pinJson", empty_response)
+        .options("/pinMetadata", empty_response)
         .options("/pinFile", empty_response)
         .run(req, env)
         .await

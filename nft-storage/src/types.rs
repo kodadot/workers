@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use validator::{Validate, ValidationError};
 use chrono::{Utc, SecondsFormat, Duration};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -36,3 +37,23 @@ pub struct ValueApiResponse {
     r#type: String,
     created: String,
 }
+
+
+
+#[derive(Serialize, Deserialize, Debug, Validate)]
+pub struct Metadata {
+    #[validate(length(min = 1))]
+    name: String,
+    #[validate(length(min = 1))]
+    description: String,
+    #[validate(contains = "ipfs://ipfs/")]
+    image: String,
+}
+
+// fn validate_ipfs_uri(uri: &str) -> Result<(), ValidationError> {
+//     if uri.starts_with("ipfs://ipfs/") {
+//         return Ok(());
+//     }
+
+//     return Err(ValidationError::new("terrible_username"));
+// }
