@@ -4,57 +4,13 @@ use reqwest::{ Client, Body };
 use chrono::{Duration, Utc, SecondsFormat};
 
 mod utils;
+mod cors;
+mod types;
 
 
-#[derive(Serialize, Deserialize, Debug)]
-struct StorageApiResponse {
-    ok: bool,
-    value: ValueApiResponse
-}
+use types::{StorageApiResponse, PinningKey, PinningKeyResponse, ValueApiResponse};
+use cors::{CorsHeaders, empty_response};
 
-#[derive(Serialize, Deserialize, Debug)]
-struct PinningKey {
-    ok: bool,
-    value: String
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct PinningKeyResponse {
-    expiry: String,
-    token: String
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct ValueApiResponse {
-    cid: String,
-    size: u32,
-    r#type: String,
-    created: String,
-}
-
-
-#[derive(Debug)]
-struct CorsHeaders {}
-
-impl CorsHeaders {
-    pub fn new() -> Result<Headers> {
-        let mut headers = Headers::new();
-        headers.set("Access-Control-Allow-Origin", "*")?;
-        headers.set("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")?;
-        headers.set("Access-Control-Allow-Headers", "*")?;
-        return Ok(headers);
-    }
-
-    pub fn response() -> Result<Response> {
-        let resp = Response::empty()?.with_headers(CorsHeaders::new()?);
-        return Ok(resp);
-    }
-
-    pub fn update(response: Result<Response>) -> Result<Response> {
-        let resp = response?.with_headers(CorsHeaders::new()?);
-        return Ok(resp);
-    }
-}
 
 fn log_request(req: &Request) {
     console_log!(
@@ -146,10 +102,6 @@ async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
         Ok(json) => CorsHeaders::update(Response::from_json(&json)),
         Err(e) => CorsHeaders::update(Response::error(e.to_string(), 500))
     }
-}
-
-fn empty_response<D>(_: Request, _: RouteContext<D>) ->  Result<Response> {
-    CorsHeaders::response()
 }
 
 fn get_token<D>(ctx: &RouteContext<D>) -> Result<String> {
