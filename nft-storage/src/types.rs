@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use validator::{Validate, ValidationError};
+use validator::{Validate};
 use chrono::{Utc, SecondsFormat, Duration};
 
 #[derive(Serialize, Deserialize, Debug)]

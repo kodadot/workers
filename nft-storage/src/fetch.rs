@@ -1,5 +1,5 @@
 use reqwest::{header::{AUTHORIZATION, CONTENT_TYPE}, Client, Error, Body};
-use serde::{de::DeserializeOwned, Serialize};
+use serde::{de::DeserializeOwned};
 use std::result::Result as StdResult;
 use worker::console_debug;
 
