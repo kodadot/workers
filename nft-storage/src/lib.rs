@@ -1,14 +1,12 @@
-use serde::{Deserialize, Serialize};
 use worker::*;
 use reqwest::{ Client, Body };
-use chrono::{Duration, Utc, SecondsFormat};
 
 mod utils;
 mod cors;
 mod types;
 
 
-use types::{StorageApiResponse, PinningKey, PinningKeyResponse, ValueApiResponse};
+use types::{StorageApiResponse, PinningKey, PinningKeyResponse};
 use cors::{CorsHeaders, empty_response};
 
 
@@ -44,11 +42,7 @@ async fn get_user_key<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> 
 
     match response {
         Ok(json) => {
-            let dt = Utc::now() + Duration::days(13);
-            let res = PinningKeyResponse {
-                expiry: dt.to_rfc3339_opts(SecondsFormat::Millis, true),
-                token: json.value
-            };   
+            let res = PinningKeyResponse::new(&json.value);
             CorsHeaders::update(Response::from_json(&res))
         },
         Err(_) => CorsHeaders::update(Response::error("Failed to get user key", 500))
@@ -109,7 +103,7 @@ fn get_token<D>(ctx: &RouteContext<D>) -> Result<String> {
 }
 
 #[event(fetch)]
-pub async fn main(req: Request, env: Env) -> Result<Response> {
+pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Response> {
     log_request(&req);
 
     // Optionally, get more helpful error messages written to the console in the case of a panic.
