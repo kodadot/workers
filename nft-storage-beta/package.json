@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "dev": "wrangler dev src/index.ts",
+    "deploy": "wrangler publish src/index.ts"
+  },
+  "dependencies": {
+    "hono": "^3.0.2",
+    "nft.storage": "^7.0.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230228.0",
+    "node-fetch": "^3.3.0",
+    "wrangler": "^2.12.0"
+  }
+}
