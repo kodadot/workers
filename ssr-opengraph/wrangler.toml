@@ -1,0 +1,8 @@
+name = "ssr-opengraph"
+compatibility_date = "2023-01-01"
+
+routes = [
+  "kodadot.preschian.xyz/rmrk/gallery/*",
+  "kodadot.preschian.xyz/bsx/gallery/*",
+  "kodadot.preschian.xyz/snek/gallery/*",
+]
