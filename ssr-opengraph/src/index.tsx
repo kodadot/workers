@@ -3,6 +3,7 @@ import isbot from 'isbot';
 import { Opengraph } from './template';
 import { formatPrice, getNftById, getProperties } from './utils';
 
+import type { Chain } from './utils';
 import type { NFTEntity } from './types';
 
 const app = new Hono();
@@ -22,17 +23,15 @@ app.get('/:chain/gallery/:id', async (c) => {
   const id = c.req.param('id');
 
   if (chain === 'bsx' || chain === 'rmrk' || chain === 'snek') {
-    const response = await getNftById(chain, id);
+    const response = await getNftById(chain as Chain, id);
     const data = (await response.json()) as NFTEntity;
-    const { nftEntityById } = data.data;
+    const { item } = data.data;
 
     const canonical = `https://kodadot.xyz/${chain}/gallery/${id}`;
-    const { name, description, title, cdn } = await getProperties(
-      nftEntityById
-    );
+    const { name, description, title, cdn } = await getProperties(item);
 
     // contruct price
-    const price = formatPrice(nftEntityById.price);
+    const price = formatPrice(item.price);
 
     // construct vercel image with cdn
     const image = new URL(

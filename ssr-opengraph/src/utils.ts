@@ -1,6 +1,12 @@
+import { extendFields, getClient } from '@kodadot1/uniquery';
+import { $purify } from '@kodadot1/minipfs';
+import { formatBalance } from '@polkadot/util';
+
+import type { Prefix } from '@kodadot1/static';
 import type { NFT, NFTMeta } from './types';
 
-type Chain = 'bsx' | 'rmrk' | 'snek';
+// TODO: put 'rmrk' into Prefix type
+export type Chain = 'rmrk' & Prefix;
 
 export const endpoints: Record<Chain, string> = {
   bsx: 'https://squid.subsquid.io/snekk/v/005/graphql',
@@ -9,47 +15,36 @@ export const endpoints: Record<Chain, string> = {
 };
 
 export const getNftById = async (chain: Chain, id: string) => {
+  const client = getClient();
+  const query = client.itemById(id, extendFields(['meta', 'price']));
+
+  // TODO: indexer for 'rmrk'
+  // return await client.fetch(query);
+
   return await fetch(endpoints[chain], {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      query: `
-          query NftById {
-            nftEntityById(id: "${id}") {
-              id
-              name
-              price
-              metadata
-              meta {
-                name
-                image
-                animationUrl
-                description
-                id
-              }
-            }
-          }
-        `,
-    }),
+    body: JSON.stringify(query),
   });
 };
 
 export function ipfsToCdn(ipfs: string) {
-  const ipfsCid = ipfs.split('ipfs:/')[1];
-  const cdn = new URL(ipfsCid, 'https://image.w.kodadot.xyz');
-
-  return cdn.toString();
+  return $purify(ipfs)[0];
 }
 
 export function formatPrice(price: string) {
-  const number = price;
-  const numAsNumber = parseFloat(number);
-  const divisor = 1000000000000; // 10^12
-  const convertedValue = numAsNumber / divisor;
-  const ksmValue = convertedValue.toFixed(1);
-  return number === '0' ? '' : `${ksmValue} KSM`;
+  const number = BigInt(price);
+  const format = formatBalance(number, {
+    decimals: 12,
+    withUnit: 'KSM',
+    forceUnit: '-',
+    withZero: false,
+  });
+  const value = format.toString();
+
+  return value === '0' ? '' : value;
 }
 
 export async function getProperties(nft: NFT) {

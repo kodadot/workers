@@ -1,21 +1,25 @@
 export interface NFTMeta {
+  id: string;
   name: string;
+  description: string;
   image: string;
   animationUrl: string;
-  description: string;
-  id: string;
+  type: null | string;
 }
 
 export interface NFT {
   id: string;
+  createdAt: string;
   name: string;
-  price: string;
   metadata: string;
+  currentOwner: string;
+  issuer: string;
   meta?: NFTMeta;
+  price: string;
 }
 
 export interface NFTEntity {
   data: {
-    nftEntityById: NFT;
+    item: NFT;
   };
 }
