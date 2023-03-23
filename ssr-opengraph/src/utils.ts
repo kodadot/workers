@@ -1,6 +1,7 @@
 import { extendFields, getClient } from '@kodadot1/uniquery';
 import { $purify } from '@kodadot1/minipfs';
 import { formatBalance } from '@polkadot/util';
+import { INDEXERS } from '@kodadot1/static';
 
 import type { Prefix } from '@kodadot1/static';
 import type { NFT, NFTMeta } from './types';
@@ -9,8 +10,8 @@ import type { NFT, NFTMeta } from './types';
 export type Chain = 'rmrk' & Prefix;
 
 export const endpoints: Record<Chain, string> = {
-  bsx: 'https://squid.subsquid.io/snekk/v/005/graphql',
-  snek: 'https://squid.subsquid.io/snekk/v/004/graphql',
+  bsx: INDEXERS['bsx'],
+  snek: INDEXERS['snek'],
   rmrk: 'https://squid.subsquid.io/rubick/graphql',
 };
 
