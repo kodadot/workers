@@ -1,34 +1,18 @@
 import { extendFields, getClient } from '@kodadot1/uniquery';
 import { $purify } from '@kodadot1/minipfs';
 import { formatBalance } from '@polkadot/util';
-import { INDEXERS } from '@kodadot1/static';
 
 import type { Prefix } from '@kodadot1/static';
 import type { NFT, NFTMeta } from './types';
 
-// TODO: put 'rmrk' into Prefix type
-export type Chain = 'rmrk' & Prefix;
+export type Chains = 'rmrk' & Prefix;
 
-export const endpoints: Record<Chain, string> = {
-  bsx: INDEXERS['bsx'],
-  snek: INDEXERS['snek'],
-  rmrk: 'https://squid.subsquid.io/rubick/graphql',
-};
-
-export const getNftById = async (chain: Chain, id: string) => {
-  const client = getClient();
+export const getNftById = async (chain: Chains, id: string) => {
+  const getChain = chain === 'rmrk' ? 'ksm' : chain;
+  const client = getClient(getChain);
   const query = client.itemById(id, extendFields(['meta', 'price']));
 
-  // TODO: indexer for 'rmrk'
-  // return await client.fetch(query);
-
-  return await fetch(endpoints[chain], {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(query),
-  });
+  return await client.fetch(query);
 };
 
 export function ipfsToCdn(ipfs: string) {

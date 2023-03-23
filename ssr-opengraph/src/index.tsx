@@ -3,7 +3,7 @@ import isbot from 'isbot';
 import { Opengraph } from './template';
 import { formatPrice, getNftById, getProperties } from './utils';
 
-import type { Chain } from './utils';
+import type { Chains } from './utils';
 import type { NFTEntity } from './types';
 
 const app = new Hono();
@@ -23,8 +23,8 @@ app.get('/:chain/gallery/:id', async (c) => {
   const id = c.req.param('id');
 
   if (chain === 'bsx' || chain === 'rmrk' || chain === 'snek') {
-    const response = await getNftById(chain as Chain, id);
-    const data = (await response.json()) as NFTEntity;
+    const response = await getNftById(chain as Chains, id);
+    const data = response as NFTEntity;
     const { item } = data.data;
 
     const canonical = `https://kodadot.xyz/${chain}/gallery/${id}`;
