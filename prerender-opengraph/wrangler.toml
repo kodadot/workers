@@ -3,13 +3,9 @@ account_id = "b3f9fdfd827152316d080a5ddee59915"
 main = "src/index.ts"
 compatibility_date = "2022-06-24"
 routes = [
-  "kodadot.xyz/rmrk/collection/*",
   "kodadot.xyz/rmrk/detail/*",
-  "kodadot.xyz/bsx/collection/*",
   "kodadot.xyz/bsx/detail/*",
-  "kodadot.xyz/snek/collection/*",
   "kodadot.xyz/snek/detail/*",
-  "kodadot.xyz/glmr/collection/*",
   "kodadot.xyz/glmr/gallery/*",
   "kodadot.xyz/glmr/detail/*",
 ]
