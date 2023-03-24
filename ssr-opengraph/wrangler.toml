@@ -3,6 +3,9 @@ compatibility_date = "2023-01-01"
 
 routes = [
   "kodadot.xyz/rmrk/gallery/*",
+  "kodadot.xyz/rmrk/collection/*",
   "kodadot.xyz/bsx/gallery/*",
+  "kodadot.xyz/bsx/collection/*",
   "kodadot.xyz/snek/gallery/*",
+  "kodadot.xyz/snek/collection/*",
 ]
