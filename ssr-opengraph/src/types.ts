@@ -15,11 +15,23 @@ export interface NFT {
   currentOwner: string;
   issuer: string;
   meta?: NFTMeta;
-  price: string;
+  price?: string;
 }
 
 export interface NFTEntity {
   data: {
     item: NFT;
+  };
+}
+
+export interface CollectionEntity {
+  data: {
+    collection: NFT;
+  };
+}
+
+export interface ListEntity {
+  data: {
+    items: NFT[];
   };
 }

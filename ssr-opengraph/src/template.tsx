@@ -40,6 +40,6 @@ export const Layout = (props: SiteData) => html`
 export const Opengraph = (props: { siteData: SiteData; name: string }) => (
   <Layout {...props.siteData}>
     <h1>{props.siteData.title}</h1>
-    <img src={props.siteData.image} alt={props.siteData.title} />
+    <img src={props.siteData.image} alt={props.siteData.title} width="360" />
   </Layout>
 );

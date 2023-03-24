@@ -7,10 +7,29 @@ import type { NFT, NFTMeta } from './types';
 
 export type Chains = 'rmrk' & Prefix;
 
+const clientOf = (chain: Chains) => {
+  const getChain = chain === 'rmrk' ? 'ksm' : chain;
+  return getClient(getChain);
+};
+
 export const getNftById = async (chain: Chains, id: string) => {
+  const client = clientOf(chain);
+  const query = client.itemById(id, extendFields(['meta', 'price']));
+
+  return await client.fetch(query);
+};
+
+export const getCollectionById = async (chain: Chains, id: string) => {
+  const client = clientOf(chain);
+  const query = client.collectionById(id, extendFields(['meta']));
+
+  return await client.fetch(query);
+};
+
+export const getItemListByCollectionId = async (chain: Chains, id: string) => {
   const getChain = chain === 'rmrk' ? 'ksm' : chain;
   const client = getClient(getChain);
-  const query = client.itemById(id, extendFields(['meta', 'price']));
+  const query = client.itemListByCollectionId(id);
 
   return await client.fetch(query);
 };
