@@ -7,6 +7,7 @@ import {
   getItemListByCollectionId,
   getNftById,
   getProperties,
+  jpegName,
 } from './utils';
 
 import type { Chains } from './utils';
@@ -43,7 +44,7 @@ app.get('/:chain/gallery/:id', async (c) => {
 
     // construct vercel image with cdn
     const image = new URL(
-      `https://og-image-green-seven.vercel.app/${name}.jpeg`
+      `https://og-image-green-seven.vercel.app/${jpegName(name)}`
     );
     image.searchParams.set('price', price);
     image.searchParams.set('image', cdn);
@@ -81,14 +82,14 @@ app.get('/:chain/collection/:id', async (c) => {
     ]);
     const { collection } = (collectionItem as CollectionEntity).data;
 
-    const canonical = `https://kodadot.xyz/${chain}/gallery/${id}`;
+    const canonical = `https://kodadot.xyz/${chain}/collection/${id}`;
     const { name, description, title, cdn } = await getProperties(collection);
 
     const price = (nfts as ListEntity).data.items.length || 0;
 
     // construct vercel image with cdn
     const image = new URL(
-      `https://og-image-green-seven.vercel.app/${name}.jpeg`
+      `https://og-image-green-seven.vercel.app/${jpegName(name)}`
     );
     image.searchParams.set('price', `Items: ${price}`);
     image.searchParams.set('image', cdn);
@@ -107,6 +108,11 @@ app.get('/:chain/collection/:id', async (c) => {
   }
 
   return fetch(c.req.url);
+});
+
+app.onError((err, c) => {
+  console.error(`${err}`);
+  return c.text(`path: ${c.req.url}`, 500);
 });
 
 export default app;
