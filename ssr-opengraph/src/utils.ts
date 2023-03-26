@@ -38,6 +38,11 @@ export function ipfsToCdn(ipfs: string) {
   return $purify(ipfs)[0];
 }
 
+export function jpegName(name: string) {
+  const lowerCase = encodeURIComponent(name.trim());
+  return `${lowerCase}.jpeg`;
+}
+
 export function formatPrice(price: string) {
   const number = BigInt(price);
   const format = formatBalance(number, {

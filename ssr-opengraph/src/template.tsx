@@ -41,5 +41,11 @@ export const Opengraph = (props: { siteData: SiteData; name: string }) => (
   <Layout {...props.siteData}>
     <h1>{props.siteData.title}</h1>
     <img src={props.siteData.image} alt={props.siteData.title} width="360" />
+    <p>
+      image url:{' '}
+      <a href={props.siteData.image} target="_blank">
+        {props.siteData.image}
+      </a>
+    </p>
   </Layout>
 );
