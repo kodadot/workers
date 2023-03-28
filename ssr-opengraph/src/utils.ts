@@ -1,7 +1,6 @@
 import { extendFields, getClient } from '@kodadot1/uniquery';
 import { $purify } from '@kodadot1/minipfs';
 import { formatBalance } from '@polkadot/util';
-import { ofetch } from 'ofetch';
 
 import type { Prefix } from '@kodadot1/static';
 import type { NFT, NFTMeta } from './types';
@@ -60,8 +59,8 @@ export function formatPrice(price: string) {
 export async function getProperties(nft: NFT) {
   if (!nft.meta) {
     try {
-      const response = await ofetch(ipfsToCdn(nft.metadata));
-      const data = response as NFTMeta;
+      const response = await fetch(ipfsToCdn(nft.metadata));
+      const data = (await response.json()) as NFTMeta;
 
       return {
         name: data.name,
