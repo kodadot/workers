@@ -36,7 +36,7 @@ export const getItemListByCollectionId = async (chain: Chains, id: string) => {
 };
 
 export function ipfsToCdn(ipfs: string) {
-  return $purify(ipfs)[0];
+  return $purify(ipfs, ['infura_dedicated_1'])[0];
 }
 
 export function jpegName(name: string) {
@@ -70,6 +70,8 @@ export async function getProperties(nft: NFT) {
         cdn: ipfsToCdn(data.image),
       };
     } catch (error) {
+      console.log('Error', error);
+
       return {
         name: nft.name,
         description: '',
