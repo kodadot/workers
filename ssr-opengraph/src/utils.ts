@@ -1,6 +1,7 @@
 import { extendFields, getClient } from '@kodadot1/uniquery';
 import { $purify } from '@kodadot1/minipfs';
 import { formatBalance } from '@polkadot/util';
+import { ofetch } from 'ofetch';
 
 import type { Prefix } from '@kodadot1/static';
 import type { NFT, NFTMeta } from './types';
@@ -58,12 +59,17 @@ export function formatPrice(price: string) {
 
 export async function getProperties(nft: NFT) {
   if (!nft.meta) {
-    const response = await fetch(ipfsToCdn(nft.metadata));
+    try {
+      const response = await ofetch(ipfsToCdn(nft.metadata));
+      const data = response as NFTMeta;
 
-    if (!response.ok) {
-      console.log('Error fetching metadata', response.statusText);
-      console.log(ipfsToCdn(nft.metadata));
-
+      return {
+        name: data.name,
+        description: data.description,
+        title: `${data.name} | Low Carbon NFTs`,
+        cdn: ipfsToCdn(data.image),
+      };
+    } catch (error) {
       return {
         name: nft.name,
         description: '',
@@ -71,15 +77,6 @@ export async function getProperties(nft: NFT) {
         cdn: 'https://kodadot.xyz/k_card.png',
       };
     }
-
-    const data = (await response.json()) as NFTMeta;
-
-    return {
-      name: data.name,
-      description: data.description,
-      title: `${data.name} | Low Carbon NFTs`,
-      cdn: ipfsToCdn(data.image),
-    };
   }
 
   const name = nft.name;
