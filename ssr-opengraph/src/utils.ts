@@ -59,6 +59,19 @@ export function formatPrice(price: string) {
 export async function getProperties(nft: NFT) {
   if (!nft.meta) {
     const response = await fetch(ipfsToCdn(nft.metadata));
+
+    if (!response.ok) {
+      console.log('Error fetching metadata', response.statusText);
+      console.log(ipfsToCdn(nft.metadata));
+
+      return {
+        name: nft.name,
+        description: '',
+        title: `${nft.name} | Low Carbon NFTs`,
+        cdn: 'https://kodadot.xyz/k_card.png',
+      };
+    }
+
     const data = (await response.json()) as NFTMeta;
 
     return {
