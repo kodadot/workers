@@ -1,4 +1,5 @@
 name: Deploy to Cloudflare workers
+run-name: Deploy ${{ inputs.worker }} to CF Workers by @${{ github.actor }}
 on:
   workflow_dispatch:
     inputs:
