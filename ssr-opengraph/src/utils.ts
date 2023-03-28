@@ -72,9 +72,9 @@ export async function getProperties(nft: NFT) {
       console.log('Error', error);
 
       return {
-        name: nft.name,
+        name: nft?.name,
         description: '',
-        title: `${nft.name} | Low Carbon NFTs`,
+        title: `${nft?.name} | Low Carbon NFTs`,
         cdn: 'https://kodadot.xyz/k_card.png',
       };
     }
