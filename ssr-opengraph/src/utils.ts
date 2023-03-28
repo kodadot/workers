@@ -35,7 +35,7 @@ export const getItemListByCollectionId = async (chain: Chains, id: string) => {
 };
 
 export function ipfsToCdn(ipfs: string) {
-  return $purify(ipfs)[0];
+  return $purify(ipfs, ['infura_dedicated_1'])[0];
 }
 
 export function jpegName(name: string) {
@@ -58,15 +58,26 @@ export function formatPrice(price: string) {
 
 export async function getProperties(nft: NFT) {
   if (!nft.meta) {
-    const response = await fetch(ipfsToCdn(nft.metadata));
-    const data = (await response.json()) as NFTMeta;
+    try {
+      const response = await fetch(ipfsToCdn(nft.metadata));
+      const data = (await response.json()) as NFTMeta;
 
-    return {
-      name: data.name,
-      description: data.description,
-      title: `${data.name} | Low Carbon NFTs`,
-      cdn: ipfsToCdn(data.image),
-    };
+      return {
+        name: data.name,
+        description: data.description,
+        title: `${data.name} | Low Carbon NFTs`,
+        cdn: ipfsToCdn(data.image),
+      };
+    } catch (error) {
+      console.log('Error', error);
+
+      return {
+        name: nft?.name,
+        description: '',
+        title: `${nft?.name} | Low Carbon NFTs`,
+        cdn: 'https://kodadot.xyz/k_card.png',
+      };
+    }
   }
 
   const name = nft.name;
