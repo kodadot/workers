@@ -65,6 +65,10 @@ app.get('/:chain/gallery/:id', async (c) => {
   return fetch(c.req.url);
 });
 
+app.head('/:chain/gallery/:id', async (c) => {
+  return fetch(c.req.url);
+});
+
 app.get('/:chain/collection/:id', async (c) => {
   const useragent = c.req.headers.get('user-agent');
 
@@ -107,6 +111,10 @@ app.get('/:chain/collection/:id', async (c) => {
     return c.html(<Opengraph {...props} />);
   }
 
+  return fetch(c.req.url);
+});
+
+app.head('/:chain/collection/:id', async (c) => {
   return fetch(c.req.url);
 });
 
