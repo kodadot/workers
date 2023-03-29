@@ -45,7 +45,7 @@ pub struct SubsquidStatus {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SubsquidSync {
     totalBlocks: u128,
-    currentBlock: u128
+    currentBlock: i128
 }
 
 #[allow(non_snake_case)]
