@@ -11,11 +11,23 @@ export async function uploadToCloudflareImages({
   imageAccount: string;
   imageId: string;
 }) {
+  const imageOnIpfs = `${gateway}/ipfs/${path}`;
+
+  // resize image using wsrv.nl
+  const resizeImage = new URL('https://wsrv.nl');
+  resizeImage.searchParams.append('url', imageOnIpfs);
+  resizeImage.searchParams.append('w', '600');
+
+  console.log(resizeImage.toString());
+
+  await fetch(resizeImage.toString(), { method: 'HEAD' });
+
+  // upload image to cf-images
   const uploadHeaders = new Headers();
   uploadHeaders.append('Authorization', `Bearer ${token}`);
 
   const uploadFormData = new FormData();
-  uploadFormData.append('url', `${gateway}/ipfs/${path}`);
+  uploadFormData.append('url', resizeImage.toString());
   uploadFormData.append('id', path);
 
   const requestOptions = {
