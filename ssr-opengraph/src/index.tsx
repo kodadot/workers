@@ -5,6 +5,7 @@ import {
   formatPrice,
   getCollectionById,
   getItemListByCollectionId,
+  getItemListByIssuer,
   getNftById,
   getProperties,
   jpegName,
@@ -21,6 +22,7 @@ app.get('/', (c) => {
 
 const chains = ['bsx', 'snek', 'rmrk'];
 
+// gallery details
 app.get('/:chain/gallery/:id', async (c) => {
   const useragent = c.req.headers.get('user-agent');
 
@@ -69,6 +71,7 @@ app.head('/:chain/gallery/:id', async (c) => {
   return fetch(c.req.url);
 });
 
+// collection details
 app.get('/:chain/collection/:id', async (c) => {
   const useragent = c.req.headers.get('user-agent');
 
@@ -115,6 +118,55 @@ app.get('/:chain/collection/:id', async (c) => {
 });
 
 app.head('/:chain/collection/:id', async (c) => {
+  return fetch(c.req.url);
+});
+
+// user details
+app.get('/:chain/u/:id', async (c) => {
+  const useragent = c.req.headers.get('user-agent');
+
+  if (useragent && !isbot(useragent)) {
+    return fetch(c.req.url);
+  }
+
+  const chain = c.req.param('chain');
+  const id = c.req.param('id');
+
+  if (chains.includes(chain)) {
+    const response = await getItemListByIssuer(chain as Chains, id);
+    const data = response as ListEntity;
+    const { items } = data.data;
+
+    const canonical = `https://kodadot.xyz/${chain}/gallery/${id}`;
+    const { description, cdn } = await getProperties(items[0]);
+
+    // contruct price
+    const price = items.length;
+
+    // construct vercel image with cdn
+    const image = new URL(
+      `https://og-image-green-seven.vercel.app/${jpegName(id)}`
+    );
+    image.searchParams.set('price', `Created: ${price}`);
+    image.searchParams.set('image', cdn);
+
+    const props = {
+      name: `${chain} ${id}`,
+      siteData: {
+        title: 'NFT Artist Profile on KodaDot | Low Carbon NFTs',
+        description: description,
+        canonical,
+        image: image.toString(),
+      },
+    };
+
+    return c.html(<Opengraph {...props} />);
+  }
+
+  return fetch(c.req.url);
+});
+
+app.head('/:chain/u/:id', async (c) => {
   return fetch(c.req.url);
 });
 
