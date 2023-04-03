@@ -16,7 +16,7 @@ export async function uploadToCloudflareImages({
   // resize image using wsrv.nl
   const resizeImage = new URL('https://wsrv.nl');
   resizeImage.searchParams.append('url', imageOnIpfs);
-  resizeImage.searchParams.append('w', '600');
+  resizeImage.searchParams.append('w', '1400');
 
   console.log(resizeImage.toString());
 
