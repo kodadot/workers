@@ -154,7 +154,7 @@ app.get('/:chain/u/:id', async (c) => {
       name: `${chain} ${id}`,
       siteData: {
         title: 'NFT Artist Profile on KodaDot | Low Carbon NFTs',
-        description: description,
+        description,
         canonical,
         image: image.toString(),
       },
