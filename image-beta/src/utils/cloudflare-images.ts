@@ -43,6 +43,8 @@ export async function uploadToCloudflareImages({
   );
   const uploadStatus = uploadCfImage.status;
 
+  console.log('uploadStatus', uploadStatus);
+
   // if image supported by cf-images or already exists, redirect to cf-images
   if (uploadStatus === 200 || uploadStatus === 409) {
     // return Response.redirect(`https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`, 302)
