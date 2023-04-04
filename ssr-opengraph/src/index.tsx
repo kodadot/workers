@@ -140,14 +140,14 @@ app.get('/:chain/u/:id', async (c) => {
     const canonical = `https://kodadot.xyz/${chain}/gallery/${id}`;
     const { description, cdn } = await getProperties(items[0]);
 
-    // contruct price
-    const price = items.length;
+    // total created nfts
+    const created = items.length;
 
     // construct vercel image with cdn
     const image = new URL(
       `https://og-image-green-seven.vercel.app/${jpegName(id)}`
     );
-    image.searchParams.set('price', `Created: ${price}`);
+    image.searchParams.set('price', `Created: ${created}`);
     image.searchParams.set('image', cdn);
 
     const props = {
