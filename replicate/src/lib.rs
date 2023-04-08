@@ -1,5 +1,6 @@
 use cors::{empty_response, CorsHeaders};
 use replicate::Replicate;
+use reqwest::StatusCode;
 use types::PredictionRequest;
 use worker::*;
 
@@ -27,7 +28,12 @@ async fn predict<D>(mut req: Request, ctx: RouteContext<D>) -> Result<Response> 
 
     match response {
         Ok(json) => CorsHeaders::update(Response::from_json(&json)),
-        Err(err) => CorsHeaders::update(Response::error(err.to_string(), 500)),
+        Err(err) => {
+            let status = err.status().unwrap_or(StatusCode::INTERNAL_SERVER_ERROR).as_u16();
+            let msg = err.to_string();
+            console_log!("Error: {:?} - {}", status, msg);
+            CorsHeaders::update(Response::error(msg, status))
+        }
     }
 }
 

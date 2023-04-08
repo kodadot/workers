@@ -19,7 +19,15 @@ pub async fn call_post<T: DeserializeOwned, B: Serialize>(
         .await;
 
     match response {
-        Ok(response) => response.json::<T>().await,
+        Ok(response) => {
+            match response.error_for_status() {
+                Ok(response) => response.json::<T>().await,
+                Err(e) => {
+                    console_debug!("Response Error: {:?}", e);
+                    return Err(e);
+                }
+            }
+        },
         Err(e) => {
             console_debug!("Error: {:?}", e);
             Err(e)
