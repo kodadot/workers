@@ -8,7 +8,7 @@ pub struct PredictionStatus {
     created_at: String,
     error: Option<String>,
     id: String,
-    input: Input,
+    // input: Input,
     logs: Option<String>,
     // metrics: String, ?? { "predict_time": 8.760063 }
     output: Option<Vec<String>>,
@@ -21,26 +21,35 @@ pub struct PredictionStatus {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ReplicateInput {
     pub prompt: String,
-    pub width: Option<String>,
-    pub height: Option<String>,
-    pub num_outputs: Option<String>,
-    pub guidance_scale: Option<String>,
-    pub num_inference_steps: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub negative_prompt: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width: Option<u16>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub height: Option<u16>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub num_outputs: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub guidance_scale: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub num_inference_steps: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub seed: Option<u32>,
 }
 
-type Input = HashMap<String, String>;
+type _Input = HashMap<String, String>;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PredictionRequest {
     version: String,
-    input: Input,
+    input: ReplicateInput,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PredictionRequestStatus {
-    created_at: Option<String>,
     id: String,
-    input: HashMap<String, String>,
+    created_at: Option<String>,
+    input: ReplicateInput,
     logs: Option<String>,
     status: String,
     version: String,
