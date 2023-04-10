@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PredictionStatus {
@@ -37,19 +38,19 @@ pub struct ReplicateInput {
     pub seed: Option<u32>,
 }
 
-type _Input = HashMap<String, String>;
+type Input = HashMap<String, Value>;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PredictionRequest {
     version: String,
-    input: ReplicateInput,
+    input: Input,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PredictionRequestStatus {
     id: String,
     created_at: Option<String>,
-    input: ReplicateInput,
+    input: Input,
     logs: Option<String>,
     status: String,
     version: String,
