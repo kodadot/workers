@@ -27,9 +27,15 @@ export const getCollectionById = async (chain: Chains, id: string) => {
 };
 
 export const getItemListByCollectionId = async (chain: Chains, id: string) => {
-  const getChain = chain === 'rmrk' ? 'ksm' : chain;
-  const client = getClient(getChain);
+  const client = clientOf(chain);
   const query = client.itemListByCollectionId(id);
+
+  return await client.fetch(query);
+};
+
+export const getItemListByIssuer = async (chain: Chains, id: string) => {
+  const client = clientOf(chain);
+  const query = client.itemListByIssuer(id);
 
   return await client.fetch(query);
 };
@@ -57,9 +63,9 @@ export function formatPrice(price: string) {
 }
 
 export async function getProperties(nft: NFT) {
-  if (!nft.meta) {
+  if (!nft?.meta) {
     try {
-      const response = await fetch(ipfsToCdn(nft.metadata));
+      const response = await fetch(ipfsToCdn(nft?.metadata));
       const data = (await response.json()) as NFTMeta;
 
       return {
@@ -69,7 +75,7 @@ export async function getProperties(nft: NFT) {
         cdn: ipfsToCdn(data.image),
       };
     } catch (error) {
-      console.log('Error', error);
+      console.log('Error on getProperties()', error);
 
       return {
         name: nft?.name,
