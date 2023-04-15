@@ -20,7 +20,7 @@ app.get('/', (c) => {
   return c.text('hello hono.js');
 });
 
-const chains = ['bsx', 'snek', 'rmrk'];
+const chains = ['bsx', 'snek', 'rmrk', 'ksm'];
 
 // gallery details
 app.get('/:chain/gallery/:id', async (c) => {
