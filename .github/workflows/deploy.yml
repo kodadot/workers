@@ -9,7 +9,7 @@ on:
       environment:
         description: 'Choose an environment to deploy to: <beta|production>'
         required: false
-        default: 'beta'
+        default: ''
       commands:
         description: 'Precommands'
         default: 'npm install'
