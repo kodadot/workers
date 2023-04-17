@@ -1,6 +1,7 @@
 import { extendFields, getClient } from '@kodadot1/uniquery';
 import { $purify } from '@kodadot1/minipfs';
 import { formatBalance } from '@polkadot/util';
+import { META_TITLE } from './constant';
 
 import type { Prefix } from '@kodadot1/static';
 import type { NFT, NFTMeta } from './types';
@@ -79,7 +80,7 @@ export async function getProperties(nft: NFT) {
       return {
         name: data.name,
         description: data.description,
-        title: `${data.name} | Low Carbon NFTs`,
+        title: `${data.name} | ${META_TITLE}`,
         cdn: formatImage(data.image),
       };
     } catch (error) {
@@ -88,7 +89,7 @@ export async function getProperties(nft: NFT) {
       return {
         name: nft?.name,
         description: '',
-        title: `${nft?.name} | Low Carbon NFTs`,
+        title: `${nft?.name} | ${META_TITLE}`,
         cdn: 'https://kodadot.xyz/k_card.png',
       };
     }
@@ -96,7 +97,7 @@ export async function getProperties(nft: NFT) {
 
   const name = nft.name;
   const description = nft.meta?.description;
-  const title = `${name} | Low Carbon NFTs`;
+  const title = `${name} | ${META_TITLE}`;
   const cdn = formatImage(nft.meta?.image);
 
   return {
