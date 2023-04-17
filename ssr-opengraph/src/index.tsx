@@ -12,8 +12,8 @@ import {
 } from './utils';
 import { META_TITLE } from './constant';
 
-import type { Chains } from './utils';
 import type { CollectionEntity, ListEntity, NFTEntity } from './types';
+import type { Prefix } from '@kodadot1/static';
 
 const app = new Hono();
 
@@ -35,7 +35,7 @@ app.get('/:chain/gallery/:id/*', async (c) => {
   const id = c.req.param('id');
 
   if (chains.includes(chain)) {
-    const response = await getNftById(chain as Chains, id);
+    const response = await getNftById(chain as Prefix, id);
     const data = response as NFTEntity;
     const { item } = data.data;
 
@@ -85,8 +85,8 @@ app.get('/:chain/collection/:id/*', async (c) => {
 
   if (chains.includes(chain)) {
     const [collectionItem, nfts] = await Promise.all([
-      getCollectionById(chain as Chains, id),
-      getItemListByCollectionId(chain as Chains, id),
+      getCollectionById(chain as Prefix, id),
+      getItemListByCollectionId(chain as Prefix, id),
     ]);
     const { collection } = (collectionItem as CollectionEntity).data;
 
@@ -134,7 +134,7 @@ app.get('/:chain/u/:id/*', async (c) => {
   const id = c.req.param('id');
 
   if (chains.includes(chain)) {
-    const response = await getItemListByIssuer(chain as Chains, id);
+    const response = await getItemListByIssuer(chain as Prefix, id);
     const data = response as ListEntity;
     const { items } = data.data;
 
