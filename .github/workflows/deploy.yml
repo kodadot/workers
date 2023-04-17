@@ -6,13 +6,13 @@ on:
       worker:
         description: 'Name of the worker'
         required: true
-      commands:
-        description: 'Precommands'
-        default: 'npm install'
       environment:
         description: 'Choose an environment to deploy to: <beta|production>'
         required: false
-        default: ''
+        default: 'beta'
+      commands:
+        description: 'Precommands'
+        default: 'npm install'
 
 jobs:
   deploy:
