@@ -10,6 +10,7 @@ import {
   getProperties,
   jpegName,
 } from './utils';
+import { META_TITLE } from './constant';
 
 import type { Chains } from './utils';
 import type { CollectionEntity, ListEntity, NFTEntity } from './types';
@@ -20,10 +21,10 @@ app.get('/', (c) => {
   return c.text('hello hono.js');
 });
 
-const chains = ['bsx', 'snek', 'rmrk'];
+const chains = ['bsx', 'snek', 'rmrk', 'ksm'];
 
 // gallery details
-app.get('/:chain/gallery/:id', async (c) => {
+app.get('/:chain/gallery/:id/*', async (c) => {
   const useragent = c.req.headers.get('user-agent');
 
   if (useragent && !isbot(useragent)) {
@@ -67,12 +68,12 @@ app.get('/:chain/gallery/:id', async (c) => {
   return fetch(c.req.url);
 });
 
-app.head('/:chain/gallery/:id', async (c) => {
+app.head('/:chain/gallery/:id/*', async (c) => {
   return fetch(c.req.url);
 });
 
 // collection details
-app.get('/:chain/collection/:id', async (c) => {
+app.get('/:chain/collection/:id/*', async (c) => {
   const useragent = c.req.headers.get('user-agent');
 
   if (useragent && !isbot(useragent)) {
@@ -117,12 +118,12 @@ app.get('/:chain/collection/:id', async (c) => {
   return fetch(c.req.url);
 });
 
-app.head('/:chain/collection/:id', async (c) => {
+app.head('/:chain/collection/:id/*', async (c) => {
   return fetch(c.req.url);
 });
 
 // user details
-app.get('/:chain/u/:id', async (c) => {
+app.get('/:chain/u/:id/*', async (c) => {
   const useragent = c.req.headers.get('user-agent');
 
   if (useragent && !isbot(useragent)) {
@@ -153,7 +154,7 @@ app.get('/:chain/u/:id', async (c) => {
     const props = {
       name: `${chain} ${id}`,
       siteData: {
-        title: 'NFT Artist Profile on KodaDot | Low Carbon NFTs',
+        title: `NFT Artist Profile on KodaDot | ${META_TITLE}`,
         description,
         canonical,
         image: image.toString(),
@@ -166,7 +167,7 @@ app.get('/:chain/u/:id', async (c) => {
   return fetch(c.req.url);
 });
 
-app.head('/:chain/u/:id', async (c) => {
+app.head('/:chain/u/:id/*', async (c) => {
   return fetch(c.req.url);
 });
 
