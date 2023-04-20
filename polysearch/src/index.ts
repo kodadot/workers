@@ -8,27 +8,46 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
-import { Hono } from 'hono'
+import { Env, Hono } from 'hono'
 import { cors } from 'hono/cors'
 
+import { Env as CloudflareEnv, OTTER } from './utils/constants'
 import { allowedOrigin } from './utils/cors'
+import { doSearch, SearchQuery } from './utils/db'
 
 // const envAdapter = env<Bindings>()
 
-const app = new Hono();
+interface HonoEnv extends Env {
+  Bindings: CloudflareEnv
+}
 
-app.get('/', (c) => c.text('Hello! cf-workers!'));
+const app = new Hono<HonoEnv>()
 
-app.use('/search', cors({ origin: allowedOrigin }));
+app.get('/', (c) => c.text(OTTER))
 
-export default app;
+app.use('/search', cors({ origin: allowedOrigin }))
 
-// export default {
-// 	async fetch(
-// 		request: Request,
-// 		env: Bindings,
-// 		ctx: ExecutionContext
-// 	): Promise<Response> {
-// 		return new Response("Hello World!");
-// 	},
-// };
+app.get('/search', async (c) => {
+  const body = c.req.queries()
+  // const result = await doSearch(body, c.env.POLYSEARCH_DB)
+  return c.json(body)
+})
+
+app.post('/search', async (c) => {
+  const body = await c.req.json<SearchQuery>()
+  const result = await doSearch(body, c.env.POLYSEARCH_DB)
+  return c.json(result)
+})
+
+app.post('/insert/:table', async (c) => {
+  const table = c.req.param('table')
+  const body = await c.req.json()
+  return c.json({ table, body })
+})
+
+app.onError((err, c) => {
+  console.error(`${err}`)
+  return c.text(`path: ${c.req.url}`, 500)
+})
+
+export default app
