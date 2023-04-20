@@ -1,0 +1,2 @@
+init:
+  wrangler d1 execute search --local --file=./schema.sql
