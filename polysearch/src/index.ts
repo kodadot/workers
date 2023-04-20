@@ -13,7 +13,7 @@ import { cors } from 'hono/cors'
 
 import { Env as CloudflareEnv, OTTER } from './utils/constants'
 import { allowedOrigin } from './utils/cors'
-import { doSearch, SearchQuery } from './utils/db'
+import { doSearch, insertInto, isTable, SearchQuery } from './utils/db'
 
 // const envAdapter = env<Bindings>()
 
@@ -42,12 +42,17 @@ app.post('/search', async (c) => {
 app.post('/insert/:table', async (c) => {
   const table = c.req.param('table')
   const body = await c.req.json()
-  return c.json({ table, body })
+
+  if (!isTable(table) || !body) {
+    return c.text('table is required', 400)
+  }
+  const result = await insertInto(table, body, c.env.POLYSEARCH_DB)
+  return c.json(result)
 })
 
 app.onError((err, c) => {
   console.error(`${err}`)
-  return c.text(`path: ${c.req.url}`, 500)
+  return c.text(`path: ${c.req.url}`, 400)
 })
 
 export default app
