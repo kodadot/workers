@@ -28,9 +28,9 @@ app.get('/', (c) => c.text(OTTER))
 app.use('/search', cors({ origin: allowedOrigin }))
 
 app.get('/search', async (c) => {
-  const body = c.req.queries()
-  // const result = await doSearch(body, c.env.POLYSEARCH_DB)
-  return c.json(body)
+  const body = c.req.query() as Record<keyof SearchQuery, any>
+  const result = await doSearch(body as SearchQuery, c.env.POLYSEARCH_DB)
+  return c.json(result)
 })
 
 app.post('/search', async (c) => {
