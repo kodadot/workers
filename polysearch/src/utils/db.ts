@@ -1,6 +1,8 @@
 import { Kysely } from 'kysely'
 import { D1Dialect } from 'kysely-d1'
 
+export const tables = ['collections', 'items']
+
 interface Database {
   collections: any
   items: any
@@ -14,10 +16,16 @@ export type SearchQuery = {
   offset: number
 }
 
+type Dict = Record<string, any>
+
+export function isTable(table: string): table is keyof Database {
+  return tables.includes(table)
+}
+
 export async function doSearch<T>(params: SearchQuery, database: D1Database): Promise<any> {
   const table = params.table
   const search = params.search
-  if (!table || !search) {
+  if (!isTable(table) || !search) {
     throw new Error(`Missing table (${table}) or search query (${search})`)
   }
 
@@ -48,6 +56,21 @@ export async function doSearch<T>(params: SearchQuery, database: D1Database): Pr
     console.error(error)
     return []
   }
-  
-  
+}
+
+export async function insertInto(table: keyof Database, data: Dict | Dict[], database: D1Database) {
+  const db = new Kysely<Database>({ dialect: new D1Dialect({ database }) })
+  const query = db.insertInto(table).values(data)
+
+  if (!isTable(table)) {
+    return { ok: false, affected: -1, error: new Error(`Missing table (${table})`) }
+  }
+
+  try {
+    const res = await db.executeQuery(query.compile())
+    return { ok: true, affected: res.numAffectedRows, error: null }
+  } catch (error) {
+    console.error(error)
+    return { ok: false,  affected: -1, error }
+  }
 }
