@@ -1,24 +1,23 @@
 CREATE TABLE collections
 (
-    ID        TEXT PRIMARY KEY NOT NULL,
-    NAME      TEXT,
-    IMAGE     TEXT,
-    MEDIA_URL TEXT,
-    METADATA  TEXT,
-    CHAIN     CHAR(10),
-    VOLUME    UNSIGNED BIG INT
+    id        TEXT PRIMARY KEY NOT NULL,
+    name      TEXT,
+    image     TEXT,
+    media_url TEXT,
+    metadata  TEXT,
+    chain     CHAR(10),
+    volume    UNSIGNED BIG INT
 );
 
 CREATE TABLE items
 (
-    ID              TEXT PRIMARY KEY NOT NULL,
-    NAME            TEXT,
-    IMAGE           TEXT,
-    MEDIA_URL       TEXT,
-    METADATA        TEXT,
-    COLLECTION_ID   TEXT,
-    COLLECTION_NAME TEXT,
-    CHAIN           CHAR(10),
-    FOREIGN KEY (COLLECTION_ID) REFERENCES collections (ID)
-
+    id              TEXT PRIMARY KEY NOT NULL,
+    name            TEXT,
+    image           TEXT,
+    media_url       TEXT,
+    metadata        TEXT,
+    collection_id   TEXT,
+    collection_name TEXT,
+    chain           CHAR(10),
+    FOREIGN KEY (collection_id) REFERENCES collections (id)
 );
