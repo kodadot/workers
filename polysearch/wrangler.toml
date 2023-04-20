@@ -1,0 +1,9 @@
+name = "polysearch"
+main = "src/index.ts"
+compatibility_date = "2023-04-20"
+
+
+[[d1_databases]]
+binding = "POLYSEARCH_DB"
+database_name = "polysearch"
+database_id = "6ae49cb3-7b20-4172-b4c1-71c506ff87fa"
