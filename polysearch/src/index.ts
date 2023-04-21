@@ -52,7 +52,7 @@ app.post('/insert/:table', async (c) => {
 
 app.onError((err, c) => {
   console.error(`${err}`)
-  return c.text(`path: ${c.req.url}`, 400)
+  return c.json({ error: err.message, path: c.req.url }, 400)
 })
 
 export default app
