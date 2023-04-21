@@ -45,3 +45,5 @@ wrangler d1 execute search --local --file=./schema.sql
 ```bash
 wrangler dev --local --persist
 ```
+
+Your worker will run at `http://localhost:8787/`
