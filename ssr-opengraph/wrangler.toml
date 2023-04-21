@@ -1,10 +1,33 @@
-name = "ssr-opengraph"
+name = "ssr-opengraph-beta"
 compatibility_date = "2023-01-01"
 main = "src/index.tsx"
+routes = [
+  "*.kodadot.xyz/rmrk/gallery/*",
+  "*.kodadot.xyz/rmrk/collection/*",
+  "*.kodadot.xyz/rmrk/u/*",
+  "*.kodadot.xyz/ksm/gallery/*",
+  "*.kodadot.xyz/ksm/collection/*",
+  "*.kodadot.xyz/ksm/u/*",
+  "*.kodadot.xyz/bsx/gallery/*",
+  "*.kodadot.xyz/bsx/collection/*",
+  "*.kodadot.xyz/bsx/u/*",
+  "*.kodadot.xyz/snek/gallery/*",
+  "*.kodadot.xyz/snek/collection/*",
+  "*.kodadot.xyz/snek/u/*",
+]
+
+[env.beta]
+name = "ssr-opengraph-beta"
+
+[env.production]
+name = "ssr-opengraph"
 routes = [
   "kodadot.xyz/rmrk/gallery/*",
   "kodadot.xyz/rmrk/collection/*",
   "kodadot.xyz/rmrk/u/*",
+  "kodadot.xyz/ksm/gallery/*",
+  "kodadot.xyz/ksm/collection/*",
+  "kodadot.xyz/ksm/u/*",
   "kodadot.xyz/bsx/gallery/*",
   "kodadot.xyz/bsx/collection/*",
   "kodadot.xyz/bsx/u/*",

@@ -6,6 +6,10 @@ on:
       worker:
         description: 'Name of the worker'
         required: true
+      environment:
+        description: 'Choose an environment to deploy to: <beta|production>'
+        required: false
+        default: ''
       commands:
         description: 'Precommands'
         default: 'npm install'
@@ -17,7 +21,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Publish
+      - name: Publish (beta or production)
+        if: github.event.inputs.environment == 'beta' || github.event.inputs.environment == 'production'
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          preCommands: ${{ github.event.inputs.commands }}
+          workingDirectory: ${{ github.event.inputs.worker }}
+          command: publish --env ${{ github.event.inputs.environment }}
+
+      - name: Publish (default)
+        if: github.event.inputs.environment != 'beta' && github.event.inputs.environment != 'production'
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
