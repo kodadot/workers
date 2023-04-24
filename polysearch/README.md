@@ -9,7 +9,7 @@ API has basically `/search` endpoint available for `GET` and `POST` requests.
 
 - GET `/search?/search?table=collections&q=sub0&limit=2`
 - POST `/search`
-  - body: `{ table: 'collections', q: 'sub0', limit: 2 }`
+  - body: `{ table: 'collections', search: 'sub0', limit: 2 }`
 
 Available fields:
 
