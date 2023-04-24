@@ -1,19 +1,8 @@
 import { Hono } from 'hono';
 import isbot from 'isbot';
-import { Opengraph } from './template';
-import {
-  formatPrice,
-  getCollectionById,
-  getItemListByCollectionId,
-  getItemListByIssuer,
-  getNftById,
-  getProperties,
-  jpegName,
-} from './utils';
-import { META_TITLE } from './constant';
 
-import type { CollectionEntity, ListEntity, NFTEntity } from './types';
-import type { Prefix } from '@kodadot1/static';
+import { Opengraph } from './template';
+import { collectionDetail, galleryDetail, userDetail } from './handlers';
 
 const app = new Hono();
 
@@ -23,8 +12,7 @@ app.get('/', (c) => {
 
 const chains = ['bsx', 'snek', 'rmrk', 'ksm'];
 
-// gallery details
-app.get('/:chain/gallery/:id/*', async (c) => {
+app.get('/:chain/:type/:id/*', async (c) => {
   const useragent = c.req.headers.get('user-agent');
 
   if (useragent && !isbot(useragent)) {
@@ -33,141 +21,29 @@ app.get('/:chain/gallery/:id/*', async (c) => {
 
   const chain = c.req.param('chain');
   const id = c.req.param('id');
+  const type = c.req.param('type');
 
   if (chains.includes(chain)) {
-    const response = await getNftById(chain as Prefix, id);
-    const data = response as NFTEntity;
-    const { item } = data.data;
+    if (type === 'gallery' || type === 'detail') {
+      const props = await galleryDetail(chain, id);
+      return c.html(<Opengraph {...props} />);
+    }
 
-    const canonical = `https://kodadot.xyz/${chain}/gallery/${id}`;
-    const { name, description, title, cdn } = await getProperties(item);
+    if (type === 'collection') {
+      const props = await collectionDetail(chain, id);
+      return c.html(<Opengraph {...props} />);
+    }
 
-    // contruct price
-    const price = formatPrice(item.price || '0');
-
-    // construct vercel image with cdn
-    const image = new URL(
-      `https://og-image-green-seven.vercel.app/${jpegName(name)}`
-    );
-    image.searchParams.set('price', price);
-    image.searchParams.set('image', cdn);
-
-    const props = {
-      name: `${chain} ${id}`,
-      siteData: {
-        title,
-        description: description,
-        canonical,
-        image: image.toString(),
-      },
-    };
-
-    return c.html(<Opengraph {...props} />);
+    if (type === 'u') {
+      const props = await userDetail(chain, id);
+      return c.html(<Opengraph {...props} />);
+    }
   }
 
   return fetch(c.req.url);
 });
 
-app.head('/:chain/gallery/:id/*', async (c) => {
-  return fetch(c.req.url);
-});
-
-// collection details
-app.get('/:chain/collection/:id/*', async (c) => {
-  const useragent = c.req.headers.get('user-agent');
-
-  if (useragent && !isbot(useragent)) {
-    return fetch(c.req.url);
-  }
-
-  const chain = c.req.param('chain');
-  const id = c.req.param('id');
-
-  if (chains.includes(chain)) {
-    const [collectionItem, nfts] = await Promise.all([
-      getCollectionById(chain as Prefix, id),
-      getItemListByCollectionId(chain as Prefix, id),
-    ]);
-    const { collection } = (collectionItem as CollectionEntity).data;
-
-    const canonical = `https://kodadot.xyz/${chain}/collection/${id}`;
-    const { name, description, title, cdn } = await getProperties(collection);
-
-    const price = (nfts as ListEntity).data.items.length || 0;
-
-    // construct vercel image with cdn
-    const image = new URL(
-      `https://og-image-green-seven.vercel.app/${jpegName(name)}`
-    );
-    image.searchParams.set('price', `Items: ${price}`);
-    image.searchParams.set('image', cdn);
-
-    const props = {
-      name: `${chain} ${id}`,
-      siteData: {
-        title,
-        description: description,
-        canonical,
-        image: image.toString(),
-      },
-    };
-
-    return c.html(<Opengraph {...props} />);
-  }
-
-  return fetch(c.req.url);
-});
-
-app.head('/:chain/collection/:id/*', async (c) => {
-  return fetch(c.req.url);
-});
-
-// user details
-app.get('/:chain/u/:id/*', async (c) => {
-  const useragent = c.req.headers.get('user-agent');
-
-  if (useragent && !isbot(useragent)) {
-    return fetch(c.req.url);
-  }
-
-  const chain = c.req.param('chain');
-  const id = c.req.param('id');
-
-  if (chains.includes(chain)) {
-    const response = await getItemListByIssuer(chain as Prefix, id);
-    const data = response as ListEntity;
-    const { items } = data.data;
-
-    const canonical = `https://kodadot.xyz/${chain}/gallery/${id}`;
-    const { description, cdn } = await getProperties(items[0]);
-
-    // total created nfts
-    const created = items.length;
-
-    // construct vercel image with cdn
-    const image = new URL(
-      `https://og-image-green-seven.vercel.app/${jpegName(id)}`
-    );
-    image.searchParams.set('price', `Created: ${created}`);
-    image.searchParams.set('image', cdn);
-
-    const props = {
-      name: `${chain} ${id}`,
-      siteData: {
-        title: `NFT Artist Profile on KodaDot | ${META_TITLE}`,
-        description,
-        canonical,
-        image: image.toString(),
-      },
-    };
-
-    return c.html(<Opengraph {...props} />);
-  }
-
-  return fetch(c.req.url);
-});
-
-app.head('/:chain/u/:id/*', async (c) => {
+app.head('/:chain/:type/:id/*', async (c) => {
   return fetch(c.req.url);
 });
 

@@ -3,15 +3,19 @@ compatibility_date = "2023-01-01"
 main = "src/index.tsx"
 routes = [
   "*.kodadot.xyz/rmrk/gallery/*",
+  "*.kodadot.xyz/rmrk/detail/*",
   "*.kodadot.xyz/rmrk/collection/*",
   "*.kodadot.xyz/rmrk/u/*",
   "*.kodadot.xyz/ksm/gallery/*",
+  "*.kodadot.xyz/ksm/detail/*",
   "*.kodadot.xyz/ksm/collection/*",
   "*.kodadot.xyz/ksm/u/*",
   "*.kodadot.xyz/bsx/gallery/*",
+  "*.kodadot.xyz/bsx/detail/*",
   "*.kodadot.xyz/bsx/collection/*",
   "*.kodadot.xyz/bsx/u/*",
   "*.kodadot.xyz/snek/gallery/*",
+  "*.kodadot.xyz/snek/detail/*",
   "*.kodadot.xyz/snek/collection/*",
   "*.kodadot.xyz/snek/u/*",
 ]
@@ -23,15 +27,19 @@ name = "ssr-opengraph-beta"
 name = "ssr-opengraph"
 routes = [
   "kodadot.xyz/rmrk/gallery/*",
+  "kodadot.xyz/rmrk/detail/*",
   "kodadot.xyz/rmrk/collection/*",
   "kodadot.xyz/rmrk/u/*",
   "kodadot.xyz/ksm/gallery/*",
+  "kodadot.xyz/ksm/detail/*",
   "kodadot.xyz/ksm/collection/*",
   "kodadot.xyz/ksm/u/*",
   "kodadot.xyz/bsx/gallery/*",
+  "kodadot.xyz/bsx/detail/*",
   "kodadot.xyz/bsx/collection/*",
   "kodadot.xyz/bsx/u/*",
   "kodadot.xyz/snek/gallery/*",
+  "kodadot.xyz/snek/detail/*",
   "kodadot.xyz/snek/collection/*",
   "kodadot.xyz/snek/u/*",
 ]
