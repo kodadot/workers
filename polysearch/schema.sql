@@ -21,3 +21,5 @@ CREATE TABLE items
     chain           CHAR(10),
     FOREIGN KEY (collection_id) REFERENCES collections (id)
 );
+
+CREATE INDEX IDX_collection_name ON collections (name);
