@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use worker::*;
 
+static BASE_URL: &str = "https://kodadot.xyz/";
+
 #[derive(Deserialize, Serialize)]
 struct Error {
     status: u16,
@@ -11,11 +13,6 @@ struct Error {
 #[derive(Deserialize, Serialize)]
 struct Key {
     key: String,
-}
-
-#[derive(Deserialize, Serialize)]
-struct Url {
-    url: String,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -42,7 +39,9 @@ async fn key_get<D>(_: Request, ctx: RouteContext<D>) -> Result<Response> {
     let key = ctx.param("key").unwrap();
     let list = ctx.kv("list")?;
     return match list.get(key).text().await? {
-        Some(value) => Response::from_json(&Url { url: value }),
+        Some(value) => Response::redirect(
+            Url::parse(&format!("{}{}", BASE_URL.to_owned(), value))?
+        ),
         None => respond_error("Key not found", 404),
     };
 }
