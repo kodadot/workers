@@ -2,6 +2,10 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use worker::*;
 
+mod cors;
+
+type CorsHeaders = cors::CorsHeaders;
+
 static BASE_URL: &str = "https://kodadot.xyz/";
 
 #[derive(Deserialize, Serialize)]
@@ -35,7 +39,7 @@ fn root(_: Request, _: RouteContext<()>) -> Result<Response> {
     Response::ok("KodaDot URL Shortener")
 }
 
-async fn key_get<D>(_: Request, ctx: RouteContext<D>) -> Result<Response> {
+async fn redirect_by_key<D>(_: Request, ctx: RouteContext<D>) -> Result<Response> {
     let key = ctx.param("key").unwrap();
     let list = ctx.kv("list")?;
     return match list.get(key).text().await? {
@@ -46,7 +50,7 @@ async fn key_get<D>(_: Request, ctx: RouteContext<D>) -> Result<Response> {
     };
 }
 
-async fn key_post<D>(mut req: Request, ctx: RouteContext<D>) -> Result<Response> {
+async fn create_key<D>(mut req: Request, ctx: RouteContext<D>) -> Result<Response> {
     let body: KeyValue = req.json().await?;
     let list = ctx.kv("list")?;
     
@@ -59,21 +63,27 @@ async fn key_post<D>(mut req: Request, ctx: RouteContext<D>) -> Result<Response>
     };
 }
 
-async fn key_delete<D>(_: Request, ctx: RouteContext<D>) -> Result<Response> {
+async fn delete_key<D>(_: Request, ctx: RouteContext<D>) -> Result<Response> {
     let key = ctx.param("key").unwrap();
     let list = ctx.kv("list")?;
     list.delete(&key).await?;
     return Response::from_json(&Key { key: key.to_string() });
 }
 
+fn empty_response<D>(_: Request, _: RouteContext<D>) ->  Result<Response> {
+    CorsHeaders::response()
+}
+
 #[event(fetch)]
 async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     let router = Router::new();
-    router
+    CorsHeaders::update(router
         .get("/", root)
-        .get_async("/:key", key_get)
-        .post_async("/", key_post)
-        .delete_async("/:key", key_delete)
+        .get_async("/:key", redirect_by_key)
+        .post_async("/", create_key)
+        .delete_async("/:key", delete_key)
+        .options("/", empty_response)
+        .options("/:key", empty_response)
         .run(req, env)
-        .await
+        .await)
 }
