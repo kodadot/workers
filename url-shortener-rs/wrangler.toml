@@ -1,0 +1,11 @@
+name = "url-shortener"
+main = "build/worker/shim.mjs"
+compatibility_date = "2023-04-27"
+usage_model = "bundled"
+
+kv_namespaces = [
+    { binding = "list", id = "54b02bab8d394f448dd0c064feab1e86", preview_id = "3a9ba2324e9c4021b76107ead42672e0" }
+]
+
+[build]
+command = "cargo install -q worker-build && worker-build --release"
