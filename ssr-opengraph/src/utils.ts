@@ -65,7 +65,7 @@ function formatImage(url: string) {
 }
 
 export async function getProperties(nft: NFT) {
-  if (!nft?.meta) {
+  if (!nft?.meta || !nft?.name) {
     try {
       const response = await fetch(ipfsToCdn(nft?.metadata));
       const data = (await response.json()) as NFTMeta;
