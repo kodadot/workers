@@ -65,7 +65,7 @@ function formatImage(url: string) {
 }
 
 export async function getProperties(nft: NFT) {
-  if (!nft?.meta) {
+  if (!nft?.meta || !nft?.name) {
     try {
       const response = await fetch(ipfsToCdn(nft?.metadata));
       const data = (await response.json()) as NFTMeta;
@@ -78,11 +78,12 @@ export async function getProperties(nft: NFT) {
       };
     } catch (error) {
       console.log('Error on getProperties()', error);
+      const name = nft?.name || 'NFT Item';
 
       return {
-        name: nft?.name,
+        name: name,
         description: '',
-        title: `${nft?.name} | ${META_TITLE}`,
+        title: `${name} | ${META_TITLE}`,
         cdn: 'https://kodadot.xyz/k_card.png',
       };
     }
