@@ -6,6 +6,7 @@ CREATE TABLE collections
     media_url TEXT,
     metadata  TEXT,
     chain     CHAR(10),
+    collection_id TEXT NOT NULL,
     volume    UNSIGNED BIG INT
 );
 
@@ -19,7 +20,9 @@ CREATE TABLE items
     collection_id   TEXT,
     collection_name TEXT,
     chain           CHAR(10),
+    item_id         TEXT NOT NULL,
     FOREIGN KEY (collection_id) REFERENCES collections (id)
 );
 
 CREATE INDEX IDX_collection_name ON collections (name);
+
