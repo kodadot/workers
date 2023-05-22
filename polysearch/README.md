@@ -47,3 +47,17 @@ wrangler dev --local --persist
 ```
 
 Your worker will run at `http://localhost:8787/`
+
+
+### Changelog
+
+#### 0.0.2
+
+- id should represent - chain + id
+- there is new field [entitity_id] which is id of the entity for subsquid
+
+```sql
+ALTER TABLE collections ADD COLUMN `collection_id` TEXT NOT NULL DEFAULT '';
+UPDATE collections SET collection_id = id;
+UPDATE collections SET id = chain || '-' || id WHERE collection_id = id;
+```
