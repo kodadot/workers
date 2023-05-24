@@ -1,7 +1,7 @@
 import { ORIGIN } from './constants';
 
 const MATCHES: RegExp[] = [
-  /deploy-preview-[0-9]+--koda-nuxt.netlify.app/,
+  /deploy-preview-[0-9]+--koda-canary.netlify.app/,
   /kodadot.xyz/,
   /localhost:9090/,
 ];
