@@ -1,0 +1,12 @@
+{
+	"name": "counter",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+    "start": "wrangler dev",
+    "deploy": "wrangler publish"
+	},
+	"devDependencies": {
+		"wrangler": "^3.0.1"
+	}
+}

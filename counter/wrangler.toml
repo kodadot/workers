@@ -1,0 +1,12 @@
+name = "counter"
+main = "build/worker/shim.mjs"
+compatibility_date = "2023-04-27"
+usage_model = "bundled"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "counter"
+database_id = "114ff4fe-1c74-4d8f-81d4-7a3a7d29bf2b"
+
+[build]
+command = "cargo install -q worker-build && worker-build --release"
