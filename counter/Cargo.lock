@@ -621,8 +621,9 @@ dependencies = [
 
 [[package]]
 name = "worker"
-version = "0.0.15"
-source = "git+https://github.com/FlareLine/workers-rs.git?branch=d1-support#c35d762f2aa3d19a2a687aa5e34f70923c20c3f6"
+version = "0.0.16"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "301c77ead87587225c6f58104de6c9046afef597e7d39d36cba2640b5af1046a"
 dependencies = [
  "async-trait",
  "chrono",
@@ -664,7 +665,8 @@ dependencies = [
 [[package]]
 name = "worker-macros"
 version = "0.0.8"
-source = "git+https://github.com/FlareLine/workers-rs.git?branch=d1-support#c35d762f2aa3d19a2a687aa5e34f70923c20c3f6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c86b080d7a6472a244fd1b5b1f36be3dc53942aef13e716724a4b74715708afc"
 dependencies = [
  "async-trait",
  "proc-macro2",
@@ -688,7 +690,8 @@ dependencies = [
 [[package]]
 name = "worker-sys"
 version = "0.0.8"
-source = "git+https://github.com/FlareLine/workers-rs.git?branch=d1-support#c35d762f2aa3d19a2a687aa5e34f70923c20c3f6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b842e2ac2871c2d83e50ce8e8844fc3893666d1c16825b809505de6506ad4487"
 dependencies = [
  "cfg-if",
  "js-sys",
