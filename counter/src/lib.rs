@@ -31,10 +31,6 @@ impl DurableObject for Views {
                 self.count = self.state.storage().get::<i32>(&key).await.unwrap_or(0) + 1;
                 self.state.storage().put(&key, self.count).await?;
             },
-            "DELETE" => {
-                self.count = 0;
-                self.state.storage().delete(&key).await?;
-            },
             "OPTIONS" => return CorsHeaders::response(),
             _ => return Response::error("Method not allowed", 405),
         }
