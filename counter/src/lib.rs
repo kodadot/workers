@@ -17,8 +17,20 @@ impl DurableObject for Views {
 
     async fn fetch(&mut self, req: Request) -> Result<Response> {
         let key = req.path();
-        self.count = self.state.storage().get::<i32>(&key).await.unwrap_or(0) + 1;
-        self.state.storage().put(&key, self.count).await?;
+        let method = req.method().to_string();
+
+        match method.as_str() {
+            "POST" => {
+                self.count = self.state.storage().get::<i32>(&key).await.unwrap_or(0) + 1;
+                self.state.storage().put(&key, self.count).await?;
+            },
+            "DELETE" => {
+                self.count = 0;
+                self.state.storage().delete(&key).await?;
+            },
+            _ => self.count = self.state.storage().get::<i32>(&key).await.unwrap_or(0)
+        }
+
         Response::ok(self.count.to_string())
     }
 }
