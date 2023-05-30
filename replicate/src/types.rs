@@ -44,6 +44,10 @@ type Input = HashMap<String, Value>;
 pub struct PredictionRequest {
     version: String,
     input: Input,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub webhook: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub webhook_events_filter: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
