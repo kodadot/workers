@@ -33,6 +33,12 @@ struct ValueApiResponse {
 }
 
 
+#[derive(Serialize, Deserialize, Debug)]
+struct UrlPinRequest {
+    url: String,
+}
+
+
 #[derive(Debug)]
 struct CorsHeaders {}
 
@@ -124,6 +130,42 @@ async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
 }
 
 async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
+    let val: UrlPinRequest = req.json().await?;
+    let client = Client::new();
+    let url = val.url;
+
+    let content = client.get(url)
+        .send()
+        .await
+        .unwrap();
+
+    let content_type = content.headers().get("Content-Type").unwrap().clone();
+    let content = content
+        .bytes()
+        .await
+        .unwrap();
+
+    let body = Body::from(content);
+
+    let token = get_token(&ctx).unwrap();
+
+    let response = client.post(NFT_STORAGE_BASE_API.to_string() + "/upload")
+        .header("Authorization", "Bearer ".to_string() + &token)
+        .header("Content-Type", content_type)
+        .body(body)
+        .send()
+        .await
+        .unwrap()
+        .json::<StorageApiResponse>()
+        .await;
+
+    match response {
+        Ok(json) => CorsHeaders::update(Response::from_json(&json)),
+        Err(e) => CorsHeaders::update(Response::error(e.to_string(), 500))
+    }
+}
+
+async fn pin_url_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
     let val = req.bytes().await?;
     let content_type = req.headers().get("Content-Type").unwrap().unwrap();
 
@@ -176,10 +218,12 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         .post_async("/pinJson/:name", pin_json_to_ipfs)
         .post_async("/pinJson", pin_json_to_ipfs)
         .post_async("/pinFile", pin_file_to_ipfs)
+        .post_async("/pinUrl", pin_url_to_ipfs)
         .options("/getKey/:account", empty_response)
         .options("/pinJson/:name", empty_response)
         .options("/pinJson", empty_response)
         .options("/pinFile", empty_response)
+        .options("/pinUrl", empty_response)
         .run(req, env)
         .await
 }
