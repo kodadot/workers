@@ -129,7 +129,7 @@ async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
     }
 }
 
-async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
+async fn pin_url_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
     let val: UrlPinRequest = req.json().await?;
     let client = Client::new();
     let url = val.url;
@@ -165,7 +165,7 @@ async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
     }
 }
 
-async fn pin_url_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
+async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
     let val = req.bytes().await?;
     let content_type = req.headers().get("Content-Type").unwrap().unwrap();
 
