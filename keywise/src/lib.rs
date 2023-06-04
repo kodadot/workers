@@ -1,18 +1,9 @@
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 use worker::*;
-
-mod cors;
-
-type CorsHeaders = cors::CorsHeaders;
+use utils::cors::CorsHeaders;
+use utils::error::respond_error;
 
 static BASE_URL: &str = "https://kodadot.xyz/";
-
-#[derive(Deserialize, Serialize)]
-struct Error {
-    status: u16,
-    message: String,
-}
 
 #[derive(Deserialize, Serialize)]
 struct Key {
@@ -23,16 +14,6 @@ struct Key {
 struct KeyValue {
     key: String,
     url: String,
-}
-
-fn respond_error(message: &str, status: u16) -> Result<Response> {
-    return Response::error(
-        json!(Error {
-            status: status,
-            message: message.to_string(),
-        }).to_string(),
-        status,
-    );
 }
 
 fn root(_: Request, _: RouteContext<()>) -> Result<Response> {
@@ -94,9 +75,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         .get_async("/:key", redirect_by_key)
         .post_async("/", create_key)
         .delete_async("/:key", delete_key)
-        .options("/", empty_response)
-        .options("/resolve/:key", empty_response)
-        .options("/:key", empty_response)
+        .options("/*pathname", empty_response)
         .run(req, env)
         .await)
 }
