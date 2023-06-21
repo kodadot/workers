@@ -1,9 +1,12 @@
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 use worker::*;
 use reqwest::{ Client, Body };
 use chrono::{Duration, Utc, SecondsFormat};
+use validator::Validate;
+use utils::cors::CorsHeaders;
 
-mod utils;
+mod panic;
 
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -32,34 +35,23 @@ struct ValueApiResponse {
     created: String,
 }
 
-
 #[derive(Serialize, Deserialize, Debug)]
 struct UrlPinRequest {
     url: String,
 }
 
-
-#[derive(Debug)]
-struct CorsHeaders {}
-
-impl CorsHeaders {
-    pub fn new() -> Result<Headers> {
-        let mut headers = Headers::new();
-        headers.set("Access-Control-Allow-Origin", "*")?;
-        headers.set("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS")?;
-        headers.set("Access-Control-Allow-Headers", "*")?;
-        return Ok(headers);
-    }
-
-    pub fn response() -> Result<Response> {
-        let resp = Response::empty()?.with_headers(CorsHeaders::new()?);
-        return Ok(resp);
-    }
-
-    pub fn update(response: Result<Response>) -> Result<Response> {
-        let resp = response?.with_headers(CorsHeaders::new()?);
-        return Ok(resp);
-    }
+#[derive(Serialize, Deserialize, Debug, Validate)]
+struct Metadata {
+    #[validate(required(message = "`name` is required"))]
+    name: Option<String>,
+    #[validate(required(message = "`description is required`"))]
+    description: Option<String>,
+    #[validate(
+        required(message = "`image` is required"),
+        url(message = "`image` must be valid URL"),
+        contains(pattern = "ipfs://ipfs/", message = "`image` must be an IPFS URL")
+    )]
+    image: Option<String>,
 }
 
 fn log_request(req: &Request) {
@@ -74,11 +66,14 @@ fn log_request(req: &Request) {
 
 const NFT_STORAGE_BASE_API: &str = "https://api.nft.storage/";
 
+fn root(_: Request, _: RouteContext<()>) -> Result<Response> {
+    Response::ok("KodaDot NFT Storage")
+}
 
 async fn get_user_key<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> {
     match ctx.param("account") {
         Some(account_id) => account_id,
-        None => return CorsHeaders::update(Response::error("Missing Account Id", 400)),
+        None => return Response::error("Missing Account Id", 400),
     };
 
     let token = get_token(&ctx).unwrap();
@@ -99,9 +94,9 @@ async fn get_user_key<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> 
                 expiry: dt.to_rfc3339_opts(SecondsFormat::Millis, true),
                 token: json.value
             };   
-            CorsHeaders::update(Response::from_json(&res))
+            Response::from_json(&res)
         },
-        Err(_) => CorsHeaders::update(Response::error("Failed to get user key", 500))
+        Err(_) => Response::error("Failed to get user key", 500)
     }
 }
 
@@ -124,8 +119,8 @@ async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
         .await;
 
     match response {
-        Ok(json) => CorsHeaders::update(Response::from_json(&json)),
-        Err(e) => CorsHeaders::update(Response::error(e.to_string(), 500))
+        Ok(json) => Response::from_json(&json),
+        Err(e) => Response::error(e.to_string(), 500)
     }
 }
 
@@ -160,8 +155,8 @@ async fn pin_url_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<R
         .await;
 
     match response {
-        Ok(json) => CorsHeaders::update(Response::from_json(&json)),
-        Err(e) => CorsHeaders::update(Response::error(e.to_string(), 500))
+        Ok(json) => Response::from_json(&json),
+        Err(e) => Response::error(e.to_string(), 500)
     }
 }
 
@@ -185,8 +180,35 @@ async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
         .await;
 
     match response {
-        Ok(json) => CorsHeaders::update(Response::from_json(&json)),
-        Err(e) => CorsHeaders::update(Response::error(e.to_string(), 500))
+        Ok(json) => Response::from_json(&json),
+        Err(e) => Response::error(e.to_string(), 500)
+    }
+}
+
+async fn pin_metadata_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
+    let body: Metadata = req.json().await?;
+    match body.validate() {
+        Ok(_) => {},
+        Err(e) => return Response::error(json!(e).to_string(), 400)
+    }
+
+    let content_type = String::from("application/json");
+    let token = get_token(&ctx)?;
+
+    let client = Client::new();
+    let response = client.post(NFT_STORAGE_BASE_API.to_string() + "/upload")
+        .header("Authorization", "Bearer ".to_string() + &token)
+        .header("Content-Type", content_type)
+        .json(&body)
+        .send()
+        .await
+        .unwrap()
+        .json::<StorageApiResponse>()
+        .await;
+
+    match response {
+        Ok(json) => Response::from_json(&json),
+        Err(err) => Response::error(err.to_string(), 500),
     }
 }
 
@@ -203,7 +225,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     log_request(&req);
 
     // Optionally, get more helpful error messages written to the console in the case of a panic.
-    utils::set_panic_hook();
+    panic::set_panic_hook();
 
     // Optionally, use the Router to handle matching endpoints, use ":name" placeholders, or "*name"
     // catch-alls to match on specific patterns. Alternatively, use `Router::with_data(D)` to
@@ -213,17 +235,15 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     // Add as many routes as your Worker needs! Each route will get a `Request` for handling HTTP
     // functionality and a `RouteContext` which you can use to  and get route parameters and
     // Environment bindings like KV Stores, Durable Objects, Secrets, and Variables.
-    router
+    CorsHeaders::update(router
+        .get("/", root)
         .get_async("/getKey/:account", get_user_key)
         .post_async("/pinJson/:name", pin_json_to_ipfs)
         .post_async("/pinJson", pin_json_to_ipfs)
+        .post_async("/pinMetadata", pin_metadata_to_ipfs)
         .post_async("/pinFile", pin_file_to_ipfs)
         .post_async("/pinUrl", pin_url_to_ipfs)
-        .options("/getKey/:account", empty_response)
-        .options("/pinJson/:name", empty_response)
-        .options("/pinJson", empty_response)
-        .options("/pinFile", empty_response)
-        .options("/pinUrl", empty_response)
+        .options("/*pathname", empty_response)
         .run(req, env)
-        .await
+        .await)
 }
