@@ -1,6 +1,8 @@
-name = "ssr-opengraph-beta"
 compatibility_date = "2023-06-21"
+name = "ssr-opengraph"
 main = "src/index.tsx"
+
+[env.beta]
 routes = [
   "*.kodadot.xyz/*/gallery/*",
   "*.kodadot.xyz/*/detail/*",
@@ -8,11 +10,7 @@ routes = [
   "*.kodadot.xyz/*/u/*",
 ]
 
-[env.beta]
-name = "ssr-opengraph-beta"
-
 [env.production]
-name = "ssr-opengraph"
 routes = [
   "kodadot.xyz/*/gallery/*",
   "kodadot.xyz/*/detail/*",
