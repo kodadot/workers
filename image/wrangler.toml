@@ -1,11 +1,11 @@
-name = "image"
+name = "image-beta"
 account_id = "b3f9fdfd827152316d080a5ddee59915"
 main = "src/index.ts"
 compatibility_date = "2023-01-03"
-usage_model = "bundled" 
+usage_model = "bundled"
 
 [vars]
-DEDICATED_GATEWAY = 'https://r2.infura-ipfs.io'
+DEDICATED_GATEWAY = 'https://kodadot1.infura-ipfs.io'
 DEDICATED_BACKUP_GATEWAY = 'https://kodadot1.infura-ipfs.io'
 CLOUDFLARE_GATEWAY = 'https://cloudflare-ipfs.com'
 CF_IMAGE_ACCOUNT = 'b3f9fdfd827152316d080a5ddee59915'
@@ -16,3 +16,9 @@ CF_IMAGE_ID = 'jk5b6spi_m_-9qC4VTnjpg'
 binding = 'MY_BUCKET'
 bucket_name = 'stockpile'
 preview_bucket_name = 'alpha-stockpile'
+
+[env.beta]
+name = 'image-beta'
+
+[env.production]
+name = 'image'
