@@ -7,6 +7,7 @@ usage_model = "bundled"
 # 'vars' and 'r2_buckets' are non-inheritable keys
 # https://developers.cloudflare.com/workers/wrangler/configuration/#non-inheritable-keys
 
+# beta environment
 [env.beta]
 name = 'image-beta'
 
@@ -22,6 +23,7 @@ binding = 'MY_BUCKET'
 bucket_name = 'stockpile'
 preview_bucket_name = 'alpha-stockpile'
 
+# production environment
 [env.production]
 name = 'image'
 
