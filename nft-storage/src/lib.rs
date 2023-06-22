@@ -141,20 +141,19 @@ async fn pin_metadata_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Res
         Err(e) => return Response::error(json!(e).to_string(), 400)
     }
     
-    // let response = post_storage("/upload", ctx)
-    //     .header("Content-Type", "application/json")
-    //     .json(&body)
-    //     .send()
-    //     .await
-    //     .unwrap()
-    //     .json::<StorageApiResponse>()
-    //     .await;
+    let response = post_storage("/upload", ctx)
+        .header("Content-Type", "application/json")
+        .json(&body)
+        .send()
+        .await
+        .unwrap()
+        .json::<StorageApiResponse>()
+        .await;
 
-    // match response {
-    //     Ok(json) => Response::from_json(&json),
-    //     Err(err) => Response::error(err.to_string(), 500),
-    // }
-    Response::error("Not implemented", 500)
+    match response {
+        Ok(json) => Response::from_json(&json),
+        Err(err) => Response::error(err.to_string(), 500),
+    }
 }
 
 fn empty_response<D>(_: Request, _: RouteContext<D>) ->  Result<Response> {
