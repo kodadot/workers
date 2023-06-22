@@ -6,11 +6,27 @@ import { collectionDetail, galleryDetail, userDetail } from './handlers';
 
 const app = new Hono();
 
-app.get('/', (c) => {
-  return c.text('hello hono.js');
-});
-
 const chains = ['bsx', 'snek', 'rmrk', 'ksm'];
+
+app.get('/', async(c) => {
+  const useragent = c.req.headers.get('user-agent');
+
+  if (useragent && !isbot(useragent)) {
+    return fetch(c.req.url);
+  }
+
+  const props = {
+    name: 'KodaDot',
+    siteData: {
+      title: 'KodaDot - NFT Market Explorer',
+      description: 'One Stop NFT Shop on Polkadot',
+      canonical: 'https://kodadot.xyz',
+      image: 'https://kodadot.xyz/k_card.png',
+    }
+  }
+
+  return c.html(<Opengraph {...props} />);
+})
 
 app.get('/:chain/:type/:id/*', async (c) => {
   const useragent = c.req.headers.get('user-agent');

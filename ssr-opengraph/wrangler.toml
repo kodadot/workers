@@ -2,6 +2,7 @@ name = "ssr-opengraph-beta"
 compatibility_date = "2023-06-22"
 main = "src/index.tsx"
 routes = [
+  "*.kodadot.xyz/",
   "*.kodadot.xyz/rmrk/gallery/*",
   "*.kodadot.xyz/rmrk/detail/*",
   "*.kodadot.xyz/rmrk/collection/*",
@@ -30,6 +31,7 @@ name = "ssr-opengraph-beta"
 [env.production]
 name = "ssr-opengraph"
 routes = [
+  "kodadot.xyz/",
   "kodadot.xyz/rmrk/gallery/*",
   "kodadot.xyz/rmrk/detail/*",
   "kodadot.xyz/rmrk/collection/*",
