@@ -6,7 +6,7 @@ import { collectionDetail, galleryDetail, userDetail } from './handlers';
 
 const app = new Hono();
 
-const chains = ['bsx', 'snek', 'rmrk', 'ksm'];
+const chains = ['bsx', 'snek', 'rmrk', 'ksm', 'stmn'];
 
 app.get('/', async(c) => {
   const useragent = c.req.headers.get('user-agent');
