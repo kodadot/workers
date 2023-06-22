@@ -4,12 +4,12 @@
     "dev": "wrangler dev src/index.tsx"
   },
   "dependencies": {
-    "@kodadot1/minipfs": "0.2.0-rc.0",
-    "@kodadot1/static": "^0.0.1",
-    "@kodadot1/uniquery": "^0.2.3-rc.0",
-    "@polkadot/util": "^11.1.1",
+    "@kodadot1/minipfs": "0.3.1-rc.0",
+    "@kodadot1/static": "^0.0.2",
+    "@kodadot1/uniquery": "^0.3.1-rc.0",
+    "@polkadot/util": "^12.3.2",
     "hono": "^3.1.2",
-    "isbot": "^3.6.7"
+    "isbot": "^3.6.12"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230307.0",
