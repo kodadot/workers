@@ -18,7 +18,7 @@ app.get('/', async(c) => {
   const props = {
     name: 'KodaDot',
     siteData: {
-      title: 'KodaDot - NFT Market Explorer',
+      title: 'KodaDot - Go To Polkadot NFT marketplace',
       description: 'One Stop NFT Shop on Polkadot',
       canonical: 'https://kodadot.xyz',
       image: 'https://kodadot.xyz/k_card.png',
