@@ -1,58 +1,14 @@
-use serde::{Deserialize, Serialize};
 use serde_json::json;
 use worker::*;
-use reqwest::{ Client, Body };
+use reqwest::{ Client, Body, RequestBuilder };
 use chrono::{Duration, Utc, SecondsFormat};
 use validator::Validate;
-use utils::cors::CorsHeaders;
+use utils::{cors::CorsHeaders, error::respond_error};
 
 mod panic;
+mod types;
 
-
-#[derive(Serialize, Deserialize, Debug)]
-struct StorageApiResponse {
-    ok: bool,
-    value: ValueApiResponse
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct PinningKey {
-    ok: bool,
-    value: String
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct PinningKeyResponse {
-    expiry: String,
-    token: String
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct ValueApiResponse {
-    cid: String,
-    size: u32,
-    r#type: String,
-    created: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct UrlPinRequest {
-    url: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, Validate)]
-struct Metadata {
-    #[validate(required(message = "`name` is required"))]
-    name: Option<String>,
-    #[validate(required(message = "`description is required`"))]
-    description: Option<String>,
-    #[validate(
-        required(message = "`image` is required"),
-        url(message = "`image` must be valid URL"),
-        contains(pattern = "ipfs://ipfs/", message = "`image` must be an IPFS URL")
-    )]
-    image: Option<String>,
-}
+use types::*;
 
 fn log_request(req: &Request) {
     console_log!(
@@ -66,6 +22,13 @@ fn log_request(req: &Request) {
 
 const NFT_STORAGE_BASE_API: &str = "https://api.nft.storage/";
 
+fn post_storage<D>(path: &str, ctx: RouteContext<D>) -> RequestBuilder {
+    let token = get_token(&ctx).unwrap();
+    let client = Client::new();
+    client.post(NFT_STORAGE_BASE_API.to_string() + path)
+        .header("Authorization", "Bearer ".to_string() + &token)
+}
+
 fn root(_: Request, _: RouteContext<()>) -> Result<Response> {
     Response::ok("KodaDot NFT Storage")
 }
@@ -76,11 +39,7 @@ async fn get_user_key<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> 
         None => return Response::error("Missing Account Id", 400),
     };
 
-    let token = get_token(&ctx).unwrap();
-
-    let client = Client::new();
-    let response = client.post(NFT_STORAGE_BASE_API.to_string() + "ucan/token")
-        .header("Authorization", "Bearer ".to_string() + &token)
+    let response = post_storage("ucan/token", ctx)
         .send()
         .await
         .unwrap()
@@ -102,14 +61,9 @@ async fn get_user_key<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> 
 
 async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
     let val = req.bytes().await?;
-
     let body = Body::from(val);
 
-    let token = get_token(&ctx).unwrap();
-
-    let client = Client::new();
-    let response = client.post(NFT_STORAGE_BASE_API.to_string() + "/upload")
-        .header("Authorization", "Bearer ".to_string() + &token)
+    let response = post_storage("/upload", ctx)
         .header("Content-Type", "application/json")
         .body(body)
         .send()
@@ -126,10 +80,9 @@ async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
 
 async fn pin_url_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
     let val: UrlPinRequest = req.json().await?;
-    let client = Client::new();
     let url = val.url;
 
-    let content = client.get(url)
+    let content = Client::new().get(url)
         .send()
         .await
         .unwrap();
@@ -142,10 +95,7 @@ async fn pin_url_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<R
 
     let body = Body::from(content);
 
-    let token = get_token(&ctx).unwrap();
-
-    let response = client.post(NFT_STORAGE_BASE_API.to_string() + "/upload")
-        .header("Authorization", "Bearer ".to_string() + &token)
+    let response = post_storage("/upload", ctx)
         .header("Content-Type", content_type)
         .body(body)
         .send()
@@ -166,11 +116,7 @@ async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
 
     let body = Body::from(val);
 
-    let token = get_token(&ctx).unwrap();
-
-    let client = Client::new();
-    let response = client.post(NFT_STORAGE_BASE_API.to_string() + "/upload")
-        .header("Authorization", "Bearer ".to_string() + &token)
+    let response = post_storage("/upload", ctx)
         .header("Content-Type", content_type)
         .body(body)
         .send()
@@ -186,30 +132,29 @@ async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
 }
 
 async fn pin_metadata_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
-    let body: Metadata = req.json().await?;
+    let body: Metadata = match req.json().await {
+        Ok(v) => v,
+        Err(e) => return respond_error(&e.to_string(), 400),
+    };
     match body.validate() {
         Ok(_) => {},
         Err(e) => return Response::error(json!(e).to_string(), 400)
     }
+    
+    // let response = post_storage("/upload", ctx)
+    //     .header("Content-Type", "application/json")
+    //     .json(&body)
+    //     .send()
+    //     .await
+    //     .unwrap()
+    //     .json::<StorageApiResponse>()
+    //     .await;
 
-    let content_type = String::from("application/json");
-    let token = get_token(&ctx)?;
-
-    let client = Client::new();
-    let response = client.post(NFT_STORAGE_BASE_API.to_string() + "/upload")
-        .header("Authorization", "Bearer ".to_string() + &token)
-        .header("Content-Type", content_type)
-        .json(&body)
-        .send()
-        .await
-        .unwrap()
-        .json::<StorageApiResponse>()
-        .await;
-
-    match response {
-        Ok(json) => Response::from_json(&json),
-        Err(err) => Response::error(err.to_string(), 500),
-    }
+    // match response {
+    //     Ok(json) => Response::from_json(&json),
+    //     Err(err) => Response::error(err.to_string(), 500),
+    // }
+    Response::error("Not implemented", 500)
 }
 
 fn empty_response<D>(_: Request, _: RouteContext<D>) ->  Result<Response> {
