@@ -3,7 +3,7 @@ main = "src/worker.ts"
 compatibility_date = "2023-05-18"
 
 routes = [
-	"preschian.xyz/",
-	"preschian.xyz/stmn/gallery/*",
-	"preschian.xyz/stmn/collection/*",
+	"kodadot.xyz/",
+	"kodadot.xyz/stmn/gallery/*",
+	"kodadot.xyz/stmn/collection/*",
 ]
