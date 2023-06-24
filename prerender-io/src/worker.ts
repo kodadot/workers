@@ -15,6 +15,8 @@ export default {
 			.substring(pathName.lastIndexOf(".") || pathName.length)
 			?.toLowerCase();
 
+		console.log("isbot", isbot(userAgent))
+
 		// Prerender loop protection
 		// Non robot user agent
 		// Ignore extensions
@@ -25,6 +27,8 @@ export default {
 		) {
 			return fetch(request);
 		}
+
+		console.log("Prerendering", request.url)
 
 		// Build Prerender request
 		const newURL = `https://service.prerender.io/${request.url}`;
