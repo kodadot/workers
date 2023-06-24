@@ -1,32 +1,40 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import isbot from "isbot";
+import { IGNORE_EXTENSIONS } from "./constant";
 
 export interface Env {
-	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
-	// MY_KV_NAMESPACE: KVNamespace;
-	//
-	// Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
-	// MY_DURABLE_OBJECT: DurableObjectNamespace;
-	//
-	// Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
-	// MY_BUCKET: R2Bucket;
-	//
-	// Example binding to a Service. Learn more at https://developers.cloudflare.com/workers/runtime-apis/service-bindings/
-	// MY_SERVICE: Fetcher;
-	//
-	// Example binding to a Queue. Learn more at https://developers.cloudflare.com/queues/javascript-apis/
-	// MY_QUEUE: Queue;
+	PRERENDER_TOKEN: string;
 }
 
 export default {
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return new Response('Hello World!');
-	},
+	async fetch(request: Request, env: Env): Promise<Response> {
+		const url = new URL(request.url);
+		const userAgent = request.headers.get("User-Agent")?.toLowerCase() || "";
+		const isPrerender = request.headers.get("X-Prerender");
+		const pathName = url.pathname.toLowerCase();
+		const extension = pathName
+			.substring(pathName.lastIndexOf(".") || pathName.length)
+			?.toLowerCase();
+
+		// Prerender loop protection
+		// Non robot user agent
+		// Ignore extensions
+		if (
+			isPrerender ||
+			!isbot(userAgent) ||
+			(extension.length && IGNORE_EXTENSIONS.includes(extension))
+		) {
+			return fetch(request);
+		}
+
+		// Build Prerender request
+		const newURL = `https://service.prerender.io/${request.url}`;
+		const newHeaders = new Headers(request.headers);
+
+		newHeaders.set("X-Prerender-Token", env.PRERENDER_TOKEN);
+
+		return fetch(new Request(newURL, {
+			headers: newHeaders,
+			redirect: "manual",
+		}));
+  },
 };
