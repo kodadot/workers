@@ -1,9 +1,8 @@
-use serde_json::json;
 use worker::*;
 use reqwest::{ Client, Body, RequestBuilder };
 use chrono::{Duration, Utc, SecondsFormat};
 use validator::Validate;
-use utils::{cors::CorsHeaders, error::respond_error};
+use utils::{cors::CorsHeaders, error::{respond_error, respond_validation_errors}};
 
 mod panic;
 mod types;
@@ -33,7 +32,7 @@ fn root(_: Request, _: RouteContext<()>) -> Result<Response> {
     Response::ok("KodaDot NFT Storage")
 }
 
-async fn get_user_key<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> {
+async fn get_user_key<D>(_: Request, ctx: RouteContext<D>) -> Result<Response> {
     match ctx.param("account") {
         Some(account_id) => account_id,
         None => return Response::error("Missing Account Id", 400),
@@ -59,7 +58,7 @@ async fn get_user_key<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> 
     }
 }
 
-async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
+async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) -> Result<Response> {
     let val = req.bytes().await?;
     let body = Body::from(val);
 
@@ -78,7 +77,7 @@ async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
     }
 }
 
-async fn pin_url_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
+async fn pin_url_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) -> Result<Response> {
     let val: UrlPinRequest = req.json().await?;
     let url = val.url;
 
@@ -110,7 +109,7 @@ async fn pin_url_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<R
     }
 }
 
-async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
+async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) -> Result<Response> {
     let val = req.bytes().await?;
     let content_type = req.headers().get("Content-Type").unwrap().unwrap();
 
@@ -131,14 +130,14 @@ async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
     }
 }
 
-async fn pin_metadata_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
+async fn pin_metadata_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) -> Result<Response> {
     let body: Metadata = match req.json().await {
         Ok(v) => v,
         Err(e) => return respond_error(&e.to_string(), 400),
     };
     match body.validate() {
         Ok(_) => {},
-        Err(e) => return Response::error(json!(e).to_string(), 400)
+        Err(e) => return respond_validation_errors(e)
     }
     
     let response = post_storage("/upload", ctx)
@@ -156,7 +155,7 @@ async fn pin_metadata_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Res
     }
 }
 
-fn empty_response<D>(_: Request, _: RouteContext<D>) ->  Result<Response> {
+fn empty_response<D>(_: Request, _: RouteContext<D>) -> Result<Response> {
     CorsHeaders::response()
 }
 

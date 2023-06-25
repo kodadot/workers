@@ -37,7 +37,6 @@ pub struct Metadata {
     #[validate(required(message = "`name` is required"))]
     name: Option<String>,
     #[validate(required(message = "`description` is required"))]
-    // #[serde(deserialize_with = "string_or_number")]
     description: Option<String>,
     #[validate(
         required(message = "`image` is required"),
@@ -46,16 +45,3 @@ pub struct Metadata {
     )]
     image: Option<String>,
 }
-
-// fn string_or_number<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
-// where
-//     D: Deserializer<'de>,
-// {
-//     let value: Option<Value> = Deserialize::deserialize(deserializer)?;
-//     match value {
-//         Some(Value::String(s)) => Ok(Some(s)),
-//         Some(Value::Number(n)) => Ok(Some(n.to_string())),
-//         None => Ok(None),
-//         _ => Err(serde::de::Error::custom("expected string or null")),
-//     }
-// }
