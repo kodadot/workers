@@ -1,4 +1,4 @@
-name = "prerender-io-beta"
+name = "prerender-beta"
 main = "src/worker.ts"
 compatibility_date = "2023-05-18"
 
@@ -9,10 +9,10 @@ routes = [
 ]
 
 [env.beta]
-name = "prerender-io-beta"
+name = "prerender-beta"
 
 [env.production]
-name = "prerender-io"
+name = "prerender"
 routes = [
 	"kodadot.xyz/",
 	"kodadot.xyz/stmn/gallery/*",
