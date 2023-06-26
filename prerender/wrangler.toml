@@ -1,0 +1,20 @@
+name = "prerender-beta"
+main = "src/worker.ts"
+compatibility_date = "2023-05-18"
+
+routes = [
+	"*.kodadot.xyz/",
+	"*.kodadot.xyz/stmn/gallery/*",
+	"*.kodadot.xyz/stmn/collection/*",
+]
+
+[env.beta]
+name = "prerender-beta"
+
+[env.production]
+name = "prerender"
+routes = [
+	"kodadot.xyz/",
+	"kodadot.xyz/stmn/gallery/*",
+	"kodadot.xyz/stmn/collection/*",
+]
