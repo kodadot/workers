@@ -38,12 +38,12 @@ async function doSomeTaskOnASchedule(env: Env): Promise<any> {
     version: '42a996d39a96aedc57b2e0aa8105dea39c9c89d9d266caf6bb4327a1c191b061',
     input: {
       prompt:
-        'medium digital painting of smiling anime waifu with light brown hair, wearing casual summer dress, soft lighting, Prague in the background',
+        'medium digital painting of smiling anime waifu with light brown hair, wearing casual summer dress, soft lighting, Copenhagen in the background',
       negative_prompt:
         'lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, artist name',
       width: 512,
       height: 512,
-      num_outputs: 1,
+      num_outputs: 4,
       guidance_scale: 7,
       num_inference_steps: 50,
     },
