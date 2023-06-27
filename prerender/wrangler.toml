@@ -17,4 +17,10 @@ routes = [
 	"kodadot.xyz/",
 	"kodadot.xyz/stmn/gallery/*",
 	"kodadot.xyz/stmn/collection/*",
+	"kodadot.xyz/ksm/create/",
+	"kodadot.xyz/ksm/explore/collectibles",
+	"kodadot.xyz/ksm/explore/items",
+	"kodadot.xyz/ksm/massmint",
+	"kodadot.xyz/series-insight/",
+	"kodadot.xyz/stmn/drops/free-drop",
 ]
