@@ -6,8 +6,6 @@ mod cors;
 
 type CorsHeaders = cors::CorsHeaders;
 
-static BASE_URL: &str = "https://kodadot.xyz/";
-
 #[derive(Deserialize, Serialize)]
 struct Error {
     status: u16,
@@ -44,7 +42,7 @@ async fn redirect_by_key<D>(_: Request, ctx: RouteContext<D>) -> Result<Response
     let list = ctx.kv("list")?;
     return match list.get(key).text().await? {
         Some(value) => Response::redirect(
-            Url::parse(&format!("{}{}", BASE_URL.to_owned(), value))?
+            Url::parse(&value)?
         ),
         None => respond_error("Key not found", 404),
     };
