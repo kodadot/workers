@@ -1,4 +1,4 @@
-name = "url-shortener"
+name = "keywise"
 main = "build/worker/shim.mjs"
 compatibility_date = "2023-04-27"
 usage_model = "bundled"
@@ -6,6 +6,12 @@ account_id = "b3f9fdfd827152316d080a5ddee59915"
 
 kv_namespaces = [
     { binding = "list", id = "e2ec51da00a54b30b11e843ec6f89957", preview_id = "54ead6b7cd5a48e0ba56c7212dde9c42" }
+]
+
+[env.beta]
+name = "url"
+kv_namespaces = [
+    { binding = "list", id = "4c1b47288d6e4d2ebba0fe31e6f510b2", preview_id = "54ead6b7cd5a48e0ba56c7212dde9c42" }
 ]
 
 [build]
