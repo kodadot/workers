@@ -18,8 +18,16 @@ impl CorsHeaders {
     }
 
     pub fn update(response: Result<Response>) -> Result<Response> {
-        let resp = response?.with_headers(CorsHeaders::new()?);
-        return Ok(resp);
+        match response {
+            Ok(res) => {
+                if res.status_code() == 301 || res.status_code() == 302 {
+                    return Ok(res);
+                } else {
+                    return Ok(res.with_headers(CorsHeaders::new()?));
+                }
+            },
+            Err(err) => return Err(err),
+        }
     }
 }
 

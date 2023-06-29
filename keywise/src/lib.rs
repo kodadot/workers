@@ -6,8 +6,6 @@ mod cors;
 
 type CorsHeaders = cors::CorsHeaders;
 
-static BASE_URL: &str = "https://kodadot.xyz/";
-
 #[derive(Deserialize, Serialize)]
 struct Error {
     status: u16,
@@ -44,7 +42,7 @@ async fn redirect_by_key<D>(_: Request, ctx: RouteContext<D>) -> Result<Response
     let list = ctx.kv("list")?;
     return match list.get(key).text().await? {
         Some(value) => Response::redirect(
-            Url::parse(&format!("{}{}", BASE_URL.to_owned(), value))?
+            Url::parse(&value)?
         ),
         None => respond_error("Key not found", 404),
     };
@@ -54,9 +52,7 @@ async fn resolve_key<D>(_: Request, ctx: RouteContext<D>) -> Result<Response> {
     let key = ctx.param("key").unwrap();
     let list = ctx.kv("list")?;
     return match list.get(key).text().await? {
-        Some(value) => CorsHeaders::update(
-            Response::from_json(&KeyValue { key: key.to_owned(), url: value })
-        ),
+        Some(value) => Response::from_json(&KeyValue { key: key.to_owned(), url: value }),
         None => respond_error("Key not found", 404),
     };
 }
@@ -94,9 +90,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         .get_async("/:key", redirect_by_key)
         .post_async("/", create_key)
         .delete_async("/:key", delete_key)
-        .options("/", empty_response)
-        .options("/resolve/:key", empty_response)
-        .options("/:key", empty_response)
+        .options("/*pathname", empty_response)
         .run(req, env)
         .await)
 }
