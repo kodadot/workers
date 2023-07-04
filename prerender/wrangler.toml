@@ -3,9 +3,15 @@ main = "src/worker.ts"
 compatibility_date = "2023-05-18"
 
 routes = [
-	"*.kodadot.xyz/",
-	"*.kodadot.xyz/stmn/gallery/*",
-	"*.kodadot.xyz/stmn/collection/*",
+	"*.kodadot.xyz/stmn/drops/free-drop",
+	# "*.kodadot.xyz/",
+	# "*.kodadot.xyz/stmn/gallery/*",
+	# "*.kodadot.xyz/stmn/collection/*",
+	# "*.kodadot.xyz/ksm/create/",
+	# "*.kodadot.xyz/ksm/explore/collectibles",
+	# "*.kodadot.xyz/ksm/explore/items",
+	# "*.kodadot.xyz/ksm/massmint",
+	# "*.kodadot.xyz/series-insight/",
 ]
 
 [env.beta]
@@ -14,13 +20,13 @@ name = "prerender-beta"
 [env.production]
 name = "prerender"
 routes = [
-	"kodadot.xyz/",
-	"kodadot.xyz/stmn/gallery/*",
-	"kodadot.xyz/stmn/collection/*",
-	"kodadot.xyz/ksm/create/",
-	"kodadot.xyz/ksm/explore/collectibles",
-	"kodadot.xyz/ksm/explore/items",
-	"kodadot.xyz/ksm/massmint",
-	"kodadot.xyz/series-insight/",
 	"kodadot.xyz/stmn/drops/free-drop",
+	# "kodadot.xyz/",
+	# "kodadot.xyz/stmn/gallery/*",
+	# "kodadot.xyz/stmn/collection/*",
+	# "kodadot.xyz/ksm/create/",
+	# "kodadot.xyz/ksm/explore/collectibles",
+	# "kodadot.xyz/ksm/explore/items",
+	# "kodadot.xyz/ksm/massmint",
+	# "kodadot.xyz/series-insight/",
 ]
