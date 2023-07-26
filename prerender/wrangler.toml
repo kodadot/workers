@@ -3,6 +3,7 @@ main = "src/worker.ts"
 compatibility_date = "2023-05-18"
 
 routes = [
+	"*.kodadot.xyz/blog/*",
 	"*.kodadot.xyz/stmn/drops/*",
 	"*.kodadot.xyz/stt/drops/*",
 	# "*.kodadot.xyz/",
@@ -21,6 +22,7 @@ name = "prerender-beta"
 [env.production]
 name = "prerender"
 routes = [
+	"kodadot.xyz/blog/*",
 	"kodadot.xyz/stmn/drops/*",
 	"kodadot.xyz/stt/drops/*",
 	# "kodadot.xyz/",
