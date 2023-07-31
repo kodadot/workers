@@ -73,7 +73,7 @@ app.all('/ipfs/*', async (c) => {
       }
 
       // fallback to cf-ipfs
-      return Response.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`, 302);
+      return c.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`, 302);
     }
 
     if (!response) {
@@ -136,7 +136,7 @@ app.all('/ipfs/*', async (c) => {
       }
 
       // fallback to cf-ipfs
-      return Response.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`, 302);
+      return c.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`, 302);
     }
 
     const headers = new Headers();
