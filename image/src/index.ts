@@ -55,7 +55,7 @@ app.all('/ipfs/*', async (c) => {
         });
 
         if (imageUrl) {
-          return Response.redirect(imageUrl, 302);
+          return c.redirect(imageUrl, 302);
         }
 
         // else, render r2 object
@@ -85,7 +85,7 @@ app.all('/ipfs/*', async (c) => {
 
       // return early to cf-images
       if (currentImage.ok) {
-        return Response.redirect(cfImage, 302);
+        return c.redirect(cfImage, 302);
       }
 
       // else, upload to cf-images
@@ -100,7 +100,7 @@ app.all('/ipfs/*', async (c) => {
       // redirect to cf-images
       if (imageUrl) {
         // how to cache redirect response?
-        return Response.redirect(imageUrl, 302);
+        return c.redirect(imageUrl, 302);
       }
 
       // else, render r2 object and cache it
