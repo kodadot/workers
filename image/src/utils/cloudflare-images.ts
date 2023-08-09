@@ -39,14 +39,14 @@ export async function uploadToCloudflareImages({
 
   const uploadCfImage = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${imageAccount}/images/v1`,
-    requestOptions
+    requestOptions,
   );
   const uploadStatus = uploadCfImage.status;
 
   console.log('uploadStatus', uploadStatus);
 
-  // if image supported by cf-images or already exists, redirect to cf-images
-  if (uploadStatus === 200 || uploadStatus === 409) {
+  // if image supported by cf-images, redirect to cf-images
+  if (uploadStatus === 200) {
     // return Response.redirect(`https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`, 302)
     return `https://imagedelivery.net/${imageId}/${path}/public`;
   }
