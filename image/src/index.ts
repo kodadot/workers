@@ -2,8 +2,10 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
 import { Env, CACHE_MONTH, CACHE_TTL_BY_STATUS } from './utils/constants';
-import { uploadToCloudflareImages } from './utils/cloudflare-images';
+import { ipfsToCloudflareImages } from './utils/cloudflare-images';
 import { allowedOrigin } from './utils/cors';
+
+import { getTypeUrl } from './routes/type-url';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -46,7 +48,7 @@ app.all('/ipfs/*', async (c) => {
         });
 
         // put object to cf-images
-        const imageUrl = await uploadToCloudflareImages({
+        const imageUrl = await ipfsToCloudflareImages({
           path,
           token: c.env.IMAGE_API_TOKEN,
           gateway: c.env.DEDICATED_GATEWAY,
@@ -89,7 +91,7 @@ app.all('/ipfs/*', async (c) => {
       }
 
       // else, upload to cf-images
-      const imageUrl = await uploadToCloudflareImages({
+      const imageUrl = await ipfsToCloudflareImages({
         path,
         token: c.env.IMAGE_API_TOKEN,
         gateway: c.env.DEDICATED_GATEWAY,
@@ -149,5 +151,7 @@ app.all('/ipfs/*', async (c) => {
     });
   }
 });
+
+app.get('/type/url', getTypeUrl);
 
 export default app;
