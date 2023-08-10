@@ -4,11 +4,13 @@ CREATE TABLE accounts
     handle    CHAR(15) UNIQUE,
     name      TEXT,
     avatar    TEXT,
-    referral  TEXT,
+    referral  TEXT UNIQUE,
     checksum  TEXT,
     banner    TEXT,
     social_id TEXT,
+    referrer   TEXT,
     FOREIGN KEY (social_id) REFERENCES socials (id)
+    FOREIGN KEY (referrer) REFERENCES accounts (id)
 );
 
 CREATE TABLE socials
@@ -25,6 +27,8 @@ CREATE TABLE socials
     telegram  TEXT,
     medium    TEXT
 );
+
+
 
 CREATE INDEX IDX_account_handle ON accounts (handle);
 
