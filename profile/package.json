@@ -1,0 +1,24 @@
+{
+  "name": "polysearch",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev",
+    "deploy": "wrangler publish",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@polkadot/util": "^12.3.2",
+    "@polkadot/util-crypto": "^12.3.2",
+    "hono": "^3.2.7",
+    "kysely": "^0.26.1",
+    "kysely-d1": "^0.3.0",
+    "ohmyfetch": "^0.4.21"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230628.0",
+    "typescript": "^5.1.6",
+    "vitest": "^0.33.0",
+    "wrangler": "3.1.2"
+  }
+}

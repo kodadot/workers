@@ -1,0 +1,5 @@
+init:
+  wrangler d1 execute enjoyer --local --file=./schema.sql
+
+execute NAME:
+  wrangler d1 execute enjoyer --file=./{{NAME}}.sql
