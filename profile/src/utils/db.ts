@@ -6,6 +6,9 @@ export const tables = ['accounts', 'socials']
 interface Database {
   accounts: any
   socials: any
+  quests: any
+  completed_quests: any
+  statistics: any
 }
 
 export type SearchQuery = {
@@ -17,6 +20,9 @@ export type SearchQuery = {
 }
 
 type Dict = Record<string, any>
+type Result = {
+  [x: string]: any;
+}
 
 export function isTable(table: string): table is keyof Database {
   return tables.includes(table)
@@ -60,14 +66,24 @@ export async function doSearch<T>(params: SearchQuery, database: D1Database): Pr
   }
 }
 
-export async function save<T = any>(data: Dict | Dict[], table: keyof Database,  database: D1Database): Promise<any | undefined> {
+export async function save<T = any>(data: Dict | Dict[], table: keyof Database,  database: D1Database): Promise<Result | undefined> {
   const db = new Kysely<Database>({ dialect: new D1Dialect({ database }) })
   return db.insertInto(table).values(data).returningAll().executeTakeFirst()
 }
 
-export async function findById<T = any>(id: string, table: keyof Database,  database: D1Database): Promise<any | undefined> {
+export async function selectAll<T = any>(table: keyof Database, database: D1Database): Promise<Result[]> {
+  const db = new Kysely<Database>({ dialect: new D1Dialect({ database }) })
+  return db.selectFrom(table).selectAll().execute()
+}
+
+export async function findById<T = any>(id: string, table: keyof Database,  database: D1Database): Promise<Result | undefined> {
   const db = new Kysely<Database>({ dialect: new D1Dialect({ database }) })
   return db.selectFrom(table).selectAll().where('id', '=', id).executeTakeFirst()
+}
+
+export async function findAllByKey<T = any>(key: string, value: string, table: keyof Database,  database: D1Database): Promise<Result[]> {
+  const db = new Kysely<Database>({ dialect: new D1Dialect({ database }) })
+  return db.selectFrom(table).selectAll().where(key, '=', value).execute()
 }
 
 export async function findByHandle<T = any>(id: string, table: keyof Database, database: D1Database): Promise<any | undefined> {
