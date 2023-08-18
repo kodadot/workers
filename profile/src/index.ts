@@ -8,6 +8,7 @@ import { SearchQuery, doSearch, findByHandle, findById, save } from './utils/db'
 import { SignatureRequest, isSignatureValid } from './utils/external'
 import { profiles } from './routes/profiles'
 import { socials } from './routes/socials'
+import { quests } from './routes/quests'
 
 interface HonoEnv extends Env {
   Bindings: CloudflareEnv
@@ -18,6 +19,7 @@ const app = new Hono<HonoEnv>()
 app.get('/', (c) => c.text(OTTER))
 app.route('/profiles', profiles)
 app.route('/socials', socials)
+app.route('/quests', quests)
 
 
 app.use('/u/:id', cors({ origin: allowedOrigin }))
