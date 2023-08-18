@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 import { Env, CACHE_MONTH, CACHE_TTL_BY_STATUS } from './utils/constants';
 import { uploadToCloudflareImages } from './utils/cloudflare-images';
 import { allowedOrigin } from './utils/cors';
+import { fetchIPFS } from './utils/ipfs';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -33,16 +34,16 @@ app.all('/ipfs/*', async (c) => {
 
     // if r2 object not exists, fetch from ipfs gateway
     if (object === null) {
-      const fetchIPFS = await Promise.any([
-        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${path}`),
-        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${path}`),
-      ]);
-      const statusCode = fetchIPFS.status;
+      const status = await fetchIPFS({
+        path,
+        gateway1: c.env.DEDICATED_GATEWAY,
+        gateway2: c.env.DEDICATED_BACKUP_GATEWAY,
+      });
 
-      if (statusCode === 200) {
+      if (status.ok && status.body && status.headers) {
         // put object to r2
-        await c.env.MY_BUCKET.put(objectName, fetchIPFS.body, {
-          httpMetadata: fetchIPFS.headers,
+        await c.env.MY_BUCKET.put(objectName, status.body, {
+          httpMetadata: status.headers,
         });
 
         // put object to cf-images
@@ -125,14 +126,14 @@ app.all('/ipfs/*', async (c) => {
     const object = await c.env.MY_BUCKET.get(objectName);
 
     if (object === null) {
-      const fetchIPFS = await Promise.any([
-        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${path}`),
-        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${path}`),
-      ]);
-      const statusCode = fetchIPFS.status;
+      const status = await fetchIPFS({
+        path,
+        gateway1: c.env.DEDICATED_GATEWAY,
+        gateway2: c.env.DEDICATED_BACKUP_GATEWAY,
+      });
 
-      if (statusCode === 200) {
-        return c.body(fetchIPFS.body);
+      if (status.ok && status.body) {
+        return c.body(status.body);
       }
 
       // fallback to cf-ipfs
