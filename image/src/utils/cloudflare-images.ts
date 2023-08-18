@@ -1,9 +1,9 @@
 import { trimEndpoint } from '../routes/type-url';
+import { CFIApiResponse } from './types';
 
 type CFImages = {
   token: string;
   imageAccount: string;
-  imageId: string;
 };
 
 type UploadCFI = CFImages & {
@@ -24,7 +24,7 @@ async function resizeImage(url: string) {
   return wsrvnl.toString();
 }
 
-async function uploadCFI({ token, url, id, imageAccount, imageId }: UploadCFI) {
+async function uploadCFI({ token, url, id, imageAccount }: UploadCFI) {
   const uploadHeaders = new Headers();
   uploadHeaders.append('Authorization', `Bearer ${token}`);
 
@@ -43,12 +43,14 @@ async function uploadCFI({ token, url, id, imageAccount, imageId }: UploadCFI) {
     `https://api.cloudflare.com/client/v4/accounts/${imageAccount}/images/v1`,
     requestOptions,
   );
-  const uploadStatus = uploadCfImage.status;
+  const image = (await uploadCfImage.json()) as CFIApiResponse;
 
-  console.log('uploadStatus', uploadStatus);
+  console.log('uploadStatus', image.success);
 
-  if (uploadStatus === 200) {
-    return `https://imagedelivery.net/${imageId}/${id}/public`;
+  if (image.success) {
+    // current variants = ['/detail', '/public', '/aaa']
+    // return `https://imagedelivery.net/${imageId}/${id}/public`;
+    return image.result?.variants?.[1];
   }
 
   return '';
@@ -59,7 +61,7 @@ type IpfsToCFI = CFImages & {
   path: string;
 };
 
-export async function ipfsToCFI({ token, gateway, path, imageAccount, imageId }: IpfsToCFI) {
+export async function ipfsToCFI({ token, gateway, path, imageAccount }: IpfsToCFI) {
   const imageOnIpfs = `${gateway}/ipfs/${path}`;
   const url = await resizeImage(imageOnIpfs);
 
@@ -68,7 +70,6 @@ export async function ipfsToCFI({ token, gateway, path, imageAccount, imageId }:
     url,
     id: path,
     imageAccount,
-    imageId,
   });
 }
 
@@ -76,7 +77,7 @@ type UrlToCFI = CFImages & {
   endpoint: string;
 };
 
-export async function urlToCFI({ token, endpoint, imageAccount, imageId }: UrlToCFI) {
+export async function urlToCFI({ token, endpoint, imageAccount }: UrlToCFI) {
   const path = trimEndpoint(endpoint);
   const url = await resizeImage(endpoint);
 
@@ -85,6 +86,5 @@ export async function urlToCFI({ token, endpoint, imageAccount, imageId }: UrlTo
     url,
     id: path,
     imageAccount,
-    imageId,
   });
 }
