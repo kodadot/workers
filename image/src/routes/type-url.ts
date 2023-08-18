@@ -1,6 +1,6 @@
 import type { Context } from 'hono';
 import { CACHE_TTL_BY_STATUS, type Env } from '../utils/constants';
-import { urlToCloudflareImages } from '../utils/cloudflare-images';
+import { urlToCFI } from '../utils/cloudflare-images';
 
 type HonoInterface = Context<
   string,
@@ -48,7 +48,7 @@ export const getTypeUrl = async (c: HonoInterface) => {
 
   // 3. upload image to cf-images
   // ----------------------------------------
-  const imageUrl = await urlToCloudflareImages({
+  const imageUrl = await urlToCFI({
     endpoint,
     token: c.env.IMAGE_API_TOKEN,
     imageAccount: c.env.CF_IMAGE_ACCOUNT,
