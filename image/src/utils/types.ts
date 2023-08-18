@@ -1,3 +1,4 @@
+// refer to https://developers.cloudflare.com/api/operations/cloudflare-images-upload-an-image-via-url
 export interface CFIApiResponse {
   errors: any[];
   messages: any[];
