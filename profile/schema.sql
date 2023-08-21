@@ -51,8 +51,9 @@ CREATE TABLE IF NOT EXISTS quests
     description TEXT NOT NULL,
     image       TEXT NOT NULL,
     reward      NUMERIC NOT NULL,
-    link        TEXT,
-    type        TEXT
+    type        TEXT,
+    link        TEXT 
+    -- link should tell where to go to complete the quest
 );
 
 CREATE TABLE IF NOT EXISTS completed_quests
