@@ -3,6 +3,7 @@ import { D1Dialect } from 'kysely-d1'
 
 export const tables = ['accounts', 'socials']
 
+// DEV: https://github.com/RobinBlomberg/kysely-codegen
 interface Database {
   accounts: any
   socials: any
