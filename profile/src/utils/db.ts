@@ -66,6 +66,15 @@ export async function doSearch<T>(params: SearchQuery, database: D1Database): Pr
   }
 }
 
+export function dbOf(database: D1Database) {
+  return new Kysely<Database>({ dialect: new D1Dialect({ database }) })
+}
+
+// export async function update(data: Dict | Dict[], table: keyof Database,  database: D1Database): Promise<Result | undefined> {
+  // const db = dbOf(database)
+  // return db.updateTable(table).set({}).
+// }
+
 export async function save<T = any>(data: Dict | Dict[], table: keyof Database,  database: D1Database): Promise<Result | undefined> {
   const db = new Kysely<Database>({ dialect: new D1Dialect({ database }) })
   return db.insertInto(table).values(data).returningAll().executeTakeFirst()
