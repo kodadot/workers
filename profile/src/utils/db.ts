@@ -1,16 +1,11 @@
-import { Kysely } from 'kysely'
+import { Kysely, ReferenceExpression } from 'kysely'
 import { D1Dialect } from 'kysely-d1'
+import { DB as Database } from './types'
+
+type Table = keyof Database
+type TableKey = ReferenceExpression<Database, Table>
 
 export const tables = ['accounts', 'socials']
-
-// DEV: https://github.com/RobinBlomberg/kysely-codegen
-interface Database {
-  accounts: any
-  socials: any
-  quests: any
-  completed_quests: any
-  statistics: any
-}
 
 export type SearchQuery = {
   table: keyof Database
@@ -25,7 +20,7 @@ type Result = {
   [x: string]: any;
 }
 
-export function isTable(table: string): table is keyof Database {
+export function isTable(table: string): table is Table {
   return tables.includes(table)
 }
 
@@ -45,9 +40,9 @@ export async function doSearch<T>(params: SearchQuery, database: D1Database): Pr
     .selectAll()
     .where('name', 'like', '%'+search+'%')
 
-  if (params.chain) {
-    query = query.where('chain', '=', params.chain)
-  }
+  // if (params.chain) {
+  //   query = query.where('chain', '=', params.chain)
+  // }
 
   if (params.limit) {
     query = query.limit(Math.min(Number(params.limit), 25))
@@ -91,7 +86,7 @@ export async function findById<T = any>(id: string, table: keyof Database,  data
   return db.selectFrom(table).selectAll().where('id', '=', id).executeTakeFirst()
 }
 
-export async function findAllByKey<T = any>(key: string, value: string, table: keyof Database,  database: D1Database): Promise<Result[]> {
+export async function findAllByKey<T = any>(key: TableKey, value: string, table: keyof Database,  database: D1Database): Promise<Result[]> {
   const db = new Kysely<Database>({ dialect: new D1Dialect({ database }) })
   return db.selectFrom(table).selectAll().where(key, '=', value).execute()
 }
