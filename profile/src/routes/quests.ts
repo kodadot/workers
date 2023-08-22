@@ -14,12 +14,12 @@ interface HonoEnv extends Env {
 const app = new Hono<HonoEnv>();
 
 // Notes: 
-// refactor /types/:type', into query param
+// refactor /types/:type, into query param
 
-app.use('/types/:type', cors({ origin: allowedOrigin }))
+app.use('/', cors({ origin: allowedOrigin }))
 
-app.get('/types/:type', async (c) => {
-  const type = c.req.param('type')
+app.get('/', async (c) => {
+  const { type } = c.req.query()
   const result = await findAllByKey('type', type, 'quests', c.env.PROFILE_DB)
   return c.json(result)
 })
