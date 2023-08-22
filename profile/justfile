@@ -3,3 +3,6 @@ init:
 
 execute NAME:
   wrangler d1 execute enjoyer --file=./{{NAME}}.sql
+
+codegen:
+  npm run codegen
