@@ -20,13 +20,16 @@ app.use('/', cors({ origin: allowedOrigin }))
 
 app.get('/', async (c) => {
   const { type } = c.req.query()
+  if (!type) {
+    return c.text('type is required', 400)
+  }
   const result = await findAllByKey('type', type, 'quests', c.env.PROFILE_DB)
   return c.json(result)
 })
 
-app.use('/users/:account', cors({ origin: allowedOrigin }))
+app.use('/completed/:account', cors({ origin: allowedOrigin }))
 
-app.get('/users/:account', async (c) => {
+app.get('/completed/:account', async (c) => {
   const id = c.req.param('account')
   const address = addressOf(id)
   const result = await findAllByKey('account_id', address, 'completed_quests', c.env.PROFILE_DB)
