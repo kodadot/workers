@@ -29,7 +29,7 @@ app.use('/users/:account', cors({ origin: allowedOrigin }))
 app.get('/users/:account', async (c) => {
   const id = c.req.param('account')
   const address = addressOf(id)
-  const result = await findAllByKey('account', address, 'completed_quests', c.env.PROFILE_DB)
+  const result = await findAllByKey('account_id', address, 'completed_quests', c.env.PROFILE_DB)
   return c.json(result)
 })
 
