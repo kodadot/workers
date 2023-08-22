@@ -5,7 +5,8 @@
   "scripts": {
     "start": "wrangler dev",
     "deploy": "wrangler publish",
-    "test": "vitest"
+    "test": "vitest",
+    "codegen": "kysely-codegen --dialect sqlite --out-file src/utils/types.ts"
   },
   "dependencies": {
     "@polkadot/util": "^12.3.2",
