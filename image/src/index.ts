@@ -14,6 +14,9 @@ app.use('/ipfs/*', cors({ origin: allowedOrigin }));
 
 app.all('/ipfs/*', async (c) => {
   const method = c.req.method;
+  const { original } = c.req.query();
+
+  const isOriginal = original === 'true';
 
   const url = new URL(c.req.url);
   const path = url.pathname.replace('/ipfs/', '');
@@ -55,7 +58,7 @@ app.all('/ipfs/*', async (c) => {
           imageId: c.env.CF_IMAGE_ID,
         });
 
-        if (imageUrl) {
+        if (imageUrl && !isOriginal) {
           return c.redirect(imageUrl, 302);
         }
 
@@ -78,30 +81,32 @@ app.all('/ipfs/*', async (c) => {
     }
 
     if (!response) {
-      const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`;
-      const currentImage = await fetch(cfImage, {
-        method: 'HEAD',
-        cf: CACHE_TTL_BY_STATUS,
-      });
+      if (!isOriginal) {
+        const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`;
+        const currentImage = await fetch(cfImage, {
+          method: 'HEAD',
+          cf: CACHE_TTL_BY_STATUS,
+        });
 
-      // return early to cf-images
-      if (currentImage.ok) {
-        return c.redirect(cfImage, 302);
-      }
+        // return early to cf-images
+        if (currentImage.ok) {
+          return c.redirect(cfImage, 302);
+        }
 
-      // else, upload to cf-images
-      const imageUrl = await uploadToCloudflareImages({
-        path,
-        token: c.env.IMAGE_API_TOKEN,
-        gateway: c.env.DEDICATED_GATEWAY,
-        imageAccount: c.env.CF_IMAGE_ACCOUNT,
-        imageId: c.env.CF_IMAGE_ID,
-      });
+        // else, upload to cf-images
+        const imageUrl = await uploadToCloudflareImages({
+          path,
+          token: c.env.IMAGE_API_TOKEN,
+          gateway: c.env.DEDICATED_GATEWAY,
+          imageAccount: c.env.CF_IMAGE_ACCOUNT,
+          imageId: c.env.CF_IMAGE_ID,
+        });
 
-      // redirect to cf-images
-      if (imageUrl) {
-        // how to cache redirect response?
-        return c.redirect(imageUrl, 302);
+        // redirect to cf-images
+        if (imageUrl) {
+          // how to cache redirect response?
+          return c.redirect(imageUrl, 302);
+        }
       }
 
       // else, render r2 object and cache it
