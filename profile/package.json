@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "wrangler dev",
+    "dev": "wrangler dev",
     "deploy": "wrangler publish",
     "test": "vitest",
     "codegen": "kysely-codegen --dialect sqlite --out-file src/utils/types.ts"
