@@ -10,7 +10,7 @@ interface SiteData {
 
 export const Layout = (props: SiteData) => html`
   <!DOCTYPE html>
-  <html>
+  <html lang="en">
     <head>
       <title>${props.title}</title>
 
