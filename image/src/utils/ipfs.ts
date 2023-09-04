@@ -5,17 +5,6 @@ type FetchIPFS = {
 };
 
 export async function fetchIPFS({ path, gateway1, gateway2 }: FetchIPFS) {
-  const gwNftstorage = await fetch(`https://nftstorage.link/ipfs/${path}`);
-  console.log('fetch IPFS status', 'nftstorage.link', gwNftstorage.status);
-
-  if (gwNftstorage.status === 200) {
-    return {
-      headers: gwNftstorage.headers,
-      body: gwNftstorage.body,
-      ok: true,
-    };
-  }
-
   const gwCfIpfs = await fetch(`https://cloudflare-ipfs.com/ipfs/${path}`);
   console.log('fetch IPFS status', 'cloudflare-ipfs.com', gwCfIpfs.status);
 
