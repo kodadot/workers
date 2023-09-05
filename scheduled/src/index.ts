@@ -25,20 +25,31 @@ export interface Env {
 
 export default {
   async scheduled(
-    _controller: ScheduledController,
+    { cron }: ScheduledController,
     env: Env,
     ctx: ExecutionContext
   ): Promise<void> {
-    ctx.waitUntil(doSomeTaskOnASchedule(env))
+    ctx.waitUntil(doSomeTaskOnASchedule(env, cron))
   },
 }
 
-async function doSomeTaskOnASchedule(env: Env): Promise<any> {
+async function doSomeTaskOnASchedule(env: Env, cron: string): Promise<any> {
+  const cityCrop: Record<string, string> = {
+    '*/10 * * * *': 'Shanghai',
+    '*/11 * * * *': 'Seoul',
+    '*/12 * * * *': 'Berlin',
+  }
+
+  const city = cityCrop[cron] || 'Ljubljana'
+
+  console.log('city', city, cron)
+
+
   const body = {
     version: '42a996d39a96aedc57b2e0aa8105dea39c9c89d9d266caf6bb4327a1c191b061',
     input: {
       prompt:
-        'medium digital painting of smiling anime waifu with dark hair, wearing Qipao, sunny lighting, Shanghai in the background"',
+        `medium digital painting of smiling anime waifu with dark hair, wearing fashionable clothes, sunny lighting, ${city} in the background, saturated colors`,
       negative_prompt:
         'lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, artist name',
       width: 512,
