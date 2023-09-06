@@ -35,9 +35,9 @@ export default {
 
 async function doSomeTaskOnASchedule(env: Env, cron: string): Promise<any> {
   const cityCrop: Record<string, string> = {
-    '*/10 * * * *': 'Shanghai',
-    '*/11 * * * *': 'Seoul',
-    '*/12 * * * *': 'Berlin',
+    '*/29 * * * *': 'Shanghai',
+    '*/30 * * * *': 'Seoul',
+    '*/31 * * * *': 'Berlin',
   }
 
   const city = cityCrop[cron] || 'Ljubljana'
