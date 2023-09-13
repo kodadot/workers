@@ -15,11 +15,18 @@ app.use('/ipfs/*', cors({ origin: allowedOrigin }));
 app.all('/ipfs/*', async (c) => {
   const method = c.req.method;
   const { original } = c.req.query();
-
   const isOriginal = original === 'true';
 
   const url = new URL(c.req.url);
   const path = url.pathname.replace('/ipfs/', '');
+
+  // add trailing slash
+  if (!url.pathname.endsWith('/') && url.search) {
+    return c.redirect(`${url.pathname}/${url.search}`, 301);
+  }
+
+  const fullPath = `${path}${url.search}`;
+  // const encodePath = encodeURIComponent(fullPath);
 
   const request = c.req;
   const flushCache = '2023-04-15-a'; // change the value to flush the cache
@@ -38,15 +45,15 @@ app.all('/ipfs/*', async (c) => {
     // if r2 object not exists, fetch from ipfs gateway
     if (object === null) {
       const status = await fetchIPFS({
-        path,
+        path: fullPath,
         gateway1: c.env.DEDICATED_GATEWAY,
         gateway2: c.env.DEDICATED_BACKUP_GATEWAY,
       });
 
-      if (status.ok && status.body && status.headers) {
+      if (status.ok && status.response?.body && status.response?.headers) {
         // put object to r2
-        await c.env.MY_BUCKET.put(objectName, status.body, {
-          httpMetadata: status.headers,
+        await c.env.MY_BUCKET.put(objectName, status.response.body, {
+          httpMetadata: status.response.headers,
         });
 
         // put object to cf-images
@@ -132,13 +139,13 @@ app.all('/ipfs/*', async (c) => {
 
     if (object === null) {
       const status = await fetchIPFS({
-        path,
+        path: fullPath,
         gateway1: c.env.DEDICATED_GATEWAY,
         gateway2: c.env.DEDICATED_BACKUP_GATEWAY,
       });
 
-      if (status.ok && status.body) {
-        return c.body(status.body);
+      if (status.ok && status.response?.body) {
+        return c.body(status.response.body);
       }
 
       // fallback to cf-ipfs

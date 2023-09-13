@@ -5,13 +5,14 @@ type FetchIPFS = {
 };
 
 export async function fetchIPFS({ path, gateway1, gateway2 }: FetchIPFS) {
+  console.log('ipfs path', path);
+
   const gwCfIpfs = await fetch(`https://cloudflare-ipfs.com/ipfs/${path}`);
   console.log('fetch IPFS status', 'cloudflare-ipfs.com', gwCfIpfs.status);
 
   if (gwCfIpfs.status === 200) {
     return {
-      headers: gwCfIpfs.headers,
-      body: gwCfIpfs.body,
+      response: gwCfIpfs,
       ok: true,
     };
   }
@@ -21,8 +22,7 @@ export async function fetchIPFS({ path, gateway1, gateway2 }: FetchIPFS) {
 
   if (gw1.status === 200) {
     return {
-      headers: gw1.headers,
-      body: gw1.body,
+      response: gw1,
       ok: true,
     };
   }
@@ -32,15 +32,13 @@ export async function fetchIPFS({ path, gateway1, gateway2 }: FetchIPFS) {
 
   if (gw2.status === 200) {
     return {
-      headers: gw2.headers,
-      body: gw2.body,
+      response: gw2,
       ok: true,
     };
   }
 
   return {
-    headers: null,
-    body: null,
+    response: null,
     ok: false,
   };
 }
