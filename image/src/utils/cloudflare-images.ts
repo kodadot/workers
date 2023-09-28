@@ -1,4 +1,4 @@
-import { trimEndpoint } from '../routes/type-url';
+import { encodeEndpoint } from '../routes/type-url';
 import { CFIApiResponse } from './types';
 
 type CFImages = {
@@ -78,7 +78,7 @@ type UrlToCFI = CFImages & {
 };
 
 export async function urlToCFI({ token, endpoint, imageAccount }: UrlToCFI) {
-  const path = trimEndpoint(endpoint);
+  const path = encodeEndpoint(endpoint);
   const url = await resizeImage(endpoint);
 
   return await uploadCFI({

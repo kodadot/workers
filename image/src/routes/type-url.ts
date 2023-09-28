@@ -10,13 +10,14 @@ type HonoInterface = Context<
   {}
 >;
 
-export const trimEndpoint = (endpoint: string) => {
-  return endpoint.replace(/[:,._/]/g, '-');
+export const encodeEndpoint = (endpoint: string) => {
+  // return endpoint.replace(/[:,._/]/g, '-');
+  return encodeURIComponent(endpoint);
 };
 
 export const getTypeUrl = async (c: HonoInterface) => {
   const { endpoint } = c.req.query();
-  const path = trimEndpoint(endpoint);
+  const path = encodeEndpoint(endpoint);
 
   // 1. check existing image on cf-images
   // ----------------------------------------
