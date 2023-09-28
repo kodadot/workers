@@ -11,8 +11,8 @@ type HonoInterface = Context<
 >;
 
 export const encodeEndpoint = (endpoint: string) => {
-  // return endpoint.replace(/[:,._/]/g, '-');
-  return encodeURIComponent(endpoint);
+  // return encodeURIComponent(endpoint);
+  return endpoint.replace(/[:,._/]/g, '-');
 };
 
 export const getTypeUrl = async (c: HonoInterface) => {

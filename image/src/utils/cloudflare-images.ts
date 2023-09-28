@@ -50,7 +50,8 @@ async function uploadCFI({ token, url, id, imageAccount }: UploadCFI) {
   if (image.success) {
     // current variants = ['/detail', '/public', '/aaa']
     // return `https://imagedelivery.net/${imageId}/${id}/public`;
-    return image.result?.variants?.[1];
+    // return image.result?.variants?.[1];
+    return image.result?.variants?.find((v) => v.endsWith('/public'));
   }
 
   return '';
