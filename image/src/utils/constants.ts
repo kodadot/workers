@@ -1,4 +1,4 @@
-export interface Env {
+export type Env = {
   MY_BUCKET: R2Bucket;
   DEDICATED_GATEWAY: string;
   DEDICATED_BACKUP_GATEWAY: string;
@@ -8,7 +8,7 @@ export interface Env {
 
   // wrangler secret
   IMAGE_API_TOKEN: string;
-}
+};
 
 export const CACHE_SECOND = 1;
 export const CACHE_DAY = 86400;

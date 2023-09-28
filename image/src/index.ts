@@ -4,9 +4,8 @@ import { cors } from 'hono/cors';
 import { Env, CACHE_MONTH, CACHE_TTL_BY_STATUS } from './utils/constants';
 import { ipfsToCFI } from './utils/cloudflare-images';
 import { allowedOrigin } from './utils/cors';
-
-import { getTypeUrl } from './routes/type-url';
 import { fetchIPFS } from './utils/ipfs';
+import { getTypeUrl } from './routes/type-url';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -16,6 +15,9 @@ app.use('/ipfs/*', cors({ origin: allowedOrigin }));
 
 app.all('/ipfs/*', async (c) => {
   const method = c.req.method;
+  const { original } = c.req.query();
+
+  const isOriginal = original === 'true';
 
   const url = new URL(c.req.url);
   const path = url.pathname.replace('/ipfs/', '');
@@ -58,7 +60,7 @@ app.all('/ipfs/*', async (c) => {
           imageAccount: c.env.CF_IMAGE_ACCOUNT,
         });
 
-        if (imageUrl) {
+        if (imageUrl && !isOriginal) {
           return c.redirect(imageUrl, 302);
         }
 
@@ -81,29 +83,31 @@ app.all('/ipfs/*', async (c) => {
     }
 
     if (!response) {
-      const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`;
-      const currentImage = await fetch(cfImage, {
-        method: 'HEAD',
-        cf: CACHE_TTL_BY_STATUS,
-      });
+      if (!isOriginal) {
+        const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`;
+        const currentImage = await fetch(cfImage, {
+          method: 'HEAD',
+          cf: CACHE_TTL_BY_STATUS,
+        });
 
-      // return early to cf-images
-      if (currentImage.ok) {
-        return c.redirect(cfImage, 302);
-      }
+        // return early to cf-images
+        if (currentImage.ok) {
+          return c.redirect(cfImage, 302);
+        }
 
-      // else, upload to cf-images
-      const imageUrl = await ipfsToCFI({
-        path,
-        token: c.env.IMAGE_API_TOKEN,
-        gateway: c.env.DEDICATED_GATEWAY,
-        imageAccount: c.env.CF_IMAGE_ACCOUNT,
-      });
+        // else, upload to cf-images
+        const imageUrl = await ipfsToCFI({
+          path,
+          token: c.env.IMAGE_API_TOKEN,
+          gateway: c.env.DEDICATED_GATEWAY,
+          imageAccount: c.env.CF_IMAGE_ACCOUNT,
+        });
 
-      // redirect to cf-images
-      if (imageUrl) {
-        // how to cache redirect response?
-        return c.redirect(imageUrl, 302);
+        // redirect to cf-images
+        if (imageUrl) {
+          // how to cache redirect response?
+          return c.redirect(imageUrl, 302);
+        }
       }
 
       // else, render r2 object and cache it

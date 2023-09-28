@@ -11,4 +11,4 @@ services = [
 WEBHOOK = 'https://waifu-me.kodadot.workers.dev/hookd'
 
 [triggers]
-crons = [ "*/5 * * * *" ]
+crons = [ "*/29 * * * *",  "*/30 * * * *", "*/31 * * * *"]
