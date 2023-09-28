@@ -3,11 +3,11 @@ import { CACHE_TTL_BY_STATUS, type Env } from '../utils/constants';
 import { urlToCFI } from '../utils/cloudflare-images';
 
 type HonoInterface = Context<
-  string,
   {
     Bindings: Env;
   },
-  unknown
+  '/type/url',
+  {}
 >;
 
 export const trimEndpoint = (endpoint: string) => {
@@ -52,7 +52,6 @@ export const getTypeUrl = async (c: HonoInterface) => {
     endpoint,
     token: c.env.IMAGE_API_TOKEN,
     imageAccount: c.env.CF_IMAGE_ACCOUNT,
-    imageId: c.env.CF_IMAGE_ID,
   });
 
   if (imageUrl) {
