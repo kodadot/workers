@@ -161,6 +161,18 @@ app.all('/ipfs/*', async (c) => {
       headers,
     });
   }
+
+  if (method === 'DELETE') {
+    const objectName = `ipfs/${path}`;
+
+    try {
+      await c.env.MY_BUCKET.delete(objectName);
+
+      return c.json({ status: 'ok' });
+    } catch (error) {
+      return c.json({ status: 'error', error }, 500);
+    }
+  }
 });
 
 export default app;
