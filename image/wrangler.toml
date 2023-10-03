@@ -1,7 +1,7 @@
-account_id = "b3f9fdfd827152316d080a5ddee59915"
-compatibility_date = "2023-01-03"
-main = "src/index.ts"
 name = "image-beta"
+account_id = "b3f9fdfd827152316d080a5ddee59915"
+main = "src/index.ts"
+compatibility_date = "2023-01-03"
 usage_model = "bundled"
 
 [vars]
@@ -24,11 +24,11 @@ preview_bucket_name = 'alpha-stockpile'
 name = 'image-beta'
 
 [env.beta.vars]
+DEDICATED_GATEWAY = 'https://kodadot-ultra.myfilebase.com'
+DEDICATED_BACKUP_GATEWAY = 'https://kodadot1.infura-ipfs.io'
+CLOUDFLARE_GATEWAY = 'https://cloudflare-ipfs.com'
 CF_IMAGE_ACCOUNT = 'b3f9fdfd827152316d080a5ddee59915'
 CF_IMAGE_ID = 'jk5b6spi_m_-9qC4VTnjpg'
-CLOUDFLARE_GATEWAY = 'https://cloudflare-ipfs.com'
-DEDICATED_BACKUP_GATEWAY = 'https://kodadot1.infura-ipfs.io'
-DEDICATED_GATEWAY = 'https://kodadot-ultra.myfilebase.com'
 
 [[env.beta.r2_buckets]]
 binding = 'MY_BUCKET'
@@ -40,11 +40,11 @@ preview_bucket_name = 'alpha-stockpile'
 name = 'image'
 
 [env.production.vars]
+DEDICATED_GATEWAY = 'https://kodadot-ultra.myfilebase.com'
+DEDICATED_BACKUP_GATEWAY = 'https://kodadot1.infura-ipfs.io'
+CLOUDFLARE_GATEWAY = 'https://cloudflare-ipfs.com'
 CF_IMAGE_ACCOUNT = 'b3f9fdfd827152316d080a5ddee59915'
 CF_IMAGE_ID = 'jk5b6spi_m_-9qC4VTnjpg'
-CLOUDFLARE_GATEWAY = 'https://cloudflare-ipfs.com'
-DEDICATED_BACKUP_GATEWAY = 'https://kodadot1.infura-ipfs.io'
-DEDICATED_GATEWAY = 'https://kodadot-ultra.myfilebase.com'
 
 [[env.production.r2_buckets]]
 binding = 'MY_BUCKET'
