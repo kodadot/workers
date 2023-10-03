@@ -51,10 +51,19 @@ app.all('/ipfs/*', async (c) => {
         gateway1: c.env.DEDICATED_GATEWAY,
         gateway2: c.env.DEDICATED_BACKUP_GATEWAY,
       });
+      const contentLength = status.response?.headers.get('content-length');
 
       if (status.ok && status.response?.body && status.response?.headers) {
+        let body;
+
+        if (contentLength === null) {
+          body = await status.response?.text();
+        } else {
+          body = status.response.body;
+        }
+
         // put object to r2
-        await c.env.MY_BUCKET.put(objectName, status.response.body, {
+        await c.env.MY_BUCKET.put(objectName, body, {
           httpMetadata: status.response.headers,
         });
 
@@ -73,7 +82,15 @@ app.all('/ipfs/*', async (c) => {
 
         // else, render r2 object
         const r2Object = await c.env.MY_BUCKET.get(objectName);
+
         if (r2Object !== null) {
+          if (r2Object?.httpMetadata?.contentType?.includes('html')) {
+            // add trailing slash
+            if (!url.pathname.endsWith('/')) {
+              return c.redirect(`${url.pathname}/${url.search}`, 301);
+            }
+          }
+
           const headers = new Headers();
           r2Object.writeHttpMetadata(headers);
           headers.set('Access-Control-Allow-Origin', '*');
