@@ -15,14 +15,15 @@ app.use('/ipfs/*', cors({ origin: allowedOrigin }));
 app.all('/ipfs/*', async (c) => {
   const method = c.req.method;
   const { original } = c.req.query();
-
   const isOriginal = original === 'true';
 
   const url = new URL(c.req.url);
   const path = url.pathname.replace('/ipfs/', '');
 
+  const fullPath = `${path}${url.search}`;
+
   const request = c.req;
-  const flushCache = '2023-10-02'; // change the value to flush the cache
+  const flushCache = '2023-10-03'; // change the value to flush the cache
   const cacheUrl = new URL(request.url);
   const cacheKey = new Request(cacheUrl.toString() + flushCache, request);
   const cache = caches.default;
@@ -34,19 +35,36 @@ app.all('/ipfs/*', async (c) => {
   if (method === 'GET') {
     const objectName = `ipfs/${path}`;
     const object = await c.env.MY_BUCKET.get(objectName);
+    const mimeType = object?.httpMetadata?.contentType;
+
+    if (mimeType?.includes('html')) {
+      // add trailing slash
+      if (!url.pathname.endsWith('/')) {
+        return c.redirect(`${url.pathname}/${url.search}`, 301);
+      }
+    }
 
     // if r2 object not exists, fetch from ipfs gateway
     if (object === null) {
       const status = await fetchIPFS({
-        path,
+        path: fullPath,
         gateway1: c.env.DEDICATED_GATEWAY,
         gateway2: c.env.DEDICATED_BACKUP_GATEWAY,
       });
+      const contentLength = status.response?.headers.get('content-length');
 
-      if (status.ok && status.body && status.headers) {
+      if (status.ok && status.response?.body && status.response?.headers) {
+        let body;
+
+        if (contentLength === null) {
+          body = await status.response?.text();
+        } else {
+          body = status.response.body;
+        }
+
         // put object to r2
-        await c.env.MY_BUCKET.put(objectName, status.body, {
-          httpMetadata: status.headers,
+        await c.env.MY_BUCKET.put(objectName, body, {
+          httpMetadata: status.response.headers,
         });
 
         // put object to cf-images
@@ -64,7 +82,15 @@ app.all('/ipfs/*', async (c) => {
 
         // else, render r2 object
         const r2Object = await c.env.MY_BUCKET.get(objectName);
+
         if (r2Object !== null) {
+          if (r2Object?.httpMetadata?.contentType?.includes('html')) {
+            // add trailing slash
+            if (!url.pathname.endsWith('/')) {
+              return c.redirect(`${url.pathname}/${url.search}`, 301);
+            }
+          }
+
           const headers = new Headers();
           r2Object.writeHttpMetadata(headers);
           headers.set('Access-Control-Allow-Origin', '*');
@@ -136,13 +162,13 @@ app.all('/ipfs/*', async (c) => {
 
     if (object === null) {
       const status = await fetchIPFS({
-        path,
+        path: fullPath,
         gateway1: c.env.DEDICATED_GATEWAY,
         gateway2: c.env.DEDICATED_BACKUP_GATEWAY,
       });
 
-      if (status.ok && status.body) {
-        return c.body(status.body);
+      if (status.ok && status.response?.body) {
+        return c.body(status.response.body);
       }
 
       // fallback to cf-ipfs
@@ -157,6 +183,18 @@ app.all('/ipfs/*', async (c) => {
     return new Response(object.body, {
       headers,
     });
+  }
+
+  if (method === 'DELETE') {
+    const objectName = `ipfs/${path}`;
+
+    try {
+      await c.env.MY_BUCKET.delete(objectName);
+
+      return c.json({ status: 'ok' });
+    } catch (error) {
+      return c.json({ status: 'error', error }, 500);
+    }
   }
 });
 
