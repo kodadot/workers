@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
-import { Env, CACHE_MONTH, CACHE_TTL_BY_STATUS } from './utils/constants';
+import { Env, CACHE_TTL_BY_STATUS, CACHE_DAY } from './utils/constants';
 import { uploadToCloudflareImages } from './utils/cloudflare-images';
 import { allowedOrigin } from './utils/cors';
 import { fetchIPFS } from './utils/ipfs';
@@ -29,7 +29,7 @@ app.all('/ipfs/*', async (c) => {
   // const encodePath = encodeURIComponent(fullPath);
 
   const request = c.req;
-  const flushCache = '2023-04-15-a'; // change the value to flush the cache
+  const flushCache = '2023-10-02'; // change the value to flush the cache
   const cacheUrl = new URL(request.url);
   const cacheKey = new Request(cacheUrl.toString() + flushCache, request);
   const cache = caches.default;
@@ -119,15 +119,19 @@ app.all('/ipfs/*', async (c) => {
       // else, render r2 object and cache it
       const headers = new Headers();
       object.writeHttpMetadata(headers);
-      headers.set('Access-Control-Allow-Origin', '*');
       headers.set('etag', object.httpEtag);
 
       response = new Response(object.body, {
         headers,
       });
 
-      response.headers.append('Cache-Control', `s-maxage=${CACHE_MONTH}`);
-      c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
+      response.headers.append('cache-control', `s-maxage=${CACHE_DAY}`);
+
+      // TODO: TypeError: Can't modify immutable headers.
+      // c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
+      return response;
+    } else {
+      console.log(`Cache hit for: ${request.url}`);
     }
 
     return response;
