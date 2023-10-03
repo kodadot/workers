@@ -6,8 +6,5 @@ usage_model = "bundled"
 [build]
 command = "cargo install -q worker-build && worker-build --release"
 
-[secrets]
-# NFT_STORAGE_API_TOKEN
-
 # read more about configuring your Worker via wrangler.toml at:
 # https://developers.cloudflare.com/workers/cli-wrangler/configuration
