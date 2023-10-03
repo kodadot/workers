@@ -23,7 +23,7 @@ app.all('/ipfs/*', async (c) => {
   const fullPath = `${path}${url.search}`;
 
   const request = c.req;
-  const flushCache = '2023-10-02-a'; // change the value to flush the cache
+  const flushCache = '2023-10-03'; // change the value to flush the cache
   const cacheUrl = new URL(request.url);
   const cacheKey = new Request(cacheUrl.toString() + flushCache, request);
   const cache = caches.default;
