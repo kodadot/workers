@@ -147,8 +147,15 @@ async fn pin_url_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<R
     }
 }
 
+fn _get_query_param(url: &Url, key: &str) -> bool  {
+    url.query_pairs().find(|(k, _)| k == key)
+        .map(|(_, val)| val)
+        .and_then(|c| c.parse::<bool>().ok()).unwrap_or(false)
+}
+
 async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
     let val = req.bytes().await?;
+    // let cache = get_query_param(&req.url()?, "cache");
     let content_type = req.headers().get("Content-Type").unwrap().unwrap();
 
     let body = Body::from(val);
