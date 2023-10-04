@@ -60,37 +60,6 @@ fn log_request(req: &Request) {
 
 const NFT_STORAGE_BASE_API: &str = "https://api.nft.storage/";
 
-
-async fn get_user_key<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> {
-    match ctx.param("account") {
-        Some(account_id) => account_id,
-        None => return CorsHeaders::update(Response::error("Missing Account Id", 400)),
-    };
-
-    let token = get_token(&ctx).unwrap();
-
-    let client = Client::new();
-    let response = client.post(NFT_STORAGE_BASE_API.to_string() + "ucan/token")
-        .header("Authorization", "Bearer ".to_string() + &token)
-        .send()
-        .await
-        .unwrap()
-        .json::<PinningKey>()
-        .await;
-
-    match response {
-        Ok(json) => {
-            let dt = Utc::now() + Duration::days(13);
-            let res = PinningKeyResponse {
-                expiry: dt.to_rfc3339_opts(SecondsFormat::Millis, true),
-                token: json.value
-            };   
-            CorsHeaders::update(Response::from_json(&res))
-        },
-        Err(_) => CorsHeaders::update(Response::error("Failed to get user key", 500))
-    }
-}
-
 fn universal_response<T: Serialize>(response: StdResult<T, reqwest::Error>) -> Result<Response> {
     match response {
         Ok(json) => CorsHeaders::update(Response::from_json(&json)),
@@ -193,7 +162,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     // functionality and a `RouteContext` which you can use to  and get route parameters and
     // Environment bindings like KV Stores, Durable Objects, Secrets, and Variables.
     router
-        .get_async("/getKey/:account", get_user_key)
+        .get("/getKey/:account", empty_response)
         .post_async("/pinJson/:name", pin_json_to_ipfs)
         .post_async("/pinJson", pin_json_to_ipfs)
         .post_async("/pinFile", pin_file_to_ipfs)
