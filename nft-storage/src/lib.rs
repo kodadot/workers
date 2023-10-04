@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 use worker::*;
 use reqwest::{ Client, Body, StatusCode };
-use chrono::{Duration, Utc, SecondsFormat};
-use nftstorage::NftStorage;
+use nftstorage::{NftStorage, StorageApiResponse};
 use std::result::Result as StdResult;
 
 mod utils;
@@ -14,38 +13,9 @@ type CorsHeaders = cors::CorsHeaders;
 
 
 #[derive(Serialize, Deserialize, Debug)]
-struct StorageApiResponse {
-    ok: bool,
-    value: ValueApiResponse
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct PinningKey {
-    ok: bool,
-    value: String
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct PinningKeyResponse {
-    expiry: String,
-    token: String
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct ValueApiResponse {
-    cid: String,
-    size: u32,
-    r#type: String,
-    created: String,
-}
-
-
-#[derive(Serialize, Deserialize, Debug)]
 struct UrlPinRequest {
     url: String,
 }
-
-
 
 
 fn log_request(req: &Request) {
