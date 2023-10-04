@@ -1,10 +1,14 @@
 use serde::{Deserialize, Serialize};
 use worker::*;
-use reqwest::{ Client, Body };
+use reqwest::{ Client, Body, StatusCode };
 use chrono::{Duration, Utc, SecondsFormat};
+use nftstorage::NftStorage;
+use std::result::Result as StdResult;
 
 mod utils;
 mod cors;
+mod nftstorage;
+mod fetch;
 
 type CorsHeaders = cors::CorsHeaders;
 
@@ -87,23 +91,27 @@ async fn get_user_key<D>(_: Request, ctx: RouteContext<D>) ->  Result<Response> 
     }
 }
 
+fn universal_response<T: Serialize>(response: StdResult<T, reqwest::Error>) -> Result<Response> {
+    match response {
+        Ok(json) => CorsHeaders::update(Response::from_json(&json)),
+        Err(err) => {
+            let status = err.status().unwrap_or(StatusCode::INTERNAL_SERVER_ERROR).as_u16();
+            let msg = err.to_string();
+            console_log!("Error: {:?} - {}", status, msg);
+            CorsHeaders::update(Response::error(msg, status))
+        }
+    }
+}
+
 async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
     let val = req.bytes().await?;
 
-    let body = Body::from(val);
+    let body = Body::from(val.clone());
 
     let token = get_token(&ctx).unwrap();
-
-    let client = Client::new();
-    let response = client.post(NFT_STORAGE_BASE_API.to_string() + "/upload")
-        .header("Authorization", "Bearer ".to_string() + &token)
-        .header("Content-Type", "application/json")
-        .body(body)
-        .send()
-        .await
-        .unwrap()
-        .json::<StorageApiResponse>()
-        .await;
+    let nftstorage = NftStorage::new(&token);
+    let content_type = "application/json";
+    let response = nftstorage.upload(body, &content_type).await;
 
     match response {
         Ok(json) => CorsHeaders::update(Response::from_json(&json)),
@@ -158,25 +166,13 @@ async fn pin_file_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
     // let cache = get_query_param(&req.url()?, "cache");
     let content_type = req.headers().get("Content-Type").unwrap().unwrap();
 
-    let body = Body::from(val);
+    let body = Body::from(val.clone());
 
     let token = get_token(&ctx).unwrap();
+    let nftstorage = NftStorage::new(&token);
+    let response = nftstorage.upload(body, &content_type).await;
 
-    let client = Client::new();
-    let response = client.post(NFT_STORAGE_BASE_API.to_string() + "/upload")
-        .header("Authorization", "Bearer ".to_string() + &token)
-        .header("Content-Type", content_type)
-        .body(body)
-        .send()
-        .await
-        .unwrap()
-        .json::<StorageApiResponse>()
-        .await;
-
-    match response {
-        Ok(json) => CorsHeaders::update(Response::from_json(&json)),
-        Err(e) => CorsHeaders::update(Response::error(e.to_string(), 500))
-    }
+    universal_response(response)
 }
 
 fn empty_response<D>(_: Request, _: RouteContext<D>) ->  Result<Response> {
