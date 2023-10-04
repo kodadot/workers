@@ -113,10 +113,7 @@ async fn pin_json_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<
     let content_type = "application/json";
     let response = nftstorage.upload(body, &content_type).await;
 
-    match response {
-        Ok(json) => CorsHeaders::update(Response::from_json(&json)),
-        Err(e) => CorsHeaders::update(Response::error(e.to_string(), 500))
-    }
+    universal_response(response)
 }
 
 async fn pin_url_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<Response> {
