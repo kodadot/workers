@@ -1,6 +1,20 @@
-use crate::fetch::{call_fetch, call_post};
-use crate::types::{PredictionRequest, PredictionRequestStatus, PredictionStatus};
+use crate::fetch::call_post;
 use reqwest::{ Body, Error};
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct StorageApiResponse {
+    ok: bool,
+    value: ValueApiResponse
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ValueApiResponse {
+    cid: String,
+    size: u32,
+    r#type: String,
+    created: String,
+}
 
 #[derive(Debug)]
 pub struct NftStorage {
@@ -22,12 +36,12 @@ impl NftStorage {
 
     pub async fn upload(
         &self,
-        body: &Body,
+        body: Body,
         content_type: &str,
     ) -> Result<StorageApiResponse, Error> {
         let url = format!("/{}", "upload");
         let response =
-            call_post::<StorageApiResponse, Body>(&url, &self.token, prediction)
+            call_post::<StorageApiResponse, Body>(&url, &self.token, body, content_type)
                 .await;
         response
     }
