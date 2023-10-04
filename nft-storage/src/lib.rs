@@ -146,10 +146,7 @@ async fn pin_url_to_ipfs<D>(mut req: Request, ctx: RouteContext<D>) ->  Result<R
         .json::<StorageApiResponse>()
         .await;
 
-    match response {
-        Ok(json) => CorsHeaders::update(Response::from_json(&json)),
-        Err(e) => CorsHeaders::update(Response::error(e.to_string(), 500))
-    }
+    universal_response(response)
 }
 
 fn _get_query_param(url: &Url, key: &str) -> bool  {
