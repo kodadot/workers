@@ -16,13 +16,13 @@ app.get('/', async(c) => {
   }
 
   const props = {
-    name: 'KodaDot',
-    siteData: {
-      title: 'KodaDot - Go To Polkadot NFT marketplace',
-      description: 'Multi-chain NFT marketplace across Polkadot parachains',
-      canonical: 'https://kodadot.xyz',
-      image: 'https://kodadot.xyz/k_card.png',
-    }
+		name: 'KodaDot',
+		siteData: {
+			title: 'KodaDot - One Stop Shop for Polkadot NFTs',
+			description: 'One Stop NFT Shop on Polkadot',
+			canonical: 'https://kodadot.xyz',
+			image: 'https://kodadot.xyz/k_card.png'
+		}
   }
 
   return c.html(<Opengraph {...props} />);
