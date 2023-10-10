@@ -35,7 +35,7 @@ export const getItemListByIssuer = async (chain: Prefix, id: string) => {
 };
 
 export function ipfsToCdn(ipfs: string) {
-  return $purify(ipfs, ['infura_dedicated_1'])[0];
+  return $purify(ipfs, ['filebase_kodadot'])[0]
 }
 
 export function jpegName(name: string) {
