@@ -4,9 +4,9 @@
     "dev": "wrangler dev src/index.tsx"
   },
   "dependencies": {
-    "@kodadot1/minipfs": "0.3.1-rc.0",
+    "@kodadot1/minipfs": "0.4.1-rc.0",
     "@kodadot1/static": "^0.0.3",
-    "@kodadot1/uniquery": "^0.3.1-rc.0",
+    "@kodadot1/uniquery": "^0.5.0-rc.0",
     "@polkadot/util": "^12.3.2",
     "hono": "^3.1.2",
     "isbot": "^3.6.12"
