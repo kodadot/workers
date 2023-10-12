@@ -1,5 +1,5 @@
 name: Deploy to Cloudflare workers
-run-name: Deploy "${{ inputs.worker }}-${{ inputs.environment }}". Branch "${{ github.ref_name }}" by @${{ github.actor }}
+run-name: Deploy "${{ inputs.worker }}-${{ inputs.environment }}" by @${{ github.actor }}
 on:
   workflow_dispatch:
     inputs:
