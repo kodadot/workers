@@ -53,7 +53,7 @@ async fn resolve_key<D>(_: Request, ctx: RouteContext<D>) -> Result<Response> {
     let list = ctx.kv("list")?;
     return match list.get(key).text().await? {
         Some(value) => Response::from_json(&KeyValue { key: key.to_owned(), url: value }),
-        None => Response::from_json(&KeyValue { key: key.to_owned(), url: String::new() }),
+        None => Ok(Response::empty()?.with_status(204))
     };
 }
 
