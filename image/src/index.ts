@@ -140,11 +140,14 @@ app.all('/ipfs/*', async (c) => {
       object.writeHttpMetadata(headers);
       headers.set('etag', object.httpEtag);
 
+      const statusCode = c.req.raw.headers.get('range') !== null ? 206 : 200;
       response = new Response(object.body, {
         headers,
+        status: object.body ? statusCode : 304,
       });
 
       response.headers.append('cache-control', `s-maxage=${CACHE_DAY}`);
+      response.headers.append('content-range', `bytes 0-${object.size - 1}/${object.size}`);
 
       // TODO: TypeError: Can't modify immutable headers.
       // c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
