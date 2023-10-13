@@ -2,11 +2,7 @@ import { Context } from "hono"
 import { BEEHIIV_API_URL } from "./constants"
 import { HonoEnv } from ".."
 
-type SubscribeBody = {
-    email: string,
-}
-
-export const subscribe = ({ email }: SubscribeBody, c: Context<HonoEnv>) => {
+export const subscribe = (email: string, c: Context<HonoEnv>) => {
     const apiKey = c.env.BEEHIIV_API_KEY
     const publicationId = c.env.BEEHIIV_PUBLICATION_ID
 
