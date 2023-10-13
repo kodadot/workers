@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "wrangler dev --remote",
+    "start": "wrangler dev",
+    "start:remote": "wrangler dev --remote",
     "deploy": "wrangler publish"
   },
   "dependencies": {
