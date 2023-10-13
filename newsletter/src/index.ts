@@ -1,32 +1,47 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import { Env, Hono } from 'hono'
+import { Env as CloudflareEnv } from './utils/constants'
+import { subscribe } from './utils/beehiiv'
+import { cors } from 'hono/cors'
+import { allowedOrigin } from './utils/cors'
+import { validator } from 'hono/validator'
+import { z } from 'zod'
 
-export interface Env {
-	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
-	// MY_KV_NAMESPACE: KVNamespace;
-	//
-	// Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
-	// MY_DURABLE_OBJECT: DurableObjectNamespace;
-	//
-	// Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
-	// MY_BUCKET: R2Bucket;
-	//
-	// Example binding to a Service. Learn more at https://developers.cloudflare.com/workers/runtime-apis/service-bindings/
-	// MY_SERVICE: Fetcher;
-	//
-	// Example binding to a Queue. Learn more at https://developers.cloudflare.com/queues/javascript-apis/
-	// MY_QUEUE: Queue;
+export interface HonoEnv extends Env {
+	Bindings: CloudflareEnv
 }
 
-export default {
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return new Response('Hello World!');
-	},
-};
+const getResponse = (message: string) => ({ message })
+
+const app = new Hono<HonoEnv>()
+
+app.use('/subscribe', cors({ origin: allowedOrigin }))
+
+app.post('/subscribe',
+	validator('json', (value, c) => {
+		const schema = z.object({
+			email: z.string().email(),
+		})
+
+		const parsed = schema.safeParse(value)
+
+		if (!parsed.success) {
+			return c.json(getResponse('Invalid email'), 400)
+		}
+
+		return value
+	})
+	, async (c) => {
+		const { email } = c.req.valid('json')
+
+		const publicationId = c.env.BEEHIIV_PUBLICATION_ID
+
+		const response = await subscribe({ email, publicationId }, c)
+
+		if (response.status !== 201) {
+			return c.json(getResponse('Something went wrong'), 500)
+		}
+
+		return c.json({}, 201)
+	})
+
+export default app
