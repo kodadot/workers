@@ -148,7 +148,10 @@ app.all('/ipfs/*', async (c) => {
       });
 
       response.headers.append('cache-control', `s-maxage=${CACHE_DAY}`);
-      response.headers.append('content-range', `bytes 0-${object.size - 1}/${object.size}`);
+      response.headers.append(
+        'content-range',
+        `bytes 0-${object.size - 1}/${object.size}`,
+      );
 
       // TODO: TypeError: Can't modify immutable headers.
       // c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
@@ -202,6 +205,7 @@ app.all('/ipfs/*', async (c) => {
   }
 });
 
-app.get('/type/url', getTypeUrl);
+app.use('/type/url', cors({ origin: allowedOrigin }));
+app.on(['GET', 'HEAD'], '/type/url', getTypeUrl);
 
 export default app;
