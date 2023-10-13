@@ -2,19 +2,19 @@ import { Context } from "hono"
 import { BEEHIIV_API_URL } from "./constants"
 import { HonoEnv } from ".."
 
-type SubscribeParams = {
+type SubscribeBody = {
     email: string,
-    publicationId: string
 }
 
-export const subscribe = ({ email, publicationId }: SubscribeParams, c: Context<HonoEnv>) => {
-    const API_KEY = c.env.BEEHIIV_API_KEY
+export const subscribe = ({ email }: SubscribeBody, c: Context<HonoEnv>) => {
+    const apiKey = c.env.BEEHIIV_API_KEY
+    const publicationId = c.env.BEEHIIV_PUBLICATION_ID
 
     return fetch(BEEHIIV_API_URL + `/publications/${publicationId}/subscriptions`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${API_KEY}`
+            Authorization: `Bearer ${apiKey}`
         },
         body: JSON.stringify({
             email: email

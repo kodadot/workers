@@ -33,9 +33,7 @@ app.post('/subscribe',
 	, async (c) => {
 		const { email } = c.req.valid('json')
 
-		const publicationId = c.env.BEEHIIV_PUBLICATION_ID
-
-		const response = await subscribe({ email, publicationId }, c)
+		const response = await subscribe(email, c)
 
 		if (response.status !== 201) {
 			return c.json(getResponse('Something went wrong'), 500)
