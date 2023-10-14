@@ -1,45 +1,25 @@
-import { Env, Hono } from 'hono'
-import { Env as CloudflareEnv } from './utils/constants'
+import { Hono } from 'hono'
 import { subscribe } from './utils/beehiiv'
+import { HonoEnv } from './utils/types'
 import { cors } from 'hono/cors'
 import { allowedOrigin } from './utils/cors'
-import { validator } from 'hono/validator'
-import { z } from 'zod'
-
-export interface HonoEnv extends Env {
-	Bindings: CloudflareEnv
-}
-
-const getResponse = (message: string) => ({ message })
+import { subscribeValidator } from './utils/validators'
+import { getResponse } from './utils/response'
 
 const app = new Hono<HonoEnv>()
 
 app.use('/subscribe', cors({ origin: allowedOrigin }))
 
-app.post('/subscribe',
-	validator('json', (value, c) => {
-		const schema = z.object({
-			email: z.string().email(),
-		})
+app.post('/subscribe', subscribeValidator, async (c) => {
+	const { email } = c.req.valid('json')
 
-		const parsed = schema.safeParse(value)
+	const response = await subscribe(email, c)
 
-		if (!parsed.success) {
-			return c.json(getResponse('Invalid email'), 400)
-		}
+	if (response.status !== 201) {
+		return c.json(getResponse('Something went wrong'), response.status)
+	}
 
-		return value
-	})
-	, async (c) => {
-		const { email } = c.req.valid('json')
-
-		const response = await subscribe(email, c)
-
-		if (response.status !== 201) {
-			return c.json(getResponse('Something went wrong'), 500)
-		}
-
-		return c.json({}, 201)
-	})
+	return c.json(undefined, 204)
+})
 
 export default app
