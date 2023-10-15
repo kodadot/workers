@@ -1,0 +1,6 @@
+name = "newsletter"
+main = "src/index.ts"
+compatibility_date = "2023-10-10"
+
+[vars]
+BEEHIIV_PUBLICATION_ID="pub_6d5a3f59-9974-4054-9765-6b7ddd46db02"
