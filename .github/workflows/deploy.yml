@@ -23,7 +23,7 @@ jobs:
 
       - name: Publish (beta or production)
         if: github.event.inputs.environment == 'beta' || github.event.inputs.environment == 'production'
-        uses: cloudflare/wrangler-action@2.0.0
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           preCommands: ${{ github.event.inputs.commands }}
@@ -32,7 +32,7 @@ jobs:
 
       - name: Publish (default)
         if: github.event.inputs.environment != 'beta' && github.event.inputs.environment != 'production'
-        uses: cloudflare/wrangler-action@2.0.0
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           preCommands: ${{ github.event.inputs.commands }}
