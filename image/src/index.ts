@@ -79,7 +79,7 @@ app.all('/ipfs/*', async (c) => {
         });
 
         if (imageUrl && !isOriginal) {
-          return c.redirect(imageUrl, 302);
+          return c.redirect(imageUrl, 301);
         }
 
         // else, render r2 object
@@ -105,7 +105,7 @@ app.all('/ipfs/*', async (c) => {
       }
 
       // fallback to cf-ipfs
-      return c.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`, 302);
+      return c.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`, 301);
     }
 
     if (!response) {
@@ -118,7 +118,7 @@ app.all('/ipfs/*', async (c) => {
 
         // return early to cf-images
         if (currentImage.ok) {
-          return c.redirect(cfImage, 302);
+          return c.redirect(cfImage, 301);
         }
 
         // else, upload to cf-images
@@ -132,7 +132,7 @@ app.all('/ipfs/*', async (c) => {
         // redirect to cf-images
         if (imageUrl) {
           // how to cache redirect response?
-          return c.redirect(imageUrl, 302);
+          return c.redirect(imageUrl, 301);
         }
       }
 
@@ -148,10 +148,7 @@ app.all('/ipfs/*', async (c) => {
       });
 
       response.headers.append('cache-control', `s-maxage=${CACHE_DAY}`);
-      response.headers.append(
-        'content-range',
-        `bytes 0-${object.size - 1}/${object.size}`,
-      );
+      response.headers.append('content-range', `bytes 0-${object.size - 1}/${object.size}`);
 
       // TODO: TypeError: Can't modify immutable headers.
       // c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
@@ -179,7 +176,7 @@ app.all('/ipfs/*', async (c) => {
       }
 
       // fallback to cf-ipfs
-      return c.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`, 302);
+      return c.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`, 301);
     }
 
     const headers = new Headers();
