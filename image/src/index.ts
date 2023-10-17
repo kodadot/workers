@@ -1,10 +1,11 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
-import { Env, CACHE_TTL_BY_STATUS, CACHE_DAY } from './utils/constants';
-import { uploadToCloudflareImages } from './utils/cloudflare-images';
+import { Env, CACHE_DAY, CACHE_TTL_BY_STATUS } from './utils/constants';
+import { ipfsToCFI } from './utils/cloudflare-images';
 import { allowedOrigin } from './utils/cors';
 import { fetchIPFS } from './utils/ipfs';
+import { getTypeUrl } from './routes/type-url';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -44,6 +45,8 @@ app.all('/ipfs/*', async (c) => {
       }
     }
 
+    console.log('object', object);
+
     // if r2 object not exists, fetch from ipfs gateway
     if (object === null) {
       const status = await fetchIPFS({
@@ -68,12 +71,11 @@ app.all('/ipfs/*', async (c) => {
         });
 
         // put object to cf-images
-        const imageUrl = await uploadToCloudflareImages({
+        const imageUrl = await ipfsToCFI({
           path,
           token: c.env.IMAGE_API_TOKEN,
           gateway: c.env.DEDICATED_GATEWAY,
           imageAccount: c.env.CF_IMAGE_ACCOUNT,
-          imageId: c.env.CF_IMAGE_ID,
         });
 
         if (imageUrl && !isOriginal) {
@@ -120,12 +122,11 @@ app.all('/ipfs/*', async (c) => {
         }
 
         // else, upload to cf-images
-        const imageUrl = await uploadToCloudflareImages({
+        const imageUrl = await ipfsToCFI({
           path,
           token: c.env.IMAGE_API_TOKEN,
           gateway: c.env.DEDICATED_GATEWAY,
           imageAccount: c.env.CF_IMAGE_ACCOUNT,
-          imageId: c.env.CF_IMAGE_ID,
         });
 
         // redirect to cf-images
@@ -147,7 +148,10 @@ app.all('/ipfs/*', async (c) => {
       });
 
       response.headers.append('cache-control', `s-maxage=${CACHE_DAY}`);
-      response.headers.append('content-range', `bytes 0-${object.size - 1}/${object.size}`);
+      response.headers.append(
+        'content-range',
+        `bytes 0-${object.size - 1}/${object.size}`,
+      );
 
       // TODO: TypeError: Can't modify immutable headers.
       // c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
@@ -200,5 +204,8 @@ app.all('/ipfs/*', async (c) => {
     }
   }
 });
+
+app.use('/type/url', cors({ origin: allowedOrigin }));
+app.on(['GET', 'HEAD'], '/type/url', getTypeUrl);
 
 export default app;
