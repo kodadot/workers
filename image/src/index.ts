@@ -147,6 +147,7 @@ app.all('/ipfs/*', async (c) => {
         status: object.body ? statusCode : 304,
       });
 
+      response.headers.append('accept-ranges', 'bytes');
       response.headers.append('cache-control', `s-maxage=${CACHE_DAY}`);
       response.headers.append('content-range', `bytes 0-${object.size - 1}/${object.size}`);
 
