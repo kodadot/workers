@@ -186,10 +186,7 @@ app.all('/ipfs/*', async (c) => {
     headers.set('etag', object.httpEtag);
 
     return new Response(object.body, {
-      headers: {
-        ...headers,
-        'cache-control': 'no-cache, no-store',
-      },
+      headers,
     });
   }
 
