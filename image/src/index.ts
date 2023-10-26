@@ -156,13 +156,15 @@ app.all('/ipfs/*', async (c) => {
         status: object.body ? statusCode : 304,
       });
 
-      response.headers.append('accept-ranges', 'bytes');
-      response.headers.append('access-control-allow-headers', 'Content-Type');
-      response.headers.append('access-control-allow-headers', 'Range');
-      response.headers.append('access-control-expose-headers', 'Content-Length');
-      response.headers.append('access-control-expose-headers', 'Content-Range');
-      response.headers.append('cache-control', `s-maxage=${CACHE_DAY}`);
-      response.headers.append('content-range', `bytes 0-${object.size - 1}/${object.size}`);
+      if (!isApple) {
+        response.headers.append('accept-ranges', 'bytes');
+        response.headers.append('access-control-allow-headers', 'Content-Type');
+        response.headers.append('access-control-allow-headers', 'Range');
+        response.headers.append('access-control-expose-headers', 'Content-Length');
+        response.headers.append('access-control-expose-headers', 'Content-Range');
+        response.headers.append('cache-control', `s-maxage=${CACHE_DAY}`);
+        response.headers.append('content-range', `bytes 0-${object.size - 1}/${object.size}`);
+      }
 
       // TODO: TypeError: Can't modify immutable headers.
       // c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
