@@ -141,7 +141,16 @@ app.all('/ipfs/*', async (c) => {
       object.writeHttpMetadata(headers);
       headers.set('etag', object.httpEtag);
 
-      const statusCode = c.req.raw.headers.get('range') !== null ? 206 : 200;
+      const userAgent = c.req.raw.headers.get('user-agent') || '';
+      const isIos = userAgent.includes('iPhone') || userAgent.includes('iPad');
+      const isSafari = userAgent.includes('Safari') && !userAgent.includes('Chrome');
+      const isApple = isIos || isSafari;
+      let statusCode = c.req.raw.headers.get('range') !== null ? 206 : 200;
+
+      if (isApple && statusCode === 206) {
+        statusCode = 200;
+      }
+
       response = new Response(object.body, {
         headers,
         status: object.body ? statusCode : 304,
