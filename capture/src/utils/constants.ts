@@ -1,6 +1,6 @@
 export type Env = {
-	MYBROWSER: Fetcher;
-	BROWSER_KV_DEMO: KVNamespace;
+	BW: Fetcher;
+	// BROWSER_KV_DEMO: KVNamespace;
 
 };
 
