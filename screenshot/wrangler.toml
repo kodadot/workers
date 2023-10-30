@@ -1,0 +1,9 @@
+name = "screenshot"
+main = "src/index.ts"
+compatibility_date = "2023-10-25"
+compatibility_flags = [ "nodejs_compat" ]
+
+browser = { binding = "MYBROWSER" }
+kv_namespaces = [
+  { binding = "BROWSER_KV_DEMO", id = "f4a99377d30a45f395718628a00c0cf9", preview_id = "24fef87419a14b339c6440310a0cc1a2" }
+]
