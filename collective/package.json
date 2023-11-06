@@ -15,8 +15,6 @@
   "dependencies": {
     "@kodadot1/static": "^0.0.3",
     "@kodadot1/sub-api": "^0.2.0-rc.0",
-    "@polkadot/api": "^10.10.1",
-    "@polkadot/util-crypto": "^12.5.1",
     "@polkadot/wasm-crypto": "^7.2.2",
     "hono": "^3.9.2"
   }
