@@ -6,6 +6,7 @@ import { validateRequest } from '../middleware/validateRequest';
 import { api } from '../utils/api';
 import { generateId, nextSn } from '../utils/utils';
 import { insertCollectiveItem } from '../utils/queries';
+import { D1Database } from '@cloudflare/workers-types';
 
 
 

@@ -1,3 +1,4 @@
+import { D1Database } from "@cloudflare/workers-types";
 import { sqlGetMaxSn } from "./queries";
 
 export const generateId = (chain: string, collection: string, sn: number): string => {
