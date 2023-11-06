@@ -1,19 +1,19 @@
 import { Env } from './utils/constants';
 import { Hono } from 'hono';
 import type { Prefix } from '@kodadot1/static';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { validateRequest } from '../middleware/validateRequest';
 import { api } from '../utils/api';
 import { generateId, nextSn } from '../utils/utils';
 import { insertCollectiveItem } from '../utils/queries';
 import { D1Database } from '@cloudflare/workers-types';
+import { initWasm } from '@polkadot/wasm-crypto/initOnlyAsm';
+await initWasm();
 
 
 
 
 const app = new Hono<{ Bindings: Env }>();
 
-await cryptoWaitReady();
 
 app.use('/collectives', validateRequest);
 
