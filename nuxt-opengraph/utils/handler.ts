@@ -1,5 +1,5 @@
-import type {Prefix} from '@kodadot1/static'
-import {getClient, extendFields} from '@kodadot1/uniquery'
+import type { Prefix } from '@kodadot1/static';
+import { getClient, extendFields } from '@kodadot1/uniquery';
 
 export const getCollectionById = async (prefix: Prefix, id: string) => {
   const client = getClient(prefix);
