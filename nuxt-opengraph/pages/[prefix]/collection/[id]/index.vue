@@ -1,9 +1,11 @@
 <template>
   <div>
     <h1>{{ collection.name }}</h1>
-    <p>collection page</p>
-    <div>{{ collection }}</div>
     <img :src="ipfsUrl(collection.meta.image)" :alt="collection.name" />
+
+    <hr />
+    <p>debug:</p>
+    <div>{{ collection }}</div>
   </div>
 </template>
 

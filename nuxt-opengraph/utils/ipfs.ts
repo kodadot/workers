@@ -1,3 +1,5 @@
+import { $purify } from "@kodadot1/minipfs";
+
 export function ipfsUrl(ipfs: string) {
-  return ipfs.replace('ipfs://', 'https://image-beta.w.kodadot.xyz/');
+  return $purify(ipfs, ['kodadot'])[0];
 }
