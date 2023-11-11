@@ -18,8 +18,6 @@ const id = route.params.id.toString()
 const {data: {collection}} = await getCollectionById(prefix, id)
 const {data: {items}} = await getItemListByCollectionId(prefix, id)
 
-console.log(collection, items.length)
-
 useSeoMeta({
   title: collection.name,
   description: collection.meta.description,
@@ -27,6 +25,9 @@ useSeoMeta({
   ogDescription: collection.meta.description,
   ogType: 'website',
   twitterCard: 'summary_large_image',
+  twitterTitle: collection.name,
+  twitterImage: `https://nuxt-opengraph.kodadot.workers.dev${route.path}/__og_image__/og.png`,
+  twitterImageAlt: collection.name,
 })
 
 defineOgImage({
