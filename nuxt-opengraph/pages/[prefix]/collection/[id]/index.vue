@@ -26,6 +26,7 @@ useSeoMeta({
   ogTitle: collection.name,
   ogDescription: collection.meta.description,
   ogType: 'website',
+  twitterCard: 'summary_large_image',
 })
 
 defineOgImage({
