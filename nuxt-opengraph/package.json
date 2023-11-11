@@ -8,7 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "deploy": "NITRO_PRESET=cloudflare npm run build && wrangler deploy"
+    "deploy": "NITRO_PRESET=cloudflare npm run build && wrangler deploy --minify"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
