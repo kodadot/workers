@@ -9,7 +9,7 @@ const app = new Hono();
 const chains = ['bsx', 'snek', 'rmrk', 'ksm', 'ahp', 'ahk'];
 
 app.get('/', async(c) => {
-  const useragent = c.req.headers.get('user-agent');
+  const useragent = c.req.header('User-Agent')
 
   if (useragent && !isbot(useragent)) {
     return fetch(c.req.url);
@@ -29,7 +29,7 @@ app.get('/', async(c) => {
 })
 
 app.get('/:chain/:type/:id/*', async (c) => {
-  const useragent = c.req.headers.get('user-agent');
+  const useragent = c.req.header('User-Agent')
 
   if (useragent && !isbot(useragent)) {
     return fetch(c.req.url);
@@ -40,6 +40,19 @@ app.get('/:chain/:type/:id/*', async (c) => {
   const type = c.req.param('type');
 
   if (chains.includes(chain)) {
+    if (type === 'collection' && chain === 'ahk') {
+      const url = new URL (c.req.url);
+      const { pathname, search } = url;
+      const opengraph = `https://nuxt-opengraph.kodadot.workers.dev/${pathname}${search}`
+
+      const headers = new Headers(c.req.raw.headers);
+      const request = new Request(opengraph, {
+        headers
+      })
+
+      return await fetch(request)
+    }
+
     if (type === 'gallery' || type === 'detail') {
       const props = await galleryDetail(chain, id);
       return c.html(<Opengraph {...props} />);
