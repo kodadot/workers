@@ -25,23 +25,23 @@ const cover: ComputedRef<CSSProperties> = computed(() => {
 <template>
   <img :src="image" :alt="title" :style="cover" class="h-full w-full">
 
-  <div class="flex flex-col justify-end h-full w-full bg-slate-900/85 text-white p-10 text-2xl absolute inset-0">
+  <div class="flex flex-col justify-end h-full w-full bg-slate-900/85 text-white p-10 text-2xl font-bold absolute inset-0">
     <img :src="image" :alt="title" class="w-30">
-    <h1 class="mb-6">{{title}}</h1>
+    <h1 class="mb-6 font-bold">{{title}}</h1>
     <div class="flex flex-row">
       <div>
-        <p>{{items}}</p>
-        <p class="text-gray-400 mt-0">items</p>
+        <h2 class="font-bold m-0">{{items}}</h2>
+        <h2 class="text-gray-400 m-0">items</h2>
       </div>
 
-      <div class="ml-10">
-        <p>{{owners}}</p>
-        <p class="text-gray-400 mt-0">owners</p>
+      <div class="ml-16">
+        <h2 class="font-bold m-0">{{owners}}</h2>
+        <h2 class="text-gray-400 m-0">owners</h2>
       </div>
 
-      <div class="ml-10">
-        <p>{{network}}</p>
-        <p class="text-gray-400 mt-0">network</p>
+      <div class="ml-16">
+        <h2 class="font-bold m-0">{{network}}</h2>
+        <h2 class="text-gray-400 m-0">network</h2>
       </div>
     </div>
   </div>
