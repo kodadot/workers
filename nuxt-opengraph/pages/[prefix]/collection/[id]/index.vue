@@ -19,14 +19,13 @@ const {data: {collection}} = await getCollectionById(prefix, id)
 const {data: {items}} = await getItemListByCollectionId(prefix, id)
 
 useSeoMeta({
-  title: collection.name,
+  title: seoTitle(collection.name),
   description: collection.meta.description,
-  ogTitle: collection.name,
+  ogTitle: seoTitle(collection.name),
   ogDescription: collection.meta.description,
   ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: collection.name,
-  twitterImage: `https://nuxt-opengraph.kodadot.workers.dev${route.path}/__og_image__/og.png`,
+  twitterTitle: seoTitle(collection.name),
   twitterImageAlt: collection.name,
 })
 
