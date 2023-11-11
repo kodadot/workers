@@ -10,7 +10,7 @@ defineProps<{
   title: string
   image: string
   items: string
-  owners: string
+  // owners: string
   network: string
 }>()
 
@@ -34,10 +34,10 @@ const cover: ComputedRef<CSSProperties> = computed(() => {
         <h2 class="text-gray-400 m-0">items</h2>
       </div>
 
-      <div class="ml-16">
+      <!-- <div class="ml-16">
         <h2 class="font-bold m-0">{{owners}}</h2>
         <h2 class="text-gray-400 m-0">owners</h2>
-      </div>
+      </div> -->
 
       <div class="ml-16">
         <h2 class="font-bold m-0">{{network}}</h2>
