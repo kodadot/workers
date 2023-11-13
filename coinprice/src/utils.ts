@@ -1,10 +1,11 @@
 export function cacheKey() {
   const date = new Date();
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth() + 1;
+  const day = date.getUTCDate();
+  const hours = date.getUTCHours();
 
-  return `${year}-${month}-${day}`;
+  return `${year}-${month}-${day}-${hours}`;
 }
 
 // return same format as coingecko https://api.coingecko.com/api/v3/simple/price?ids=kusama&vs_currencies=usd
@@ -34,7 +35,10 @@ export async function getPrice(
       (p) => p.id === chain,
     );
     const price = findToken?.current_price;
-    return price ? price.toString() : '0';
+
+    if (price) {
+      return price.toString();
+    }
   }
 
   // fetch kraken API
@@ -47,7 +51,10 @@ export async function getPrice(
       result: { [key: string]: { a: [string] } };
     };
     const price = data.result[pair].a[0];
-    return price ? price.toString() : '0';
+
+    if (price) {
+      return price;
+    }
   }
 
   return '0';
