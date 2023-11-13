@@ -7,8 +7,8 @@ defineOptions({
 });
 
 defineProps<{
-  text: string;
-  image: string;
+  text?: string;
+  image?: string;
 }>();
 
 const cover: ComputedRef<CSSProperties> = computed(() => {
