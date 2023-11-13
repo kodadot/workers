@@ -32,7 +32,7 @@ app.on(['GET', 'OPTIONS'], '/price/:chain', async (c) => {
       return c.json(formatPrice(chain, usd));
     } catch (error) {
       console.log(error);
-      return c.json({ error });
+      return c.json({ error }, 500);
     }
   }
 
