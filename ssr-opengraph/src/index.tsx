@@ -43,7 +43,7 @@ app.get('/:chain/:type/:id/*', async (c) => {
     if (type === 'collection') {
       const url = new URL (c.req.url);
       const { pathname, search } = url;
-      const opengraph = `https://nuxt-opengraph.kodadot.workers.dev/${pathname}${search}`
+      const opengraph = `https://ogi.kodadot.workers.dev/${pathname}${search}`
 
       const headers = new Headers(c.req.raw.headers);
       const request = new Request(opengraph, {
