@@ -2,7 +2,7 @@
 
 1. Go to https://github.com/kodadot/workers/actions/workflows/deploy.yml
 2. Click "Run workflow"
-3. Name of the worker: `nuxt-opengraph`
+3. Name of the worker: `ogi`
 4. Precommands: `npm install && npm run build`
 
 # Nuxt 3 Minimal Starter
