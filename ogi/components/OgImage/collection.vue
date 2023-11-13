@@ -28,22 +28,26 @@ const cover: ComputedRef<CSSProperties> = computed(() => {
   <div
     class="flex flex-col justify-end h-full w-full bg-slate-900/85 text-white p-10 text-2xl font-bold absolute inset-0"
   >
-    <img :src="image" :alt="title" class="w-30" />
+    <img
+      :src="image"
+      :alt="title"
+      class="w-30 rounded-md border border-white"
+    />
     <h1 class="mb-6 font-bold">{{ title }}</h1>
     <div class="flex flex-row">
       <div>
-        <h2 class="font-bold m-0">{{ items }}</h2>
-        <h2 class="text-gray-400 m-0">items</h2>
+        <div class="text-2xl font-bold m-0">{{ items }}</div>
+        <div class="text-gray-400 m-0">items</div>
       </div>
 
       <!-- <div class="ml-16">
-        <h2 class="font-bold m-0">{{owners}}</h2>
-        <h2 class="text-gray-400 m-0">owners</h2>
+        <div class="text-2xl font-bold m-0">{{owners}}</div>
+        <div class="text-gray-400 m-0">owners</div>
       </div> -->
 
       <div class="ml-16">
-        <h2 class="font-bold m-0">{{ network }}</h2>
-        <h2 class="text-gray-400 m-0">network</h2>
+        <div class="text-2xl font-bold m-0">{{ network }}</div>
+        <div class="text-gray-400 m-0">network</div>
       </div>
     </div>
   </div>
@@ -54,9 +58,3 @@ const cover: ComputedRef<CSSProperties> = computed(() => {
     class="absolute top-10 right-10 w-40"
   />
 </template>
-
-<style scoped>
-h1 {
-  font-size: 70px;
-}
-</style>
