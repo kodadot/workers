@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import isbot from 'isbot';
 
 import { Opengraph } from './template';
-import { collectionDetail, galleryDetail, userDetail } from './handlers';
+import { galleryDetail, userDetail } from './handlers';
 
 const app = new Hono();
 
@@ -40,7 +40,7 @@ app.get('/:chain/:type/:id/*', async (c) => {
   const type = c.req.param('type');
 
   if (chains.includes(chain)) {
-    if (type === 'collection' && chain === 'ahk') {
+    if (type === 'collection') {
       const url = new URL (c.req.url);
       const { pathname, search } = url;
       const opengraph = `https://nuxt-opengraph.kodadot.workers.dev/${pathname}${search}`
@@ -58,11 +58,6 @@ app.get('/:chain/:type/:id/*', async (c) => {
       return c.html(<Opengraph {...props} />);
     }
 
-    if (type === 'collection') {
-      const props = await collectionDetail(chain, id);
-      return c.html(<Opengraph {...props} />);
-    }
-
     if (type === 'u') {
       const props = await userDetail(chain, id);
       return c.html(<Opengraph {...props} />);
@@ -72,7 +67,7 @@ app.get('/:chain/:type/:id/*', async (c) => {
   return fetch(c.req.url);
 });
 
-app.head('/:chain/:type/:id/*', async (c) => {
+app.on(['HEAD'], '/:chain/:type/:id/*', async (c) => {
   return fetch(c.req.url);
 });
 
