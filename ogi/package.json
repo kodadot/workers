@@ -1,0 +1,27 @@
+{
+  "name": "ogi",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "NITRO_PRESET=cloudflare nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "deploy": "NITRO_PRESET=cloudflare npm run build && wrangler deploy --minify"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "nuxt": "^3.8.1",
+    "nuxt-og-image": "^2.2.4",
+    "prettier": "^3.0.3",
+    "vue": "^3.3.8",
+    "vue-router": "^4.2.5",
+    "wrangler": "^3.15.0"
+  },
+  "dependencies": {
+    "@kodadot1/minipfs": "^0.4.2-rc.0",
+    "@kodadot1/static": "^0.0.3",
+    "@kodadot1/uniquery": "^0.5.1-rc.0"
+  }
+}
