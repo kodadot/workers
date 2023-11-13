@@ -3,6 +3,6 @@ compatibility_date = "2023-01-01"
 account_id = "307ebd51f6c21a90c3873587c11a2913"
 
 [[kv_namespaces]]
-binding = "coingecko"
-id = "36ea2c254c534008b255c55430d87b39"
-preview_id = "36ea2c254c534008b255c55430d87b39"
+binding = "TOKENPRICE"
+id = "571aaa4380994d05b5627769c280935e"
+preview_id = "571aaa4380994d05b5627769c280935e"

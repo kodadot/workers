@@ -15,3 +15,12 @@ export async function getPrices(): Promise<
 > {
   return await fetch('https://sub.id/api/v1/prices').then((res) => res.json());
 }
+
+// return same format as coingecko https://api.coingecko.com/api/v3/simple/price?ids=kusama&vs_currencies=usd
+export const formatPrice = (chain: string, price: string) => {
+  return {
+    [chain]: {
+      usd: parseFloat(price),
+    },
+  };
+};
