@@ -1,18 +1,8 @@
 name = "coinprice"
 compatibility_date = "2023-01-01"
+account_id = "307ebd51f6c21a90c3873587c11a2913"
 
-# [vars]
-# MY_VARIABLE = "production_value"
-
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
-# [[r2_buckets]]
-# binding = "MY_BUCKET"
-# bucket_name = "my-bucket"
-
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "my-database"
-# database_id = ""
+[[kv_namespaces]]
+binding = "coingecko"
+id = "36ea2c254c534008b255c55430d87b39"
+preview_id = "36ea2c254c534008b255c55430d87b39"
