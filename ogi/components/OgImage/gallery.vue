@@ -11,18 +11,21 @@ const props = defineProps<{
   image: string;
   usd: string;
   price: string;
+  symbol: string;
   network: string;
 }>();
 
-const cover: ComputedRef<CSSProperties> = computed(() => {
-  return {
-    objectFit: 'cover',
-    objectPosition: 'center',
-  };
-});
+const cover: CSSProperties = {
+  objectFit: 'cover',
+  objectPosition: 'center',
+};
 
 const parseUsd = computed(() =>
   parseFloat(props.usd) ? `$${props.usd}` : '--',
+);
+
+const parsePrice = computed(() =>
+  parseFloat(props.price) ? `${props.price} ${props.symbol}` : '--',
 );
 </script>
 
@@ -45,7 +48,7 @@ const parseUsd = computed(() =>
       </div>
 
       <div class="ml-20">
-        <div class="text-2xl font-bold m-0">{{ price }}</div>
+        <div class="text-2xl font-bold m-0">{{ parsePrice }}</div>
         <div class="text-gray-400 m-0">price</div>
       </div>
 
