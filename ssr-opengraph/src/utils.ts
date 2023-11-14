@@ -101,3 +101,16 @@ export async function getProperties(nft: NFT) {
     cdn,
   };
 }
+
+export const ogiRequest =async (reqUrl: string, rawHeaders: Headers) => {
+  const url = new URL (reqUrl);
+  const { pathname, search } = url;
+  const opengraph = `https://ogi.kodadot.workers.dev/${pathname}${search}`
+
+  const headers = new Headers(rawHeaders);
+  const request = new Request(opengraph, {
+    headers
+  })
+
+  return await fetch(request)
+}
