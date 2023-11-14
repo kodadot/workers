@@ -2,7 +2,8 @@ import { Hono } from 'hono';
 import isbot from 'isbot';
 
 import { Opengraph } from './template';
-import { galleryDetail, userDetail } from './handlers';
+import { userDetail } from './handlers';
+import { ogiRequest } from './utils';
 
 const app = new Hono();
 
@@ -41,21 +42,11 @@ app.get('/:chain/:type/:id/*', async (c) => {
 
   if (chains.includes(chain)) {
     if (type === 'collection') {
-      const url = new URL (c.req.url);
-      const { pathname, search } = url;
-      const opengraph = `https://ogi.kodadot.workers.dev/${pathname}${search}`
-
-      const headers = new Headers(c.req.raw.headers);
-      const request = new Request(opengraph, {
-        headers
-      })
-
-      return await fetch(request)
+      return await ogiRequest(c.req.url, c.req.raw.headers)
     }
 
     if (type === 'gallery' || type === 'detail') {
-      const props = await galleryDetail(chain, id);
-      return c.html(<Opengraph {...props} />);
+      return await ogiRequest(c.req.url, c.req.raw.headers)
     }
 
     if (type === 'u') {
