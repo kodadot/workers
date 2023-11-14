@@ -6,6 +6,7 @@ query nftById_bsx($id: String!) {
     meta {
       id
       image
+      description
     }
   }
 }

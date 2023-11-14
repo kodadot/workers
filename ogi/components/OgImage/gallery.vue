@@ -9,6 +9,7 @@ defineOptions({
 defineProps<{
   title: string;
   image: string;
+  usd: string;
   price: string;
   network: string;
 }>();
@@ -25,7 +26,7 @@ const cover: ComputedRef<CSSProperties> = computed(() => {
   <img :src="image" :alt="title" :style="cover" class="h-full w-full" />
 
   <div
-    class="flex flex-col justify-end h-full w-full bg-slate-900/85 text-white p-10 pb-20 text-2xl font-bold absolute inset-0"
+    class="flex flex-col justify-end h-full w-full bg-slate-900/85 text-white p-20 text-2xl font-bold absolute inset-0"
   >
     <img
       :src="image"
@@ -35,11 +36,16 @@ const cover: ComputedRef<CSSProperties> = computed(() => {
     <h1 class="mb-6 font-bold">{{ title }}</h1>
     <div class="flex flex-row">
       <div>
+        <div class="text-2xl font-bold m-0">{{ usd }}</div>
+        <div class="text-gray-400 m-0">price (usd)</div>
+      </div>
+
+      <div class="ml-20">
         <div class="text-2xl font-bold m-0">{{ price }}</div>
         <div class="text-gray-400 m-0">price</div>
       </div>
 
-      <div class="ml-16">
+      <div class="ml-20">
         <div class="text-2xl font-bold m-0">{{ network }}</div>
         <div class="text-gray-400 m-0">network</div>
       </div>
@@ -49,6 +55,6 @@ const cover: ComputedRef<CSSProperties> = computed(() => {
   <img
     src="https://raw.githubusercontent.com/kodadot/kodadot-presskit/main/pre-v4/png/KodalightV4.png"
     alt="logo"
-    class="absolute top-10 right-10 w-40"
+    class="absolute top-20 right-20 w-40"
   />
 </template>
