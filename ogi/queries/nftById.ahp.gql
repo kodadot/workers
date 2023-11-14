@@ -1,0 +1,11 @@
+query nftById_ahp($id: String!) {
+  nftEntityById(id: $id) {
+    id
+    name
+    price
+    meta {
+      id
+      image
+    }
+  }
+}
