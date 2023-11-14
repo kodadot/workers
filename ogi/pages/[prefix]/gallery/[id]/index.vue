@@ -12,7 +12,6 @@
 <script lang="ts" setup>
 import { formatBalance } from '@polkadot/util';
 import { NAMES, type Prefix, CHAINS } from '@kodadot1/static';
-import { parse } from 'vue/compiler-sfc';
 
 const route = useRoute();
 const { prefix, id } = route.params;
