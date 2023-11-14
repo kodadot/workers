@@ -19,3 +19,8 @@ export interface BaseItemMeta {
 export interface Collection extends BaseItem {
   meta: BaseItemMeta;
 }
+
+export interface NFT extends BaseItem {
+  meta: BaseItemMeta;
+  price: string;
+}
