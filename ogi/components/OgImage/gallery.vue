@@ -42,7 +42,7 @@ const parsePrice = computed(() =>
     />
     <h1 class="mb-6 font-bold">{{ title }}</h1>
     <div class="flex flex-row">
-      <div v-if="usd">
+      <div>
         <div class="text-2xl font-bold m-0">{{ parseUsd }}</div>
         <div class="text-gray-400 m-0">price (usd)</div>
       </div>
