@@ -26,7 +26,7 @@ const cover: ComputedRef<CSSProperties> = computed(() => {
   <img :src="image" :alt="title" :style="cover" class="h-full w-full" />
 
   <div
-    class="flex flex-col justify-end h-full w-full bg-slate-900/85 text-white p-10 text-2xl font-bold absolute inset-0"
+    class="flex flex-col justify-end h-full w-full bg-slate-900/85 text-white p-10 pb-20 text-2xl font-bold absolute inset-0"
   >
     <img
       :src="image"
