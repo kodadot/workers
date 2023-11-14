@@ -6,7 +6,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-defineProps<{
+const props = defineProps<{
   title: string;
   image: string;
   usd: string;
@@ -20,6 +20,10 @@ const cover: ComputedRef<CSSProperties> = computed(() => {
     objectPosition: 'center',
   };
 });
+
+const parseUsd = computed(() =>
+  parseFloat(props.usd) ? `$${props.usd}` : '--',
+);
 </script>
 
 <template>
@@ -36,7 +40,7 @@ const cover: ComputedRef<CSSProperties> = computed(() => {
     <h1 class="mb-6 font-bold">{{ title }}</h1>
     <div class="flex flex-row">
       <div>
-        <div class="text-2xl font-bold m-0">{{ usd }}</div>
+        <div class="text-2xl font-bold m-0">{{ parseUsd }}</div>
         <div class="text-gray-400 m-0">price (usd)</div>
       </div>
 

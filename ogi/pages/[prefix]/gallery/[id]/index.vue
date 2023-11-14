@@ -12,6 +12,7 @@
 <script lang="ts" setup>
 import { formatBalance } from '@polkadot/util';
 import { NAMES, type Prefix, CHAINS } from '@kodadot1/static';
+import { parse } from 'vue/compiler-sfc';
 
 const route = useRoute();
 const { prefix, id } = route.params;
@@ -33,6 +34,9 @@ const price = formatBalance(data?.nftEntityById?.price, {
   withSi: false,
   forceUnit: symbol,
 });
+const parsePrice = computed(() =>
+  parseFloat(price) ? `${price} ${symbol}` : '--',
+);
 const usd = await usdPrice(chain, price);
 
 defineOgImage({
@@ -40,7 +44,7 @@ defineOgImage({
   title: name,
   image: ipfsUrl(image || 'https://kodadot.xyz/k_card.png'),
   usd,
-  price: price + ' ' + symbol,
+  price: parsePrice.value,
   network,
 });
 

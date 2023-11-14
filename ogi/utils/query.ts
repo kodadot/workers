@@ -18,7 +18,7 @@ export const usdPrice = async (prefix: Prefix, amount: string) => {
   const usd = await getUsd.json();
   const price = parseFloat(amount) * usd[id].usd;
 
-  return `$${price.toFixed(2)}`;
+  return price.toFixed(2);
 };
 
 export const getNft = async (prefix: Prefix, id: string) => {
