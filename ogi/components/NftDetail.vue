@@ -37,13 +37,13 @@ const price = formatBalance(item.price, {
   withSi: false,
   forceUnit: symbol,
 });
-const usd = await usdPrice(chain, price);
+// const usd = await usdPrice(chain, price);
 
 defineOgImage({
   component: 'gallery',
   title: name,
   image: ipfsUrl(image || 'https://kodadot.xyz/k_card.png'),
-  usd,
+  // usd,
   price,
   symbol,
   network,
