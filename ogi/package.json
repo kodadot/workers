@@ -23,6 +23,10 @@
     "@kodadot1/minipfs": "^0.4.2-rc.0",
     "@kodadot1/static": "^0.0.3",
     "@kodadot1/uniquery": "^0.5.1-rc.0",
-    "@polkadot/util": "^12.5.1"
+    "@polkadot/util": "^12.5.1",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.4",
+    "vfile-matter": "^5.0.0"
   }
 }

@@ -57,3 +57,25 @@ export const getNftById = async (prefix: Prefix, id: string) => {
     };
   }>;
 };
+
+export const getMarkdown = async (slug: string) => {
+  const res = await fetch(
+    `https://raw.githubusercontent.com/kodadot/nft-gallery/main/content/blog/${slug}.md`,
+  );
+  const text = await res.text();
+
+  return text;
+};
+
+const encodeEndpoint = (endpoint: string) => {
+  return endpoint.replace(/[:,._/]/g, '-');
+};
+
+export const parseImage = async (imagePath: string) => {
+  const rawImage = `https://raw.githubusercontent.com/kodadot/nft-gallery/main/public${imagePath}`;
+  const encodeImage = encodeEndpoint(rawImage);
+
+  await fetch(`https://image-beta.w.kodadot.xyz/type/url?endpoint=${rawImage}`);
+
+  return `https://imagedelivery.net/jk5b6spi_m_-9qC4VTnjpg/${encodeImage}/small`;
+};
