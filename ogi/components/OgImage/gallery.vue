@@ -21,11 +21,11 @@ const cover: CSSProperties = {
 };
 
 const parseUsd = computed(() =>
-  parseFloat(props.usd) ? `$${props.usd}` : '--',
+  parseFloat(props.usd) ? `$${parseFloat(props.usd)}` : '--',
 );
 
 const parsePrice = computed(() =>
-  parseFloat(props.price) ? `${props.price} ${props.symbol}` : '--',
+  parseFloat(props.price) ? `${parseFloat(props.price)} ${props.symbol}` : '--',
 );
 </script>
 

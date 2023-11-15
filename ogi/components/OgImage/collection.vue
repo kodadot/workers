@@ -14,12 +14,10 @@ defineProps<{
   network: string;
 }>();
 
-const cover: ComputedRef<CSSProperties> = computed(() => {
-  return {
-    objectFit: 'cover',
-    objectPosition: 'center',
-  };
-});
+const cover: CSSProperties = {
+  objectFit: 'cover',
+  objectPosition: 'center',
+};
 </script>
 
 <template>
