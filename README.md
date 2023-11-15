@@ -66,7 +66,7 @@ To use `kysely-codegen` to generate the typescript types, you need to add the fo
 ⚠️ to use `kysely-codegen`, you need to have a `.env` file.
 
 ```bash
-DATABASE_URL=/absolute/path/to/database.sqlite
+DATABASE_URL=/absolute/path/to/the/working/directory/workers/<worker-name>/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/<uuid>.sqlite
 ```
 
 Create a database file with schema called `schema.sql`.
