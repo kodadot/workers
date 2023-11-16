@@ -3,7 +3,8 @@
 1. Go to https://github.com/kodadot/workers/actions/workflows/deploy.yml
 2. Click "Run workflow"
 3. Name of the worker: `ogi`
-4. Precommands: `npm run deploy`
+4. Environment: leave it blank
+5. Precommands: `npm run deploy`
 
 # Nuxt 3 Minimal Starter
 
