@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import type { CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue'
 
 // inherited attrs can mess up the satori parser
 defineOptions({
   inheritAttrs: false,
-});
+})
 
 defineProps<{
-  text?: string;
-  image?: string;
-}>();
+  text?: string
+  image?: string
+}>()
 
 const cover: ComputedRef<CSSProperties> = computed(() => {
   return {
     objectFit: 'cover',
     objectPosition: 'center',
-  };
-});
+  }
+})
 </script>
 
 <template>

@@ -9,28 +9,28 @@ const app = new Hono();
 
 const chains = ['bsx', 'snek', 'rmrk', 'ksm', 'ahp', 'ahk'];
 
-app.get('/', async(c) => {
-  const useragent = c.req.header('User-Agent')
+app.get('/', async (c) => {
+  const useragent = c.req.header('User-Agent');
 
   if (useragent && !isbot(useragent)) {
     return fetch(c.req.url);
   }
 
   const props = {
-		name: 'KodaDot',
-		siteData: {
-			title: 'KodaDot - One Stop Shop for Polkadot NFTs',
-			description: 'One Stop NFT Shop on Polkadot',
-			canonical: 'https://kodadot.xyz',
-			image: 'https://kodadot.xyz/k_card.png'
-		}
-  }
+    name: 'KodaDot',
+    siteData: {
+      title: 'KodaDot - One Stop Shop for Polkadot NFTs',
+      description: 'One Stop NFT Shop on Polkadot',
+      canonical: 'https://kodadot.xyz',
+      image: 'https://kodadot.xyz/k_card.png',
+    },
+  };
 
   return c.html(<Opengraph {...props} />);
-})
+});
 
 app.on(['GET', 'HEAD'], '/:chain/:type/:id/*', async (c) => {
-  const useragent = c.req.header('User-Agent')
+  const useragent = c.req.header('User-Agent');
 
   if (useragent && !isbot(useragent)) {
     return fetch(c.req.url);
@@ -42,13 +42,28 @@ app.on(['GET', 'HEAD'], '/:chain/:type/:id/*', async (c) => {
 
   if (chains.includes(chain)) {
     if (type === 'gallery' || type === 'detail' || type === 'collection') {
-      return await ogiRequest(c.req.url, c.req.raw.headers)
+      return await ogiRequest(c.req.url, c.req.raw.headers);
     }
 
     if (type === 'u') {
       const props = await userDetail(chain, id);
       return c.html(<Opengraph {...props} />);
     }
+  }
+
+  return fetch(c.req.url);
+});
+
+app.on(['GET', 'HEAD'], '/blog/:slug', async (c) => {
+  const useragent = c.req.header('User-Agent');
+  const { slug } = c.req.param();
+
+  if (useragent && !isbot(useragent)) {
+    return fetch(c.req.url);
+  }
+
+  if (slug) {
+    return await ogiRequest(c.req.url, c.req.raw.headers);
   }
 
   return fetch(c.req.url);

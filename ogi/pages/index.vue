@@ -5,13 +5,13 @@
 </template>
 
 <script lang="ts" setup>
-const route = useRoute();
+const route = useRoute()
 
-const { image, text } = route.query;
+const { image, text } = route.query
 
 defineOgImage({
   component: 'base',
   text: text,
   image: image,
-});
+})
 </script>
