@@ -3,6 +3,7 @@ compatibility_date = "2023-06-22"
 main = "src/index.tsx"
 routes = [
   "*.kodadot.xyz/",
+  "*.kodadot.xyz/blog/*",
   "*.kodadot.xyz/rmrk/gallery/*",
   "*.kodadot.xyz/rmrk/detail/*",
   "*.kodadot.xyz/rmrk/collection/*",
@@ -36,6 +37,7 @@ name = "ssr-opengraph-beta"
 name = "ssr-opengraph"
 routes = [
   "kodadot.xyz/",
+  "kodadot.xyz/blog/*",
   "kodadot.xyz/rmrk/gallery/*",
   "kodadot.xyz/rmrk/detail/*",
   "kodadot.xyz/rmrk/collection/*",
