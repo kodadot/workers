@@ -29,7 +29,7 @@ app.get('/', async(c) => {
   return c.html(<Opengraph {...props} />);
 })
 
-app.get('/:chain/:type/:id/*', async (c) => {
+app.on(['GET', 'HEAD'], '/:chain/:type/:id/*', async (c) => {
   const useragent = c.req.header('User-Agent')
 
   if (useragent && !isbot(useragent)) {
@@ -41,11 +41,7 @@ app.get('/:chain/:type/:id/*', async (c) => {
   const type = c.req.param('type');
 
   if (chains.includes(chain)) {
-    if (type === 'collection') {
-      return await ogiRequest(c.req.url, c.req.raw.headers)
-    }
-
-    if (type === 'gallery' || type === 'detail') {
+    if (type === 'gallery' || type === 'detail' || type === 'collection') {
       return await ogiRequest(c.req.url, c.req.raw.headers)
     }
 
@@ -55,10 +51,6 @@ app.get('/:chain/:type/:id/*', async (c) => {
     }
   }
 
-  return fetch(c.req.url);
-});
-
-app.on(['HEAD'], '/:chain/:type/:id/*', async (c) => {
   return fetch(c.req.url);
 });
 
