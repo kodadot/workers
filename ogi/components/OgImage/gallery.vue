@@ -1,32 +1,32 @@
 <script setup lang="ts">
-import type { CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue'
 
 // inherited attrs can mess up the satori parser
 defineOptions({
   inheritAttrs: false,
-});
+})
 
 const props = defineProps<{
-  title: string;
-  image: string;
-  usd: string;
-  price: string;
-  symbol: string;
-  network: string;
-}>();
+  title: string
+  image: string
+  usd: string
+  price: string
+  symbol: string
+  network: string
+}>()
 
 const cover: CSSProperties = {
   objectFit: 'cover',
   objectPosition: 'center',
-};
+}
 
 const parseUsd = computed(() =>
   parseFloat(props.usd) ? `$${parseFloat(props.usd)}` : '--',
-);
+)
 
 const parsePrice = computed(() =>
   parseFloat(props.price) ? `${parseFloat(props.price)} ${props.symbol}` : '--',
-);
+)
 </script>
 
 <template>
