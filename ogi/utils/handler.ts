@@ -75,7 +75,10 @@ export const parseImage = async (imagePath: string) => {
   const rawImage = `https://raw.githubusercontent.com/kodadot/nft-gallery/main/public${imagePath}`;
   const encodeImage = encodeEndpoint(rawImage);
 
+  // upload image to our cf-images
+  // throw an error on satori if using original size image
   await fetch(`https://image-beta.w.kodadot.xyz/type/url?endpoint=${rawImage}`);
 
+  // then, get the small image
   return `https://imagedelivery.net/jk5b6spi_m_-9qC4VTnjpg/${encodeImage}/small`;
 };
