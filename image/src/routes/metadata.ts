@@ -65,7 +65,7 @@ export const getMetadata = async (c: HonoInterface) => {
     const attributes = { ...predefinedAttributes, _raw: normalized }
 
     c.executionCtx.waitUntil(
-      c.env.METADATA.put(key, JSON.stringify(attributes))
+      c.env.METADATA.put(key, JSON.stringify(attributes)),
     )
 
     return c.json(attributes)
