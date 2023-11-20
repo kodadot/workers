@@ -42,15 +42,15 @@ export const getMetadata = async (c: HonoInterface) => {
     return c.text('url is required', 400)
   }
 
-  // check on KV
-  const metadataKV = await c.env.METADATA.get(key)
-  if (metadataKV) {
-    return c.json(JSON.parse(metadataKV))
-  }
-
-  // 1. put to KV
-  // ----------------------------------------
   try {
+    // check on KV
+    const metadataKV = await c.env.METADATA.get(key)
+    if (metadataKV) {
+      return c.json(JSON.parse(metadataKV))
+    }
+
+    // 1. put to KV
+    // ----------------------------------------
     const externalUrl = url.includes('kodadot.xyz') ? toNftstorage(url) : url
     const data = await fetch(externalUrl)
     const json = await data.json()
