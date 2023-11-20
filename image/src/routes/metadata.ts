@@ -59,19 +59,19 @@ export const getMetadata = async (c: HonoInterface) => {
     const normalized = normalize(content, ipfsUrl)
 
     const image = normalized.image
-    const imageMetadata = await getMimeType(image)
+    const imageMimeType = await getMimeType(image)
 
     const animationUrl = normalized.animationUrl
-    let animationUrlMetadata
+    let animationUrlMimeType
     if (animationUrl) {
-      animationUrlMetadata = await getMimeType(animationUrl)
+      animationUrlMimeType = await getMimeType(animationUrl)
     }
 
     const predefinedAttributes = {
       image,
-      imageMetadata,
+      imageMimeType,
       animationUrl,
-      animationUrlMetadata,
+      animationUrlMimeType,
       // TODO: get video thumbnail once we implemented CF-Streams
       // https://image-beta.w.kodadot.xyz/ipfs/bafkreia3j75r474kgxxmptwh5n43j5nrvn3du5l7dcfq2twh73wmagqs6m
       thumbnail: normalized.thumbnail,
