@@ -1,6 +1,7 @@
 import type { Context } from 'hono'
 import type { Env } from '../utils/constants'
 import { normalize, contentFrom, type BaseMetadata } from '@kodadot1/hyperdata'
+import { getProviderList } from '@kodadot1/minipfs'
 import { ipfsUrl, toNftstorage } from '../utils/ipfs'
 import { encodeEndpoint } from './type-url'
 
@@ -18,6 +19,18 @@ const getMimeType = async (url: string) => {
   const contentType = data.headers.get('content-type')
 
   return contentType
+}
+
+const toCustomKodaURL = (url: string) => {
+  if (!url) {
+    return ''
+  }
+
+  const kodaUrl = new URL(getProviderList(['kodadot_beta'])[0])
+  kodaUrl.pathname = '/type/url'
+  kodaUrl.searchParams.set('endpoint', url)
+
+  return kodaUrl.toString()
 }
 
 export const getMetadata = async (c: HonoInterface) => {
@@ -59,21 +72,31 @@ export const getMetadata = async (c: HonoInterface) => {
       imageMetadata,
       animationUrl,
       animationUrlMetadata,
+      // TODO: get video thumbnail once we implemented CF-Streams
+      // https://image-beta.w.kodadot.xyz/ipfs/bafkreia3j75r474kgxxmptwh5n43j5nrvn3du5l7dcfq2twh73wmagqs6m
       thumbnail: normalized.thumbnail,
+    }
+
+    if (!image.includes('w.kodadot.xyz')) {
+      predefinedAttributes.image = toCustomKodaURL(image)
+    }
+
+    if (!animationUrl.includes('w.kodadot.xyz')) {
+      predefinedAttributes.animationUrl = toCustomKodaURL(animationUrl)
     }
 
     const attributes = { ...predefinedAttributes, _raw: normalized }
 
     c.executionCtx.waitUntil(
-      c.env.METADATA.put(key, JSON.stringify(attributes)),
+      c.env.METADATA.put(key, JSON.stringify(attributes))
     )
 
     return c.json(attributes)
   } catch (error) {
-    console.log('error', error)
+    console.log('invalid metadata json', error)
   }
 
   // 2. fails, redirect to original url
   // ----------------------------------------
-  return c.redirect(url, 302)
+  return c.redirect(url)
 }
