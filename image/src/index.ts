@@ -6,6 +6,7 @@ import { ipfsToCFI } from './utils/cloudflare-images';
 import { allowedOrigin } from './utils/cors';
 import { fetchIPFS } from './utils/ipfs';
 import { getTypeUrl } from './routes/type-url';
+import { getMetadata } from './routes/metadata';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -204,5 +205,8 @@ app.all('/ipfs/*', async (c) => {
 
 app.use('/type/url', cors({ origin: allowedOrigin }));
 app.on(['GET', 'HEAD'], '/type/url', getTypeUrl);
+
+app.use('/metadata', cors({ origin: allowedOrigin }));
+app.on(['GET'], '/metadata', getMetadata);
 
 export default app;

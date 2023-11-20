@@ -16,6 +16,11 @@ binding = 'MY_BUCKET'
 bucket_name = 'alpha-stockpile'
 preview_bucket_name = 'alpha-stockpile'
 
+[[kv_namespaces]]
+binding = "METADATA"
+id = "e4e4e08fa2774b4eb32aabc647fe01b0"
+preview_id = "e4e4e08fa2774b4eb32aabc647fe01b0"
+
 # 'vars' and 'r2_buckets' are non-inheritable keys
 # https://developers.cloudflare.com/workers/wrangler/configuration/#non-inheritable-keys
 
