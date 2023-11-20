@@ -40,6 +40,11 @@ binding = 'MY_BUCKET'
 bucket_name = 'stockpile'
 preview_bucket_name = 'alpha-stockpile'
 
+[[env.beta.kv_namespaces]]
+binding = "METADATA"
+id = "e4e4e08fa2774b4eb32aabc647fe01b0"
+preview_id = "e4e4e08fa2774b4eb32aabc647fe01b0"
+
 # production environment
 [env.production]
 name = 'image'
@@ -55,3 +60,8 @@ CF_IMAGE_ID = 'jk5b6spi_m_-9qC4VTnjpg'
 binding = 'MY_BUCKET'
 bucket_name = 'stockpile'
 preview_bucket_name = 'alpha-stockpile'
+
+[[env.production.kv_namespaces]]
+binding = "METADATA"
+id = "e4e4e08fa2774b4eb32aabc647fe01b0"
+preview_id = "e4e4e08fa2774b4eb32aabc647fe01b0"
