@@ -19,6 +19,7 @@ export function ipfsUrl(ipfs?: string) {
     return ''
   }
 
+  // TODO: 'kodadot_beta' for beta, 'kodadot' for prod
   return $purify(ipfs, ['kodadot_beta'])[0]
 }
 

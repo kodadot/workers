@@ -51,7 +51,7 @@ export const getMetadata = async (c: HonoInterface) => {
 
     // 1. put to KV
     // ----------------------------------------
-    const externalUrl = url.includes('kodadot.xyz') ? toNftstorage(url) : url
+    const externalUrl = url.includes('kodadot.xyz') ? toNftstorage(url) : url // TODO: probably not needed
     const data = await fetch(externalUrl)
     const json = await data.json()
     const content = contentFrom(json as BaseMetadata)
