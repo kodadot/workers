@@ -12,6 +12,7 @@ type HonoInterface = Context<
   {}
 >
 
+// unable to call same workers
 const toExternalGateway = (url: string) => {
   const KODA_WORKERS = 'w.kodadot.xyz/ipfs/'
 
@@ -49,6 +50,8 @@ export const getMetadata = async (c: HonoInterface) => {
     if (metadataKV) {
       return c.json(JSON.parse(metadataKV))
     }
+
+    // TODO: check on our r2 bucket
 
     // 1. put to KV
     // ----------------------------------------
