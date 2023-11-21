@@ -45,15 +45,14 @@ export const getMetadata = async (c: HonoInterface) => {
   }
 
   try {
-    // check on KV
+    // 1. check on KV. if exists, return the data
+    // ----------------------------------------
     const metadataKV = await c.env.METADATA.get(key)
     if (metadataKV) {
       return c.json(JSON.parse(metadataKV))
     }
 
-    // TODO: check on our r2 bucket
-
-    // 1. put to KV
+    // 2. put to KV
     // ----------------------------------------
     const externalUrl = toExternalGateway(url)
     const data = await fetch(externalUrl)
@@ -72,10 +71,11 @@ export const getMetadata = async (c: HonoInterface) => {
       ...normalized,
     }
 
-    // TODO: get video thumbnail once we implemented CF-Streams
+    // TODO: get video thumbnail once we implemented CF-Streams #186
     // https://image-beta.w.kodadot.xyz/ipfs/bafkreia3j75r474kgxxmptwh5n43j5nrvn3du5l7dcfq2twh73wmagqs6m
     // if (attributes.animationUrlMimeType.includes('video')) {}
 
+    // cache it on KV
     c.executionCtx.waitUntil(
       c.env.METADATA.put(key, JSON.stringify(attributes))
     )
@@ -85,7 +85,7 @@ export const getMetadata = async (c: HonoInterface) => {
     console.log('invalid metadata json', error)
   }
 
-  // 2. fails, redirect to original url
+  // 3. fails, redirect to original url
   // ----------------------------------------
   return c.redirect(url)
 }
