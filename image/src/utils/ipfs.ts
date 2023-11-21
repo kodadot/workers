@@ -6,8 +6,8 @@ type FetchIPFS = {
   gateway2: string
 }
 
-export function toNftstorage(path: string) {
-  const infura = new URL(getProviderList(['nftstorage'])[0])
+export function toIPFSDedicated(path: string) {
+  const infura = new URL(getProviderList(['infura_kodadot1'])[0])
   const url = new URL(path)
   url.hostname = infura.hostname
 

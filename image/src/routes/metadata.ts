@@ -1,8 +1,7 @@
 import type { Context } from 'hono'
 import type { Env } from '../utils/constants'
 import { normalize, contentFrom, type BaseMetadata } from '@kodadot1/hyperdata'
-import { getProviderList } from '@kodadot1/minipfs'
-import { ipfsUrl, toNftstorage } from '../utils/ipfs'
+import { ipfsUrl, toIPFSDedicated } from '../utils/ipfs'
 import { encodeEndpoint } from './type-url'
 
 type HonoInterface = Context<
@@ -13,24 +12,26 @@ type HonoInterface = Context<
   {}
 >
 
-const getMimeType = async (url: string) => {
-  const externalUrl = url.includes('kodadot.xyz') ? toNftstorage(url) : url
-  const data = await fetch(externalUrl, { method: 'HEAD' })
-  const contentType = data.headers.get('content-type')
+const toExternalGateway = (url: string) => {
+  const KODA_WORKERS = 'w.kodadot.xyz/ipfs/'
 
-  return contentType
+  return url.includes(KODA_WORKERS) ? toIPFSDedicated(url) : url
 }
 
-const toCustomKodaURL = (url: string) => {
+const getMimeType = async (url: string): Promise<string> => {
   if (!url) {
     return ''
   }
 
-  const kodaUrl = new URL(getProviderList(['kodadot_beta'])[0])
-  kodaUrl.pathname = '/type/url'
-  kodaUrl.searchParams.set('endpoint', url)
+  const externalUrl = toExternalGateway(url)
+  const data = await fetch(externalUrl, { method: 'HEAD' })
+  const contentType = data.headers.get('content-type')
 
-  return kodaUrl.toString()
+  if (data.status !== 200) {
+    return await getMimeType(url)
+  }
+
+  return contentType ?? ''
 }
 
 export const getMetadata = async (c: HonoInterface) => {
@@ -51,41 +52,26 @@ export const getMetadata = async (c: HonoInterface) => {
 
     // 1. put to KV
     // ----------------------------------------
-    const externalUrl = url.includes('kodadot.xyz') ? toNftstorage(url) : url // TODO: probably not needed
+    const externalUrl = toExternalGateway(url)
     const data = await fetch(externalUrl)
-    const json = await data.json()
-    const content = contentFrom(json as BaseMetadata)
+    console.log('fetch metadata status', externalUrl, data.status)
+    const json = await data.json<BaseMetadata>()
+    const content = contentFrom(json, true)
     // @ts-ignore
     const normalized = normalize(content, ipfsUrl)
 
-    const image = normalized.image
-    const imageMimeType = await getMimeType(image)
+    const imageMimeType = await getMimeType(normalized.image)
+    const animationUrlMimeType = await getMimeType(normalized.animationUrl)
 
-    const animationUrl = normalized.animationUrl
-    let animationUrlMimeType
-    if (animationUrl) {
-      animationUrlMimeType = await getMimeType(animationUrl)
-    }
-
-    const predefinedAttributes = {
-      image,
+    const attributes = {
       imageMimeType,
-      animationUrl,
       animationUrlMimeType,
-      // TODO: get video thumbnail once we implemented CF-Streams
-      // https://image-beta.w.kodadot.xyz/ipfs/bafkreia3j75r474kgxxmptwh5n43j5nrvn3du5l7dcfq2twh73wmagqs6m
-      thumbnail: normalized.thumbnail,
+      ...normalized,
     }
 
-    if (!image.includes('w.kodadot.xyz')) {
-      predefinedAttributes.image = toCustomKodaURL(image)
-    }
-
-    if (!animationUrl.includes('w.kodadot.xyz')) {
-      predefinedAttributes.animationUrl = toCustomKodaURL(animationUrl)
-    }
-
-    const attributes = { ...predefinedAttributes, _raw: normalized }
+    // TODO: get video thumbnail once we implemented CF-Streams
+    // https://image-beta.w.kodadot.xyz/ipfs/bafkreia3j75r474kgxxmptwh5n43j5nrvn3du5l7dcfq2twh73wmagqs6m
+    // if (attributes.animationUrlMimeType.includes('video')) {}
 
     c.executionCtx.waitUntil(
       c.env.METADATA.put(key, JSON.stringify(attributes))
