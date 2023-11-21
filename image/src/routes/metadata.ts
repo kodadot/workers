@@ -52,6 +52,8 @@ export const getMetadata = async (c: HonoInterface) => {
       return c.json(JSON.parse(metadataKV))
     }
 
+    // TODO: additional layer, check metadata on R2 bucket
+
     // 2. put to KV
     // ----------------------------------------
     const externalUrl = toExternalGateway(url)
