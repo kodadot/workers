@@ -9,6 +9,10 @@ const app = new Hono<{ Bindings: Env }>();
 
 type ScreenshotRequest = {
 	url: string
+	viewPort?: {
+		width: number
+		height: number
+	}
 }
 
 app.get('/', (c) => c.text('KODADOT CAPTURE SERVICE - https://kodadot.xyz'));
@@ -38,6 +42,9 @@ app.post('/screenshot', async (c) => {
 
 	const browser = await puppeteer.launch(c.env.BW);
 	const page = await browser.newPage();
+	if (body.viewPort) {
+		await page.setViewport(body.viewPort);
+	}
 	await page.goto(url);
 
 	const selector = 'canvas';
