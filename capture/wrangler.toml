@@ -7,3 +7,14 @@ browser = { binding = "BW" }
 # kv_namespaces = [
 #   { binding = "BROWSER_KV_DEMO", id = "f4a99377d30a45f395718628a00c0cf9", preview_id = "24fef87419a14b339c6440310a0cc1a2" }
 # ]
+
+# Bind an R2 Bucket
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "screenshots"
+
+# Binding to a Durable Object
+[[durable_objects.bindings]]
+name = "BROWSER"
+class_name = "Browser"
+
