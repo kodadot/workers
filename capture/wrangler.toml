@@ -22,6 +22,11 @@ class_name = "Browser"
 
 [env.beta]
 name = 'capture-beta'
+browser = { binding = "BW" }
+
+[[migrations]]
+tag = "v1" # Should be unique for each entry
+new_classes = ["Browser"]
 
 [env.beta.vars]
 PUBLIC_URL = "https://pub-9eb6a8bdc529419785a85d0e2f46c46a.r2.dev"
@@ -34,4 +39,8 @@ bucket_name = "screenshots"
 [[env.beta.durable_objects.bindings]]
 name = "BROWSER"
 class_name = "Browser"
+
+[[env.beta.migrations]]
+tag = "v1" # Should be unique for each entry
+new_classes = ["Browser"]
 
