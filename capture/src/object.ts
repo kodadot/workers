@@ -1,20 +1,21 @@
 import puppeteer, { type Browser as PuppeteerBrowser } from '@cloudflare/puppeteer';
 import { Env } from './utils/constants';
+import { $URL, parseURL, withTrailingSlash } from 'ufo';
 
 const KEEP_BROWSER_ALIVE_IN_SECONDS = 60;
-const DEFAULT_VIEWPORT_WIDTH = 800
-const DEFAULT_VIEWPORT_HEIGHT = 800
-const PAGE_TIMEOUT = 300000
+const DEFAULT_VIEWPORT_WIDTH = 800;
+const DEFAULT_VIEWPORT_HEIGHT = 800;
+const PAGE_TIMEOUT = 300000;
 
 const viewportSettings = {
 	deviceScaleFactor: 1,
 	width: DEFAULT_VIEWPORT_WIDTH,
 	height: DEFAULT_VIEWPORT_HEIGHT,
-}
+};
 
 type ScreenshotRequest = {
-	urls: string[]
-}
+	urls: string[];
+};
 
 export class Browser {
 	state: DurableObjectState;
@@ -30,7 +31,6 @@ export class Browser {
 		this.storage = this.state.storage;
 	}
 
-
 	private async initBrowser() {
 		if (!this.browser || !this.browser.isConnected()) {
 			console.log(`Browser DO: Starting new instance`);
@@ -42,10 +42,9 @@ export class Browser {
 		}
 	}
 
-
 	async fetch(request: Request) {
 		// return new Response("success");
-		const body = await request.json() as ScreenshotRequest;
+		const body = (await request.json()) as ScreenshotRequest;
 		const urls = body.urls.filter(Boolean);
 
 		console.log(`Browser DO: Fetching ${urls.length} urls`);
@@ -57,13 +56,11 @@ export class Browser {
 
 		console.log(`Browser DO: Fetching ${this.browser}`);
 
-
 		if (!this.browser) {
 			return new Response('Browser DO: Could not start browser instance.', { status: 499 });
 		}
 
 		const page = await this.browser.newPage();
-
 
 		const captures = [];
 
@@ -78,19 +75,19 @@ export class Browser {
 
 			if (!element) {
 				console.log(`Browser: element not found`);
-				continue
+				continue;
 			}
 
-			const normalizedUrl = new URL(url);
+			const normalizedUrl = new $URL(url);
 
-			const fileName = normalizedUrl.pathname.replace(/\//g, '_') + '_' + normalizedUrl.searchParams.get('hash');
+			const path = withTrailingSlash(normalizedUrl.pathname.replace('/ipfs/', ''));
 
+			const fileName = path + normalizedUrl.query.hash + '.png';
 
 			const sc = await element.screenshot();
 
-			await this.env.BUCKET.put(fileName + '.jpeg', sc);
-			captures.push(this.env.PUBLIC_URL + '/' + fileName + '.jpeg');
-
+			await this.env.BUCKET.put(fileName, sc);
+			captures.push(this.env.PUBLIC_URL + '/' + fileName);
 		}
 
 		// Reset keptAlive after performing tasks to the DO.

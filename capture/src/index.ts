@@ -1,35 +1,40 @@
 import puppeteer from '@cloudflare/puppeteer';
 import { Env } from './utils/constants';
-import { Hono } from 'hono';
+import { Context, Hono } from 'hono';
 import { cors } from 'hono/cors';
 
 import { allowedOrigin } from './utils/cors';
 
 export { Browser } from './object';
 
-const app = new Hono<{ Bindings: Env }>();
+type Bindings = { Bindings: Env }
+
+const app = new Hono<Bindings>();
 
 type ScreenshotRequest = {
-	url: string
-}
+	url: string;
+};
+
+type BatchRequest = {
+	urls: string[];
+};
 
 app.get('/', (c) => c.text('KODADOT CAPTURE SERVICE - https://kodadot.xyz'));
 
 app.use('/batch', cors({ origin: allowedOrigin }));
 
+async function capture(c: Context<Bindings>, batch: BatchRequest) {
+	const id = c.env.BROWSER.idFromName('browser');
+	const obj = c.env.BROWSER.get(id);
+	const resp = await obj.fetch(c.req.url, { body: JSON.stringify(batch), method: 'POST' });
+
+	return resp
+}
 
 app.post('/batch', async (c) => {
-	const id = c.env.BROWSER.idFromName("browser");
+	const urls = await c.req.json<BatchRequest>();
 
-	console.log('id',id);
-
-	const obj = c.env.BROWSER.get(id);
-
-	console.log('obj',obj);
-
-	console.log('c.req.url',c.req.url);
-	// Send a request to the Durable Object, then await its response.
-	const resp = await obj.fetch(c.req.url, { body: JSON.stringify(await c.req.json()), method: 'POST' } )
+	const resp = await capture(c, urls);
 
 	if (resp.status !== 200) {
 		return c.json({ error: 'element not found' }, 400);
@@ -37,7 +42,6 @@ app.post('/batch', async (c) => {
 
 	return c.json(await resp.json(), 200);
 });
-
 
 app.use('/screenshot', cors({ origin: allowedOrigin }));
 
@@ -62,7 +66,6 @@ app.post('/screenshot', async (c) => {
 	// 	});
 	// }
 
-
 	const browser = await puppeteer.launch(c.env.BW);
 	const page = await browser.newPage();
 	await page.goto(url);
@@ -76,7 +79,7 @@ app.post('/screenshot', async (c) => {
 		return c.json({ error: 'element not found' }, 400);
 	}
 
-	const img = await (element.screenshot()) as Buffer;
+	const img = (await element.screenshot()) as Buffer;
 
 	// await c.env.BROWSER_KV_DEMO.put(url, img, {
 	// 	expirationTtl: 60 * 60 * 24,
@@ -90,5 +93,3 @@ app.post('/screenshot', async (c) => {
 });
 
 export default app;
-
-
