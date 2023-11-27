@@ -42,39 +42,6 @@ export class Browser {
 		}
 	}
 
-	// private async makeScreenshots(possiblyUrls: string[]) {
-	// 	const page = await this.browser!.newPage();
-
-	// 	// const body = await request.json() as ScreenshotRequest;
-
-	// 	const urls = possiblyUrls.filter(Boolean);
-
-	// 	for (const url of urls) {
-	// 		await page.setViewport(viewportSettings);
-	// 		await page.goto(url);
-
-	// 		const selector = 'canvas';
-	// 		await page.waitForSelector(selector);
-
-	// 		const element = await page.$(selector);
-
-	// 		if (!element) {
-	// 			console.log(`Browser: element not found`);
-	// 			continue
-	// 		}
-
-	// 		const normalizedUrl = new URL(url);
-
-	// 		const fileName = normalizedUrl.pathname.replace(/\//g, '_') + '_' + normalizedUrl.searchParams.get('hash');
-	// 		const sc = await page.screenshot({
-	// 			path: fileName + '.jpeg',
-	// 		});
-
-	// 		await this.env.BUCKET.put(fileName + '.jpeg', sc);
-	// 	}
-	// }
-
-
 
 	async fetch(request: Request) {
 		await this.initBrowser();
