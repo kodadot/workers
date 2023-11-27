@@ -4,6 +4,7 @@ import { Context, Hono } from 'hono';
 import { cors } from 'hono/cors';
 
 import { allowedOrigin } from './utils/cors';
+import { urlToFileName } from './utils/shared'
 
 export { Browser } from './object';
 
@@ -53,6 +54,19 @@ app.post('/screenshot', async (c) => {
 
 	if (!url) {
 		return c.json({ error: 'url is required, example: {"url": "https://example.com}' }, 400);
+	}
+
+	const name = urlToFileName(url);
+	const mayCache = await c.env.BUCKET.get(name);
+
+	if (mayCache) {
+		const img = await mayCache.arrayBuffer();
+
+		return new Response(img, {
+			headers: {
+				'content-type': 'image/png',
+			},
+		});
 	}
 
 	const resp = await capture(c, {urls: [url]});

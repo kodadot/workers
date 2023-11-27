@@ -3,8 +3,8 @@ import { Env } from './utils/constants';
 import { $URL, parseURL, withTrailingSlash } from 'ufo';
 
 const KEEP_BROWSER_ALIVE_IN_SECONDS = 60;
-const DEFAULT_VIEWPORT_WIDTH = 800;
-const DEFAULT_VIEWPORT_HEIGHT = 800;
+const DEFAULT_VIEWPORT_WIDTH = 600;
+const DEFAULT_VIEWPORT_HEIGHT = 600;
 const PAGE_TIMEOUT = 300000;
 
 const viewportSettings = {
@@ -55,8 +55,6 @@ export class Browser {
 
 		// Reset keptAlive after each call to the DO
 		this.keptAliveInSeconds = 0;
-
-		console.log(`Browser DO: Fetching ${this.browser}`);
 
 		if (!this.browser) {
 			return new Response('Browser DO: Could not start browser instance.', { status: 499 });
