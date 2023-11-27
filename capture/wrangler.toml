@@ -10,9 +10,6 @@ browser = { binding = "BW" }
 [vars]
 PUBLIC_URL = "https://pub-9eb6a8bdc529419785a85d0e2f46c46a.r2.dev"
 
-[env.beta]
-name = 'capture-beta'
-
 # Bind an R2 Bucket
 [[r2_buckets]]
 binding = "BUCKET"
@@ -20,6 +17,21 @@ bucket_name = "screenshots"
 
 # Binding to a Durable Object
 [[durable_objects.bindings]]
+name = "BROWSER"
+class_name = "Browser"
+
+[env.beta]
+name = 'capture-beta'
+
+[env.beta.vars]
+PUBLIC_URL = "https://pub-9eb6a8bdc529419785a85d0e2f46c46a.r2.dev"
+
+[[env.beta.r2_buckets]]
+binding = "BUCKET"
+bucket_name = "screenshots"
+
+# Binding to a Durable Object
+[[env.beta.durable_objects.bindings]]
 name = "BROWSER"
 class_name = "Browser"
 
