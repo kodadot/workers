@@ -36,11 +36,13 @@ app.post('/batch', async (c) => {
 
 	const resp = await capture(c, urls);
 
-	if (resp.status !== 200) {
-		return c.json({ error: 'element not found' }, 400);
+	if (resp.ok === false) {
+		return c.text('Unable to capture', 400);
 	}
 
-	return c.json(await resp.json(), 200);
+	const saved = await resp.json() as { captures: string[] };
+
+	return c.json(saved.captures.map(cap => c.env.PUBLIC_URL + '/' + cap), 200);
 });
 
 app.use('/screenshot', cors({ origin: allowedOrigin }));
@@ -48,46 +50,36 @@ app.use('/screenshot', cors({ origin: allowedOrigin }));
 app.post('/screenshot', async (c) => {
 	const body = await c.req.json<ScreenshotRequest>();
 	const url = body.url;
-	// const normalizedUrl = new URL(url);
-	// const hash = normalizedUrl.searchParams.get('hash');
 
 	if (!url) {
 		return c.json({ error: 'url is required, example: {"url": "https://example.com}' }, 400);
 	}
 
-	// const cachedImg = await c.env.BROWSER_KV_DEMO.get(normalizedUrl, {
-	// 	type: 'arrayBuffer',
-	// });
-	// if (cachedImg) {
-	// 	return new Response(cachedImg, {
-	// 		headers: {
-	// 			'content-type': 'image/jpeg',
-	// 		},
-	// 	});
-	// }
+	const resp = await capture(c, {urls: [url]});
 
-	const browser = await puppeteer.launch(c.env.BW);
-	const page = await browser.newPage();
-	await page.goto(url);
 
-	const selector = 'canvas';
-	await page.waitForSelector(selector);
-
-	const element = await page.$(selector);
-
-	if (!element) {
-		return c.json({ error: 'element not found' }, 400);
+	if (resp.ok === false) {
+		return c.text('Unable to capture', 400);
 	}
 
-	const img = (await element.screenshot()) as Buffer;
+	const saved = await resp.json() as { captures: string[] };
 
-	// await c.env.BROWSER_KV_DEMO.put(url, img, {
-	// 	expirationTtl: 60 * 60 * 24,
-	// });
-	await browser.close();
+	if (saved.captures.length === 0 && saved.captures.at(0) !== undefined) {
+		return c.text('Unable to capture', 400);
+	}
+
+	const image = await c.env.BUCKET.get(saved.captures.at(0)!);
+
+
+	if (!image) {
+		return c.text('No image saved', 400);
+	}
+
+	const img = await image.arrayBuffer();
+
 	return new Response(img, {
 		headers: {
-			'content-type': 'image/jpeg',
+			'content-type': 'image/png',
 		},
 	});
 });
