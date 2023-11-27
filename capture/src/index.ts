@@ -12,6 +12,21 @@ type ScreenshotRequest = {
 }
 
 app.get('/', (c) => c.text('KODADOT CAPTURE SERVICE - https://kodadot.xyz'));
+
+app.use('/batch', cors({ origin: allowedOrigin }));
+
+
+app.post('/batch', async (c) => {
+	const id = c.env.BROWSER.idFromName("browser");
+	const obj = c.env.BROWSER.get(id);
+
+	// Send a request to the Durable Object, then await its response.
+	const resp = await obj.fetch(c.req.url)
+
+	return resp;
+});
+
+
 app.use('/screenshot', cors({ origin: allowedOrigin }));
 
 app.post('/screenshot', async (c) => {
