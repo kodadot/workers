@@ -44,20 +44,26 @@ export class Browser {
 
 
 	async fetch(request: Request) {
+		// return new Response("success");
+		const body = await request.json() as ScreenshotRequest;
+		const urls = body.urls.filter(Boolean);
+
+		console.log(`Browser DO: Fetching ${urls.length} urls`);
+
 		await this.initBrowser();
 
 		// Reset keptAlive after each call to the DO
 		this.keptAliveInSeconds = 0;
 
+		console.log(`Browser DO: Fetching ${this.browser}`);
+
+
 		if (!this.browser) {
-			return new Response('error');
+			return new Response('Browser DO: Could not start browser instance.', { status: 499 });
 		}
 
 		const page = await this.browser.newPage();
 
-		const body = await request.json() as ScreenshotRequest;
-
-		const urls = body.urls.filter(Boolean);
 
 		const captures = [];
 

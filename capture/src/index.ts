@@ -5,6 +5,8 @@ import { cors } from 'hono/cors';
 
 import { allowedOrigin } from './utils/cors';
 
+export { Browser } from './object';
+
 const app = new Hono<{ Bindings: Env }>();
 
 type ScreenshotRequest = {
@@ -18,12 +20,22 @@ app.use('/batch', cors({ origin: allowedOrigin }));
 
 app.post('/batch', async (c) => {
 	const id = c.env.BROWSER.idFromName("browser");
+
+	console.log('id',id);
+
 	const obj = c.env.BROWSER.get(id);
 
-	// Send a request to the Durable Object, then await its response.
-	const resp = await obj.fetch(c.req.url)
+	console.log('obj',obj);
 
-	return resp;
+	console.log('c.req.url',c.req.url);
+	// Send a request to the Durable Object, then await its response.
+	const resp = await obj.fetch(c.req.url, { body: JSON.stringify(await c.req.json()), method: 'POST' } )
+
+	if (resp.status !== 200) {
+		return c.json({ error: 'element not found' }, 400);
+	}
+
+	return c.json(await resp.json(), 200);
 });
 
 
@@ -78,3 +90,5 @@ app.post('/screenshot', async (c) => {
 });
 
 export default app;
+
+
