@@ -42,6 +42,8 @@ export class Browser {
 		}
 	}
 
+
+
 	async fetch(request: Request) {
 		// return new Response("success");
 		const body = (await request.json()) as ScreenshotRequest;
@@ -87,7 +89,7 @@ export class Browser {
 			const sc = await element.screenshot();
 
 			await this.env.BUCKET.put(fileName, sc);
-			captures.push(this.env.PUBLIC_URL + '/' + fileName);
+			captures.push(fileName);
 		}
 
 		// Reset keptAlive after performing tasks to the DO.
