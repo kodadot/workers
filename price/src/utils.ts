@@ -3,9 +3,8 @@ export function cacheKey() {
   const year = date.getUTCFullYear();
   const month = date.getUTCMonth() + 1;
   const day = date.getUTCDate();
-  const hours = date.getUTCHours();
 
-  return `${year}-${month}-${day}-${hours}`;
+  return `${year}-${month}-${day}`;
 }
 
 // return same format as coingecko https://api.coingecko.com/api/v3/simple/price?ids=kusama&vs_currencies=usd
