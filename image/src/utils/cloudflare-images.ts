@@ -41,7 +41,7 @@ async function uploadCFI({ token, url, id, imageAccount }: UploadCFI) {
 
   const uploadCfImage = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${imageAccount}/images/v1`,
-    requestOptions,
+    requestOptions
   )
   const image = (await uploadCfImage.json()) as CFIApiResponse
 
