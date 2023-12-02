@@ -30,14 +30,18 @@ export async function getPrice(
   // fetch sub.id API
   const subid = await fetch('https://sub.id/api/v1/prices');
   if (subid.status === 200) {
-    const data = await subid.json();
-    const findToken = (data as { id: string; current_price: number }[]).find(
-      (p) => p.id === chain,
-    );
-    const price = findToken?.current_price;
+    try {
+      const data = (await subid.json()) as {
+        prices: { id: string; current_price: number }[];
+      };
+      const findToken = data.prices.find((p) => p.id === chain);
+      const price = findToken?.current_price;
 
-    if (price) {
-      return price.toString();
+      if (price) {
+        return price.toString();
+      }
+    } catch (error) {
+      console.log('skip sub.id', error);
     }
   }
 
@@ -47,13 +51,17 @@ export async function getPrice(
     `https://api.kraken.com/0/public/Ticker?pair=${pair}`,
   );
   if (kraken.status === 200) {
-    const data = (await kraken.json()) as {
-      result: { [key: string]: { a: [string] } };
-    };
-    const price = data.result[pair].a[0];
+    try {
+      const data = (await kraken.json()) as {
+        result: { [key: string]: { a: [string] } };
+      };
+      const price = data.result[pair].a[0];
 
-    if (price) {
-      return price;
+      if (price) {
+        return price;
+      }
+    } catch (error) {
+      console.log('skip kraken', error);
     }
   }
 
