@@ -11,9 +11,9 @@ wasm-opt = false
 crate-type = ["cdylib"]
 
 [dependencies]
-serde = { version = "1.0.160", features = ["derive"] }
-serde_json = "1.0.96"
-worker = "0.0.16"
+serde = { version = "1.0.193", features = ["derive"] }
+serde_json = "1.0.108"
+worker = "0.0.18"
 
 [profile.release]
 lto = true
