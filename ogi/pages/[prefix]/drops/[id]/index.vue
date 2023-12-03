@@ -19,9 +19,8 @@ const route = useRoute()
 const prefix = route.params.prefix.toString() as Prefix
 const id = route.params.id.toString()
 
-const drop = await getDropById(id).catch((e) => {
-  console.log('jarsen fetch error', e)
-})
+const drop = await getDropById(id)
+
 const {
   data: { collection },
 } = await getCollectionById(prefix, drop.collection)
