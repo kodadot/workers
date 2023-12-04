@@ -102,15 +102,15 @@ export async function getProperties(nft: NFT) {
   };
 }
 
-export const ogiRequest =async (reqUrl: string, rawHeaders: Headers) => {
-  const url = new URL (reqUrl);
+export const ogiRequest = async (reqUrl: string, rawHeaders: Headers) => {
+  const url = new URL(reqUrl);
   const { pathname, search } = url;
-  const opengraph = `https://ogi.kodadot.workers.dev/${pathname}${search}`
+  const opengraph = `https://workers-ogi.pages.dev/${pathname}${search}`;
 
   const headers = new Headers(rawHeaders);
   const request = new Request(opengraph, {
-    headers
-  })
+    headers,
+  });
 
-  return await fetch(request)
-}
+  return await fetch(request);
+};

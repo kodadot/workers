@@ -41,12 +41,7 @@ app.on(['GET', 'HEAD'], '/:chain/:type/:id/*', async (c) => {
   const type = c.req.param('type');
 
   if (chains.includes(chain)) {
-    if (
-      type === 'gallery' ||
-      type === 'detail' ||
-      type === 'collection' ||
-      type === 'drops'
-    ) {
+    if (['gallery', 'detail', 'collection', 'drops'].includes(type)) {
       return await ogiRequest(c.req.url, c.req.raw.headers);
     }
 

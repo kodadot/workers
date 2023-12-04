@@ -12,7 +12,7 @@
 
 <script lang="ts" setup>
 import type { Prefix } from '@kodadot1/static'
-import { computed, onBeforeMount, reactive } from 'vue'
+import { computed, reactive } from 'vue'
 
 const route = useRoute()
 
