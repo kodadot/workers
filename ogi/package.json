@@ -3,12 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "NITRO_PRESET=cloudflare nuxt build",
+    "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "deploy": "NITRO_PRESET=cloudflare npm run build && wrangler deploy --minify"
+    "postinstall": "nuxt prepare"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
@@ -16,8 +15,7 @@
     "nuxt-og-image": "^2.2.4",
     "prettier": "^3.0.3",
     "vue": "^3.3.8",
-    "vue-router": "^4.2.5",
-    "wrangler": "^3.15.0"
+    "vue-router": "^4.2.5"
   },
   "dependencies": {
     "@kodadot1/minipfs": "^0.4.2-rc.0",
