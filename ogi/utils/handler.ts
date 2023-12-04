@@ -16,9 +16,7 @@ export const prefixChain = (prefix: Prefix) => {
 
 export const usdPrice = async (prefix: Prefix, amount: string) => {
   const id = prefixChain(prefix)
-  const getUsd = await fetch(
-    `https://price.preschian-cdn.workers.dev/price/${id}`,
-  )
+  const getUsd = await fetch(`https://price.kodadot.workers.dev/price/${id}`)
   const usd = await getUsd.json()
   const price = parseFloat(amount) * usd[id].usd
 
