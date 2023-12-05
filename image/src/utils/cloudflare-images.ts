@@ -41,7 +41,7 @@ async function uploadCFI({ token, url, id, imageAccount }: UploadCFI) {
 
   const uploadCfImage = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${imageAccount}/images/v1`,
-    requestOptions,
+    requestOptions
   )
   const image = (await uploadCfImage.json()) as CFIApiResponse
 
@@ -93,4 +93,33 @@ export async function urlToCFI({ token, endpoint, imageAccount }: UrlToCFI) {
     id: path,
     imageAccount,
   })
+}
+
+export async function getImageByPath({
+  token,
+  imageAccount,
+  path,
+}: CFImages & { path: string }) {
+  const getImage = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${imageAccount}/images/v1/${path}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  )
+  const image = (await getImage.json()) as CFIApiResponse
+
+  if (getImage.ok && image.result) {
+    const variants = image.result.variants
+    const publicURL = variants.find((url) => url.endsWith('/public'))
+
+    if (publicURL) {
+      return publicURL
+    }
+  }
+
+  return ''
 }
