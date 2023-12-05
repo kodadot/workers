@@ -14,3 +14,11 @@ export interface CFIApiResponse {
   } | null
   success: boolean
 }
+
+export type IPFSResponseType =
+  | string
+  | ArrayBuffer
+  | Blob
+  | ReadableStream<any>
+  | ArrayBufferView
+  | null

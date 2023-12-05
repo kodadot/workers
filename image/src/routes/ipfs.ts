@@ -2,9 +2,9 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { CACHE_DAY, Env } from '../utils/constants'
 import { fetchIPFS } from '../utils/ipfs'
-import { ipfsToCFI } from '../utils/cloudflare-images'
+import { getImageByPath, ipfsToCFI } from '../utils/cloudflare-images'
 import { allowedOrigin } from '../utils/cors'
-import type { CFIApiResponse } from '../utils/types'
+import type { IPFSResponseType } from '../utils/types'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -18,6 +18,7 @@ app.get('/*', async (c) => {
   const fullPath = `${path}${url.search}`
 
   // TODO: check response from cache
+  // related issue: TypeError: Can't modify immutable headers.
   // ----------------------------------------
   let response = undefined
   console.log('response', response)
@@ -25,6 +26,7 @@ app.get('/*', async (c) => {
   // contruct r2 object
   const objectName = `ipfs/${path}`
   const object = await c.env.MY_BUCKET.get(objectName)
+  // TODO: check which one is faster to get mimeType from r2 or kv (probably kv, because only store mimeType string on kv)
   const mimeType = object?.httpMetadata?.contentType
   console.log('object', object)
   console.log('mime type', mimeType)
@@ -33,25 +35,14 @@ app.get('/*', async (c) => {
   // ----------------------------------------
   console.log('step 1')
   if (mimeType?.includes('image') && !isOriginal) {
-    const getImage = await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${c.env.CF_IMAGE_ACCOUNT}/images/v1/${fullPath}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${c.env.IMAGE_API_TOKEN}`,
-        },
-      }
-    )
-    const image = (await getImage.json()) as CFIApiResponse
+    const publicUrl = await getImageByPath({
+      token: c.env.IMAGE_API_TOKEN,
+      imageAccount: c.env.CF_IMAGE_ACCOUNT,
+      path: fullPath,
+    })
 
-    if (getImage.ok && image.result) {
-      const variants = image.result.variants
-      const publicURL = variants.find((url) => url.endsWith('/public'))
-
-      if (publicURL) {
-        return c.redirect(publicURL)
-      }
+    if (publicUrl) {
+      return c.redirect(publicUrl)
     }
   }
 
@@ -95,7 +86,7 @@ app.get('/*', async (c) => {
   // ----------------------------------------
   console.log('step 3')
   if (object === null) {
-    const status = await await fetchIPFS({
+    const status = await fetchIPFS({
       path: fullPath,
       gateway1: c.env.DEDICATED_GATEWAY,
       gateway2: c.env.DEDICATED_BACKUP_GATEWAY,
@@ -109,13 +100,7 @@ app.get('/*', async (c) => {
       if (contentLength === null) {
         body = await status.response?.text()
       } else {
-        body = status.response.body as
-          | string
-          | ArrayBuffer
-          | Blob
-          | ReadableStream<any>
-          | ArrayBufferView
-          | null
+        body = status.response.body as IPFSResponseType
       }
 
       await c.env.MY_BUCKET.put(objectName, body, {
