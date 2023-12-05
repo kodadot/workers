@@ -109,7 +109,13 @@ app.get('/*', async (c) => {
       if (contentLength === null) {
         body = await status.response?.text()
       } else {
-        body = status.response.body
+        body = status.response.body as
+          | string
+          | ArrayBuffer
+          | Blob
+          | ReadableStream<any>
+          | ArrayBufferView
+          | null
       }
 
       await c.env.MY_BUCKET.put(objectName, body, {
