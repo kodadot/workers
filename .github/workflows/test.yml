@@ -1,0 +1,19 @@
+name: Test Endpoints
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-image-workers:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./image
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm test
