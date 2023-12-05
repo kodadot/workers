@@ -1,3 +1,5 @@
+import type { Prefix } from '@kodadot1/static'
+
 export interface BaseItem {
   id: string
   createdAt: string
@@ -23,4 +25,16 @@ export interface Collection extends BaseItem {
 export interface NFT extends BaseItem {
   meta: BaseItemMeta
   price: string
+}
+
+export type DropItem = {
+  id: string
+  chain: Prefix
+  collection: string
+  image: string
+  name: string
+  alias: string
+  type: string
+  meta: string
+  disabled: number
 }

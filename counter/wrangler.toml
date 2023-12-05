@@ -1,0 +1,16 @@
+name = "counter"
+main = "build/worker/shim.mjs"
+compatibility_date = "2023-04-27"
+usage_model = "bundled"
+
+[durable_objects]
+bindings = [
+  { name = "VIEWS", class_name = "Views" }
+]
+
+[build]
+command = "cargo install -q worker-build && worker-build --release"
+
+[[migrations]]
+tag = "v0"
+new_classes = ["Views"]
