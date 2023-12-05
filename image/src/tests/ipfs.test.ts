@@ -28,14 +28,14 @@ test('ipfs - 200 - json', async () => {
   `)
 })
 
-test('ipfs - 301 - image', async () => {
+test('ipfs - 302 - image', async () => {
   const res = await fetch(
     'https://image-beta.w.kodadot.xyz/ipfs/bafybeidv3wgydacgpre67lkciihrttvwl5nibzftxfppy6lfanjja4v7zm',
     { redirect: 'manual' }
   )
 
   expect(res.ok).toBe(false)
-  expect(res.status).toBe(301)
+  expect(res.status).toBe(302)
 
   const redirectURL = res.headers.get('location')
   expect(redirectURL).toBe(
@@ -75,14 +75,14 @@ test('ipfs - 200 - image - original', async () => {
   `)
 })
 
-test('ipfs - 301 - html', async () => {
+test('ipfs - 302 - html', async () => {
   const res = await fetch(
     'https://image-beta.w.kodadot.xyz/ipfs/bafybeiakkzle3zsycvzpnkqtffqyq7njkt63vnmatkwijbg7kchq6s4she?hash=0x850b8f12e91fe48ad55cfb6bd8ee7b33adde24ebdf266ff8d23667c828c7e989',
     { redirect: 'manual' }
   )
 
   expect(res.ok).toBe(false)
-  expect(res.status).toBe(301)
+  expect(res.status).toBe(302)
 
   const redirectURL = res.headers.get('location')
   expect(redirectURL).toBe(redirectURL)
