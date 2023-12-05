@@ -100,3 +100,22 @@ test('ipfs - 301 - html', async () => {
     }
   `)
 })
+
+test('ipfs - 200 - html', async () => {
+  const res = await fetch(
+    'https://image-beta.w.kodadot.xyz/ipfs/bafybeiakkzle3zsycvzpnkqtffqyq7njkt63vnmatkwijbg7kchq6s4she/?hash=0x850b8f12e91fe48ad55cfb6bd8ee7b33adde24ebdf266ff8d23667c828c7e989'
+  )
+
+  expect(res.ok).toBe(true)
+  expect(res.status).toBe(200)
+  expect(res.headers.get('content-type')).toBe('text/html')
+
+  const data = await res.blob()
+  expect(data).toMatchInlineSnapshot(`
+    Blob {
+      Symbol(kHandle): Blob {},
+      Symbol(kLength): 657,
+      Symbol(kType): "text/html",
+    }
+  `)
+})
