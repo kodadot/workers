@@ -1,6 +1,6 @@
-import puppeteer, { type Browser as PuppeteerBrowser } from '@cloudflare/puppeteer';
-import { Env } from './utils/constants';
-import { $URL, parseURL, withTrailingSlash } from 'ufo';
+import puppeteer, { type Browser as PuppeteerBrowser } from '@cloudflare/puppeteer'
+import { Env } from './utils/constants'
+import { captureAll } from './utils/surf'
 
 const KEEP_BROWSER_ALIVE_IN_SECONDS = 120;
 const DEFAULT_VIEWPORT_WIDTH = 600;
@@ -43,55 +43,13 @@ export class Browser {
 	}
 
 
-
-	async fetch(request: Request) {
-		// return new Response("success");
-		const body = (await request.json()) as ScreenshotRequest;
-		const urls = body.urls.filter(Boolean);
-
-		console.log(`Browser DO: Fetching ${urls.length} urls`);
-
-		await this.initBrowser();
-
-		// Reset keptAlive after each call to the DO
+	private resetKeepAlive() {
 		this.keptAliveInSeconds = 0;
+	}
 
-		if (!this.browser) {
-			return new Response('Browser DO: Could not start browser instance.', { status: 499 });
-		}
-
-		const page = await this.browser.newPage();
-
-		const captures = [];
-
-		for (const url of urls) {
-			await page.setViewport(viewportSettings);
-			await page.goto(url);
-
-			const selector = 'canvas';
-			await page.waitForSelector(selector);
-
-			const element = await page.$(selector);
-
-			if (!element) {
-				console.log(`Browser: element not found`);
-				continue;
-			}
-
-			const normalizedUrl = new $URL(url);
-
-			const path = withTrailingSlash(normalizedUrl.pathname.replace('/ipfs/', ''));
-
-			const fileName = path + normalizedUrl.query.hash + '.png';
-
-			const sc = await element.screenshot();
-
-			await this.env.BUCKET.put(fileName, sc);
-			captures.push(fileName);
-		}
-
+	private async adjustAlarm() {
 		// Reset keptAlive after performing tasks to the DO.
-		this.keptAliveInSeconds = 0;
+		this.resetKeepAlive();
 
 		// set the first alarm to keep DO alive
 		let currentAlarm = await this.storage.getAlarm();
@@ -100,8 +58,34 @@ export class Browser {
 			const TEN_SECONDS = 10 * 1000;
 			await this.storage.setAlarm(Date.now() + TEN_SECONDS);
 		}
+	}
 
-		return new Response(JSON.stringify({ captures }));
+	async fetch(request: Request) {
+		const body = (await request.json()) as ScreenshotRequest;
+		const urls = body.urls.filter(Boolean);
+
+		console.log(`Browser DO: Fetching ${urls.length} urls`);
+
+		await this.initBrowser();
+
+		// Reset keptAlive after each call to the DO
+		this.resetKeepAlive();
+
+		if (!this.browser) {
+			return new Response('Browser DO: Could not start browser instance.', { status: 429 });
+		}
+
+		const page = await this.browser.newPage();
+
+		const captures = await captureAll(page, urls);
+
+		for (const sc of captures) {
+			await this.env.BUCKET.put(sc.name, sc.data);
+		}
+
+		await this.adjustAlarm();
+
+		return new Response(JSON.stringify({ captures: captures.map(c => c.name) }));
 	}
 
 	async alarm() {
