@@ -1,6 +1,8 @@
 import { type Page as PuppeteerPage } from '@cloudflare/puppeteer';
 import { $URL, withTrailingSlash } from 'ufo';
 import { viewportSettings } from './constants'
+import { Settings as CaptureSettings } from './types'
+import { sleep } from './shared'
 
 export type Screenshot = {
 	name: string;
@@ -10,7 +12,7 @@ export type Screenshot = {
 type SC = Screenshot
 
 
-export async function captureAll(page: PuppeteerPage, urls: string[], settings?: any): Promise<SC[]> {
+export async function captureAll(page: PuppeteerPage, urls: string[], settings?: CaptureSettings): Promise<SC[]> {
 	const screenshots: SC[] = [];
 	for (const url of urls) {
 		const sc = await doScreenshot(page, url, settings);
@@ -22,7 +24,7 @@ export async function captureAll(page: PuppeteerPage, urls: string[], settings?:
 }
 
 
-async function doScreenshot(page: PuppeteerPage, url: string, _settings?: any): Promise<SC | undefined> {
+async function doScreenshot(page: PuppeteerPage, url: string, settings?: CaptureSettings): Promise<SC | undefined> {
 	await page.setViewport(viewportSettings);
 	await page.goto(url);
 
@@ -41,6 +43,10 @@ async function doScreenshot(page: PuppeteerPage, url: string, _settings?: any): 
 	const path = withTrailingSlash(normalizedUrl.pathname.replace('/ipfs/', ''));
 
 	const fileName = path + normalizedUrl.query.hash + '.png';
+
+	if (settings?.delay) {
+		await sleep(settings.delay);
+	}
 
 	const sc = await element.screenshot();
 
