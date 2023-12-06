@@ -133,4 +133,18 @@ app.get('/*', async (c) => {
   }
 })
 
+app.delete('/*', async (c) => {
+  const url = new URL(c.req.url)
+  const path = url.pathname.replace('/ipfs/', '')
+  const objectName = `ipfs/${path}`
+
+  try {
+    await c.env.MY_BUCKET.delete(objectName)
+
+    return c.json({ status: 'ok' })
+  } catch (error) {
+    return c.json({ status: 'error', error }, 500)
+  }
+})
+
 export default app

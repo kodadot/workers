@@ -1,5 +1,16 @@
 import { expect, test } from 'vitest'
 
+test('[head] ipfs - 200 - json', async () => {
+  const res = await fetch(
+    'https://image-beta.w.kodadot.xyz/ipfs/bafkreihy6xwb35imb5hfwxzgmw2p64yoefuxysh6bkghyjwaj7tz5sfnuq',
+    { method: 'HEAD' }
+  )
+
+  expect(res.ok).toBe(true)
+  expect(res.status).toBe(200)
+  expect(res.headers.get('content-type')).toBe('application/json')
+})
+
 test('ipfs - 200 - json', async () => {
   const res = await fetch(
     'https://image-beta.w.kodadot.xyz/ipfs/bafkreihy6xwb35imb5hfwxzgmw2p64yoefuxysh6bkghyjwaj7tz5sfnuq'
