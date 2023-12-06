@@ -15,7 +15,7 @@ export interface CFIApiResponse {
   success: boolean
 }
 
-export type IPFSResponseType =
+export type ResponseType =
   | string
   | ArrayBuffer
   | Blob

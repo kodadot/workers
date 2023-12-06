@@ -4,7 +4,7 @@ import { CACHE_DAY, Env } from '../utils/constants'
 import { fetchIPFS } from '../utils/ipfs'
 import { getImageByPath, ipfsToCFI } from '../utils/cloudflare-images'
 import { allowedOrigin } from '../utils/cors'
-import type { IPFSResponseType } from '../utils/types'
+import type { ResponseType } from '../utils/types'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -101,7 +101,7 @@ app.get('/*', async (c) => {
       if (contentLength === null) {
         body = await status.response?.text()
       } else {
-        body = status.response.body as IPFSResponseType
+        body = status.response.body as ResponseType
       }
 
       await c.env.MY_BUCKET.put(objectName, body, {
