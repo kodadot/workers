@@ -2,7 +2,7 @@ import puppeteer, { type Browser as PuppeteerBrowser } from '@cloudflare/puppete
 import { Env } from './utils/constants';
 import { $URL, parseURL, withTrailingSlash } from 'ufo';
 
-const KEEP_BROWSER_ALIVE_IN_SECONDS = 60;
+const KEEP_BROWSER_ALIVE_IN_SECONDS = 120;
 const DEFAULT_VIEWPORT_WIDTH = 600;
 const DEFAULT_VIEWPORT_HEIGHT = 600;
 const PAGE_TIMEOUT = 300000;
