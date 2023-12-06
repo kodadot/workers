@@ -20,6 +20,11 @@ const prefix = route.params.prefix.toString() as Prefix
 const id = route.params.id.toString()
 
 const drop = await getDropById(id)
+const usdPricePerMint = ref('0')
+
+if (drop.isPaid) {
+  usdPricePerMint.value = await usdPrice(drop.chain, drop?.meta)
+}
 
 const {
   data: { collection },
@@ -30,6 +35,8 @@ defineOgImage({
   title: collection.name,
   image: ipfsUrl(drop.image),
   items: String(collection.max),
+  isPaid: drop.isPaid,
+  usdPricePerMint: usdPricePerMint.value,
 })
 
 useSeoMeta({

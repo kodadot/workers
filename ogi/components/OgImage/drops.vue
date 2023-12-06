@@ -9,6 +9,8 @@ defineProps<{
   title: string
   image: string
   items: string
+  isPaid: boolean
+  usdPricePerMint: number
 }>()
 
 const cover: CSSProperties = {
@@ -33,6 +35,16 @@ const cover: CSSProperties = {
       <div>
         <div class="text-2xl font-bold m-0">{{ items }}</div>
         <div class="text-gray-400 m-0">items</div>
+      </div>
+    </div>
+    <div class="flex flex-row">
+      <div v-if="isPaid">
+        <div class="text-2xl font-bold m-0">$ {{ usdPricePerMint }}</div>
+        <div class="text-gray-400 m-0">Drop</div>
+      </div>
+      <div v-else>
+        <div class="text-2xl font-bold m-0"></div>
+        <div class="text-gray-400 m-0">Free</div>
       </div>
     </div>
   </div>

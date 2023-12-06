@@ -24,8 +24,16 @@ export const usdPrice = async (prefix: Prefix, amount: string) => {
 }
 
 export const getDropById = async (id: string) => {
-  const drop = await fetch(`https://waifu-me.kodadot.workers.dev/drops/${id}`)
-  return (await drop.json()) as DropItem
+  const dropData = await fetch(
+    `https://waifu-me.kodadot.workers.dev/drops/${id}`,
+  )
+  const drop = (await dropData.json()) as DropItem
+  const isPaid = drop.type === 'paid'
+
+  return {
+    ...drop,
+    isPaid,
+  }
 }
 
 export const getCollectionById = async (prefix: Prefix, id: string) => {
