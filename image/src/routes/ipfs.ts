@@ -12,6 +12,7 @@ app.use('/*', cors({ origin: allowedOrigin }))
 app.get('/*', async (c) => {
   const { original } = c.req.query()
   const isOriginal = original === 'true'
+  const isHead = c.req.method === 'HEAD'
 
   const url = new URL(c.req.url)
   const path = url.pathname.replace('/ipfs/', '')
@@ -34,7 +35,7 @@ app.get('/*', async (c) => {
   // 1. check existing image on cf-images && !isOriginal
   // ----------------------------------------
   console.log('step 1')
-  if (mimeType?.includes('image') && !isOriginal) {
+  if (mimeType?.includes('image') && !isOriginal && !isHead) {
     const publicUrl = await getImageByPath({
       token: c.env.IMAGE_API_TOKEN,
       imageAccount: c.env.CF_IMAGE_ACCOUNT,
@@ -119,7 +120,7 @@ app.get('/*', async (c) => {
     imageAccount: c.env.CF_IMAGE_ACCOUNT,
   })
 
-  if (imageUrl && !isOriginal) {
+  if (imageUrl && !isOriginal && !isHead) {
     return c.redirect(imageUrl)
   }
 

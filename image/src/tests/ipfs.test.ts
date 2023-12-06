@@ -11,6 +11,17 @@ test('[head] ipfs - 200 - json', async () => {
   expect(res.headers.get('content-type')).toBe('application/json')
 })
 
+test('[head] ipfs - 200 - image', async () => {
+  const res = await fetch(
+    'https://image-beta.w.kodadot.xyz/ipfs/bafybeidv3wgydacgpre67lkciihrttvwl5nibzftxfppy6lfanjja4v7zm',
+    { method: 'HEAD', redirect: 'manual' }
+  )
+
+  expect(res.ok).toBe(true)
+  expect(res.status).toBe(200)
+  expect(res.headers.get('content-type')).toBe('image/jpeg')
+})
+
 test('ipfs - 200 - json', async () => {
   const res = await fetch(
     'https://image-beta.w.kodadot.xyz/ipfs/bafkreihy6xwb35imb5hfwxzgmw2p64yoefuxysh6bkghyjwaj7tz5sfnuq'
