@@ -3,15 +3,6 @@ import { Env } from './utils/constants'
 import { captureAll } from './utils/surf'
 
 const KEEP_BROWSER_ALIVE_IN_SECONDS = 120;
-const DEFAULT_VIEWPORT_WIDTH = 600;
-const DEFAULT_VIEWPORT_HEIGHT = 600;
-const PAGE_TIMEOUT = 300000;
-
-const viewportSettings = {
-	deviceScaleFactor: 1,
-	width: DEFAULT_VIEWPORT_WIDTH,
-	height: DEFAULT_VIEWPORT_HEIGHT,
-};
 
 type ScreenshotRequest = {
 	urls: string[];
