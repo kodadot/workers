@@ -11,8 +11,9 @@
 </template>
 
 <script lang="ts" setup>
-import type { Prefix } from '@kodadot1/static'
+import { type Prefix, CHAINS } from '@kodadot1/static'
 import { computed, reactive } from 'vue'
+import { formatBalance } from '@polkadot/util'
 
 const route = useRoute()
 
@@ -23,7 +24,16 @@ const drop = await getDropById(id)
 const usdPricePerMint = ref('0')
 
 if (drop.isPaid) {
-  usdPricePerMint.value = await usdPrice(drop.chain, drop?.meta)
+  const chains = CHAINS[drop.chain]
+  const decimals = chains.tokenDecimals
+  const symbol = chains.tokenSymbol
+  const price = formatBalance(drop?.meta, {
+    decimals: decimals,
+    withUnit: symbol,
+    withSi: false,
+    forceUnit: symbol,
+  })
+  usdPricePerMint.value = await usdPrice(drop.chain, price)
 }
 
 const {

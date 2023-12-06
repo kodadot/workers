@@ -37,7 +37,7 @@ const cover: CSSProperties = {
           $ {{ usdPricePerMint }}
         </div>
         <div v-else class="text-2xl font-bold m-0">Free</div>
-        <div class="text-gray-400 m-0">Drop</div>
+        <div class="text-gray-400 m-0">drop</div>
       </div>
 
       <div class="ml-20">
