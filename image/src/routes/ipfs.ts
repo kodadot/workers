@@ -4,7 +4,7 @@ import { CACHE_DAY, Env } from '../utils/constants'
 import { fetchIPFS } from '../utils/ipfs'
 import { getImageByPath, ipfsToCFI } from '../utils/cloudflare-images'
 import { allowedOrigin } from '../utils/cors'
-import type { IPFSResponseType } from '../utils/types'
+import type { ResponseType } from '../utils/types'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -12,6 +12,7 @@ app.use('/*', cors({ origin: allowedOrigin }))
 app.get('/*', async (c) => {
   const { original } = c.req.query()
   const isOriginal = original === 'true'
+  const isHead = c.req.method === 'HEAD'
 
   const url = new URL(c.req.url)
   const path = url.pathname.replace('/ipfs/', '')
@@ -34,7 +35,7 @@ app.get('/*', async (c) => {
   // 1. check existing image on cf-images && !isOriginal
   // ----------------------------------------
   console.log('step 1')
-  if (mimeType?.includes('image') && !isOriginal) {
+  if (mimeType?.includes('image') && !isOriginal && !isHead) {
     const publicUrl = await getImageByPath({
       token: c.env.IMAGE_API_TOKEN,
       imageAccount: c.env.CF_IMAGE_ACCOUNT,
@@ -100,7 +101,7 @@ app.get('/*', async (c) => {
       if (contentLength === null) {
         body = await status.response?.text()
       } else {
-        body = status.response.body as IPFSResponseType
+        body = status.response.body as ResponseType
       }
 
       await c.env.MY_BUCKET.put(objectName, body, {
@@ -119,7 +120,7 @@ app.get('/*', async (c) => {
     imageAccount: c.env.CF_IMAGE_ACCOUNT,
   })
 
-  if (imageUrl && !isOriginal) {
+  if (imageUrl && !isOriginal && !isHead) {
     return c.redirect(imageUrl)
   }
 
@@ -130,6 +131,20 @@ app.get('/*', async (c) => {
 
   if (newObject !== null) {
     return renderR2Object(newObject, newObject?.httpMetadata?.contentType)
+  }
+})
+
+app.delete('/*', async (c) => {
+  const url = new URL(c.req.url)
+  const path = url.pathname.replace('/ipfs/', '')
+  const objectName = `ipfs/${path}`
+
+  try {
+    await c.env.MY_BUCKET.delete(objectName)
+
+    return c.json({ status: 'ok' })
+  } catch (error) {
+    return c.json({ status: 'error', error }, 500)
   }
 })
 

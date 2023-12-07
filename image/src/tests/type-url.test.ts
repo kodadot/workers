@@ -1,5 +1,27 @@
 import { expect, test } from 'vitest'
 
+test('[head] ipfs - 200 - json', async () => {
+  const res = await fetch(
+    'https://image-beta.w.kodadot.xyz/type/url?endpoint=https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-meta.json',
+    { method: 'HEAD' }
+  )
+
+  expect(res.ok).toBe(true)
+  expect(res.status).toBe(200)
+  expect(res.headers.get('content-type')).toBe('application/json')
+})
+
+test('[head] ipfs - 200 - image', async () => {
+  const res = await fetch(
+    'https://image-beta.w.kodadot.xyz/type/url?endpoint=https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
+    { method: 'HEAD', redirect: 'manual' }
+  )
+
+  expect(res.ok).toBe(true)
+  expect(res.status).toBe(200)
+  expect(res.headers.get('content-type')).toBe('image/png')
+})
+
 test('type-url - 200 - json', async () => {
   const res = await fetch(
     'https://image-beta.w.kodadot.xyz/type/url?endpoint=https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-meta.json'
