@@ -1,12 +1,7 @@
 import { Kysely } from 'kysely'
 import { D1Dialect } from 'kysely-d1'
 import camelcaseKeys from 'camelcase-keys'
-
-type TableName = 'watchlist'
-
-type Database = {
-  [K in TableName]: any
-}
+import { DB } from './types'
 
 export interface SearchQuery {
   authAddress: string
@@ -26,7 +21,7 @@ interface WatchlistItemParams {
 }
 
 function createDB(database: D1Database) {
-  return new Kysely<Database>({ dialect: new D1Dialect({ database }) })
+  return new Kysely<DB>({ dialect: new D1Dialect({ database }) })
 }
 
 export async function getTotalCount(searchQuery: Omit<SearchQuery, 'limit' | 'offset'>, database: D1Database) {
