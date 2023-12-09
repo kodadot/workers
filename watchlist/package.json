@@ -1,26 +1,26 @@
 {
-	"name": "watchlist",
-	"version": "0.0.0",
-	"private": true,
-	"scripts": {
-		"dev": "wrangler dev",
-		"start": "wrangler dev",
-		"deploy": "wrangler deploy",
-		"codegen": "kysely-codegen --dialect sqlite --out-file src/utils/types.ts"
-	},
-	"dependencies": {
-		"camelcase-keys": "^9.1.2",
-		"hono": "^3.10.4",
-		"kysely": "^0.26.3",
-		"kysely-d1": "^0.3.0"
-	},
-	"devDependencies": {
-		"@cloudflare/workers-types": "^4.20231121.0",
-		"@types/node": "^20.10.4",
-		"better-sqlite3": "^9.2.2",
-		"kysely-codegen": "^0.11.0",
-		"prettier": "^3.1.0",
-		"typescript": "^5.0.4",
-		"wrangler": "^3.0.0"
-	}
+  "name": "watchlist",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "codegen": "kysely-codegen --dialect sqlite --out-file src/utils/types.ts"
+  },
+  "dependencies": {
+    "camelcase-keys": "^9.1.2",
+    "hono": "^3.10.4",
+    "kysely": "^0.26.3",
+    "kysely-d1": "^0.3.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231121.0",
+    "@types/node": "^20.10.4",
+    "better-sqlite3": "^9.2.2",
+    "kysely-codegen": "^0.11.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.0.4",
+    "wrangler": "^3.0.0"
+  }
 }
