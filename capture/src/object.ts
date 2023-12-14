@@ -1,8 +1,17 @@
-import puppeteer, { type Browser as PuppeteerBrowser } from '@cloudflare/puppeteer'
-import { Env } from './utils/constants'
-import { captureAll } from './utils/surf'
+import puppeteer, { type Browser as PuppeteerBrowser } from '@cloudflare/puppeteer';
+import { Env } from './utils/constants';
+import { $URL, parseURL, withTrailingSlash } from 'ufo';
 
-const KEEP_BROWSER_ALIVE_IN_SECONDS = 120;
+const KEEP_BROWSER_ALIVE_IN_SECONDS = 60;
+const DEFAULT_VIEWPORT_WIDTH = 600;
+const DEFAULT_VIEWPORT_HEIGHT = 600;
+const PAGE_TIMEOUT = 300000;
+
+const viewportSettings = {
+	deviceScaleFactor: 1,
+	width: DEFAULT_VIEWPORT_WIDTH,
+	height: DEFAULT_VIEWPORT_HEIGHT,
+};
 
 type ScreenshotRequest = {
 	urls: string[];
@@ -34,24 +43,9 @@ export class Browser {
 	}
 
 
-	private resetKeepAlive() {
-		this.keptAliveInSeconds = 0;
-	}
-
-	private async adjustAlarm() {
-		// Reset keptAlive after performing tasks to the DO.
-		this.resetKeepAlive();
-
-		// set the first alarm to keep DO alive
-		let currentAlarm = await this.storage.getAlarm();
-		if (currentAlarm == null) {
-			console.log(`Browser DO: setting alarm`);
-			const TEN_SECONDS = 10 * 1000;
-			await this.storage.setAlarm(Date.now() + TEN_SECONDS);
-		}
-	}
 
 	async fetch(request: Request) {
+		// return new Response("success");
 		const body = (await request.json()) as ScreenshotRequest;
 		const urls = body.urls.filter(Boolean);
 
@@ -60,23 +54,54 @@ export class Browser {
 		await this.initBrowser();
 
 		// Reset keptAlive after each call to the DO
-		this.resetKeepAlive();
+		this.keptAliveInSeconds = 0;
 
 		if (!this.browser) {
-			return new Response('Browser DO: Could not start browser instance.', { status: 429 });
+			return new Response('Browser DO: Could not start browser instance.', { status: 499 });
 		}
 
 		const page = await this.browser.newPage();
 
-		const captures = await captureAll(page, urls);
+		const captures = [];
 
-		for (const sc of captures) {
-			await this.env.BUCKET.put(sc.name, sc.data);
+		for (const url of urls) {
+			await page.setViewport(viewportSettings);
+			await page.goto(url);
+
+			const selector = 'canvas';
+			await page.waitForSelector(selector);
+
+			const element = await page.$(selector);
+
+			if (!element) {
+				console.log(`Browser: element not found`);
+				continue;
+			}
+
+			const normalizedUrl = new $URL(url);
+
+			const path = withTrailingSlash(normalizedUrl.pathname.replace('/ipfs/', ''));
+
+			const fileName = path + normalizedUrl.query.hash + '.png';
+
+			const sc = await element.screenshot();
+
+			await this.env.BUCKET.put(fileName, sc);
+			captures.push(fileName);
 		}
 
-		await this.adjustAlarm();
+		// Reset keptAlive after performing tasks to the DO.
+		this.keptAliveInSeconds = 0;
 
-		return new Response(JSON.stringify({ captures: captures.map(c => c.name) }));
+		// set the first alarm to keep DO alive
+		let currentAlarm = await this.storage.getAlarm();
+		if (currentAlarm == null) {
+			console.log(`Browser DO: setting alarm`);
+			const TEN_SECONDS = 10 * 1000;
+			await this.storage.setAlarm(Date.now() + TEN_SECONDS);
+		}
+
+		return new Response(JSON.stringify({ captures }));
 	}
 
 	async alarm() {
