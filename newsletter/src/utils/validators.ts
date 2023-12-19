@@ -7,7 +7,7 @@ const subscribeSchema = z.object({
     email: z.string().email(),
 })
 
-export const subscribeValidator = validator('json', (value, c) => {
+const emailValidation = (type: 'json' | 'param') => validator(type, (value, c) => {
     const parsed = subscribeSchema.safeParse(value)
 
     if (!parsed.success) {
@@ -16,3 +16,7 @@ export const subscribeValidator = validator('json', (value, c) => {
 
     return value
 })
+
+export const subscribeValidator = emailValidation('json')
+
+export const checkSubscriptionValidator = emailValidation('param')

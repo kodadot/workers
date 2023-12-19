@@ -1,14 +1,14 @@
 import { Hono } from 'hono'
-import { subscribe } from './utils/beehiiv'
+import { subscribe, getSubscriptionByEmail } from './utils/beehiiv'
 import { HonoEnv } from './utils/types'
 import { cors } from 'hono/cors'
 import { allowedOrigin } from './utils/cors'
-import { subscribeValidator } from './utils/validators'
+import { subscribeValidator, checkSubscriptionValidator } from './utils/validators'
 import { getResponse } from './utils/response'
 
 const app = new Hono<HonoEnv>()
 
-app.use('/subscribe', cors({ origin: allowedOrigin }))
+app.use('*', cors({ origin: allowedOrigin }))
 
 app.post('/subscribe', subscribeValidator, async (c) => {
 	const { email } = c.req.valid('json')
@@ -20,6 +20,24 @@ app.post('/subscribe', subscribeValidator, async (c) => {
 	}
 
 	return c.json(undefined, 204)
+})
+
+
+app.get('/subscribe/:email', checkSubscriptionValidator, async (c) => {
+	const email = c.req.param('email')
+
+	const response = await getSubscriptionByEmail(email, c)
+
+	if (response.status !== 200) {
+		return c.json(getResponse('Something went wrong'), response.status)
+	}
+
+	const { data } = await response.json()
+
+	return c.json({
+		email: data.email,
+		status: data.status,
+	}, 200)
 })
 
 export default app
