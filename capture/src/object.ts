@@ -1,11 +1,13 @@
 import puppeteer, { type Browser as PuppeteerBrowser } from '@cloudflare/puppeteer'
 import { Env } from './utils/constants'
 import { captureAll } from './utils/surf'
+import { Settings } from './utils/types'
 
 const KEEP_BROWSER_ALIVE_IN_SECONDS = 120;
 
 type ScreenshotRequest = {
 	urls: string[];
+	settings?: Settings
 };
 
 export class Browser {
@@ -68,7 +70,7 @@ export class Browser {
 
 		const page = await this.browser.newPage();
 
-		const captures = await captureAll(page, urls);
+		const captures = await captureAll(page, urls, body.settings);
 
 		for (const sc of captures) {
 			await this.env.BUCKET.put(sc.name, sc.data);

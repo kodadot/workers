@@ -74,7 +74,7 @@ app.post('/screenshot', async (c) => {
 		})
 	}
 
-	const resp = await capture(c, { urls: [url] })
+	const resp = await capture(c, { urls: [url], settings: body.settings })
 
 	if (resp.ok === false) {
 		return c.text('Unable to capture', 400)
