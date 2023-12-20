@@ -1,16 +1,12 @@
-import type { Context } from 'hono'
+import { Hono } from 'hono'
 import type { Env } from '../utils/constants'
 import { normalize, contentFrom, type BaseMetadata } from '@kodadot1/hyperdata'
 import { ipfsUrl, toIPFSDedicated } from '../utils/ipfs'
 import { encodeEndpoint } from './type-url'
+import { cors } from 'hono/cors'
+import { allowedOrigin } from '../utils/cors'
 
-type HonoInterface = Context<
-  {
-    Bindings: Env
-  },
-  '/metadata',
-  {}
->
+const app = new Hono<{ Bindings: Env }>()
 
 // unable to call same workers
 const toExternalGateway = (url: string) => {
@@ -35,7 +31,9 @@ const getMimeType = async (url: string): Promise<string> => {
   return contentType ?? ''
 }
 
-export const getMetadata = async (c: HonoInterface) => {
+app.use('/*', cors({ origin: allowedOrigin }))
+
+app.get('/*', async (c) => {
   const { url } = c.req.query()
   const key = 'v1.0.0-' + encodeEndpoint(url)
 
@@ -90,4 +88,6 @@ export const getMetadata = async (c: HonoInterface) => {
   // 3. fails, redirect to original url
   // ----------------------------------------
   return c.redirect(url)
-}
+})
+
+export default app
