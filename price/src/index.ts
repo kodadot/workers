@@ -19,6 +19,7 @@ app.on(['GET', 'OPTIONS'], '/price/:chain', async (c) => {
 
   const key = `${cacheKey()}-${token}`;
   const value = await c.env.TOKENPRICE.get(key);
+  const latestPrice = await c.env.TOKENPRICE.get(chain);
 
   console.log(key, value);
 
@@ -28,11 +29,17 @@ app.on(['GET', 'OPTIONS'], '/price/:chain', async (c) => {
       console.log(chain, usd);
 
       c.executionCtx.waitUntil(c.env.TOKENPRICE.put(key, usd));
+      c.executionCtx.waitUntil(c.env.TOKENPRICE.put(chain, usd));
 
       return c.json(formatPrice(chain, usd));
     } catch (error) {
       console.log(error);
-      return c.json({ error }, 500);
+
+      if (latestPrice) {
+        return c.json(formatPrice(chain, latestPrice));
+      }
+
+      return c.json({ error: (error as Error).message }, 500);
     }
   }
 

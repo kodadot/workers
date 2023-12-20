@@ -1,22 +1,22 @@
-import type { Context } from 'hono'
+import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import { CACHE_TTL_BY_STATUS, type Env } from '../utils/constants'
 import { urlToCFI } from '../utils/cloudflare-images'
+import { allowedOrigin } from '../utils/cors'
+import { ResponseType } from '../utils/types'
 
-type HonoInterface = Context<
-  {
-    Bindings: Env
-  },
-  '/type/url',
-  {}
->
+const app = new Hono<{ Bindings: Env }>()
 
 export const encodeEndpoint = (endpoint: string) => {
   return endpoint.replace(/[:,._/]/g, '-')
 }
 
-export const getTypeUrl = async (c: HonoInterface) => {
+app.use('/*', cors({ origin: allowedOrigin }))
+
+app.get('/*', async (c) => {
   const { endpoint } = c.req.query()
   const path = encodeEndpoint(endpoint)
+  const isHead = c.req.method === 'HEAD'
 
   // 1. check existing image on cf-images
   // ----------------------------------------
@@ -26,7 +26,7 @@ export const getTypeUrl = async (c: HonoInterface) => {
     cf: CACHE_TTL_BY_STATUS,
   })
 
-  if (currentImage.ok) {
+  if (currentImage.ok && !isHead) {
     return c.redirect(cfImage, 302)
   }
 
@@ -54,7 +54,7 @@ export const getTypeUrl = async (c: HonoInterface) => {
     imageAccount: c.env.CF_IMAGE_ACCOUNT,
   })
 
-  if (imageUrl) {
+  if (imageUrl && !isHead) {
     return c.redirect(imageUrl, 302)
   }
 
@@ -64,7 +64,7 @@ export const getTypeUrl = async (c: HonoInterface) => {
   const statusCode = fetchObject.status
 
   if (statusCode === 200) {
-    await c.env.MY_BUCKET.put(objectName, fetchObject.body, {
+    await c.env.MY_BUCKET.put(objectName, fetchObject.body as ResponseType, {
       httpMetadata: fetchObject.headers,
     })
 
@@ -85,4 +85,6 @@ export const getTypeUrl = async (c: HonoInterface) => {
   // 5. if all else fails, redirect to original endpoint
   // ----------------------------------------
   return c.redirect(endpoint, 302)
-}
+})
+
+export default app

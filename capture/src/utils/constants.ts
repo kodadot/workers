@@ -1,8 +1,9 @@
 export type Env = {
 	BW: Fetcher;
-	// BROWSER_KV_DEMO: KVNamespace;
-
+	BUCKET: R2Bucket;
+	BROWSER: DurableObjectNamespace;
+	PUBLIC_URL: string;
+	// BROWSER_CACHE: KVNamespace;
 };
-
 
 export const ORIGIN = 'https://kodadot.xyz';

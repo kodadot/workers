@@ -7,3 +7,43 @@ browser = { binding = "BW" }
 # kv_namespaces = [
 #   { binding = "BROWSER_KV_DEMO", id = "f4a99377d30a45f395718628a00c0cf9", preview_id = "24fef87419a14b339c6440310a0cc1a2" }
 # ]
+[vars]
+PUBLIC_URL = "https://pub-9eb6a8bdc529419785a85d0e2f46c46a.r2.dev"
+
+# Bind an R2 Bucket
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "screenshots"
+preview_bucket_name="fake-screenshots"
+
+# Binding to a Durable Object
+[[durable_objects.bindings]]
+name = "BROWSER"
+class_name = "Browser"
+
+
+[env.beta]
+name = 'capture-beta'
+browser = { binding = "BW" }
+
+[[migrations]]
+tag = "v1" # Should be unique for each entry
+new_classes = ["Browser"]
+
+[env.beta.vars]
+PUBLIC_URL = "https://pub-9eb6a8bdc529419785a85d0e2f46c46a.r2.dev"
+
+[[env.beta.r2_buckets]]
+binding = "BUCKET"
+bucket_name = "screenshots"
+preview_bucket_name="fake-screenshots"
+
+# Binding to a Durable Object
+[[env.beta.durable_objects.bindings]]
+name = "BROWSER"
+class_name = "Browser"
+
+[[env.beta.migrations]]
+tag = "v2" # Should be unique for each entry
+new_classes = ["Browser"]
+
