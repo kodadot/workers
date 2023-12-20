@@ -1,1 +1,1 @@
-export const getResponse = (message: string) => ({ message })
+export const getResponse = (message: string) => ({ message });
