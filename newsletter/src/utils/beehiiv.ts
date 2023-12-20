@@ -29,4 +29,16 @@ export const getSubscriptionByEmail = (email: string, c: Context<HonoEnv>) => {
             Authorization: `Bearer ${apiKey}`
         }
     })
+}
+
+export const deleteSubscription = (subscriptionId: string, c: Context<HonoEnv>) => {
+    const apiKey = c.env.BEEHIIV_API_KEY
+    const publicationId = c.env.BEEHIIV_PUBLICATION_ID
+
+    return fetch(BEEHIIV_API_URL + `/publications/${publicationId}/subscriptions/${subscriptionId}`, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${apiKey}`
+        }
+    })
 } 
