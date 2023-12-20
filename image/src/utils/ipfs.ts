@@ -1,7 +1,26 @@
+import { $purify, getProviderList } from '@kodadot1/minipfs'
+
 type FetchIPFS = {
   path: string
   gateway1: string
   gateway2: string
+}
+
+export function toIPFSDedicated(path: string) {
+  const infura = new URL(getProviderList(['infura_kodadot1'])[0])
+  const url = new URL(path)
+  url.hostname = infura.hostname
+
+  return url.toString()
+}
+
+export function ipfsUrl(ipfs?: string) {
+  if (!ipfs) {
+    return ''
+  }
+
+  // TODO: 'kodadot_beta' for beta, 'kodadot' for prod
+  return $purify(ipfs, ['kodadot_beta'])[0]
 }
 
 export async function fetchIPFS({ path, gateway1, gateway2 }: FetchIPFS) {

@@ -10,6 +10,8 @@
   },
   "type": "module",
   "dependencies": {
+    "@kodadot1/hyperdata": "^0.0.1-rc.3",
+    "@kodadot1/minipfs": "^0.4.2-rc.0",
     "hono": "^3.10.2"
   },
   "devDependencies": {
