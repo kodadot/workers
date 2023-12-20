@@ -1,5 +1,5 @@
 import { validator } from 'hono/validator';
-import { getResponse } from './response';
+import { getResponse } from '../utils/response';
 import { z } from 'zod';
 
 const subscribeSchema = z.object({

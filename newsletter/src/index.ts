@@ -3,7 +3,7 @@ import { subscribe, getSubscriptionByEmail, deleteSubscription } from './utils/b
 import { HonoEnv } from './utils/types';
 import { cors } from 'hono/cors';
 import { allowedOrigin } from './utils/cors';
-import { subscribeValidator, checkSubscriptionValidator } from './utils/validators';
+import { subscribeValidator, checkSubscriptionValidator } from './middleware/validators';
 import { getResponse } from './utils/response';
 
 const app = new Hono<HonoEnv>();
