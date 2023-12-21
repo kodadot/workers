@@ -3,7 +3,7 @@ import { subscribe, getSubscriptionByEmail, deleteSubscription, indexPosts } fro
 import { HonoEnv } from './utils/types';
 import { cors } from 'hono/cors';
 import { allowedOrigin } from './utils/cors';
-import { subscribeValidator, checkSubscriptionValidator } from './middleware/validators';
+import { subscribeValidator, checkSubscriptionValidator, resendEmailValidator } from './middleware/validators';
 import { getResponse } from './utils/response';
 
 const app = new Hono<HonoEnv>();
@@ -19,13 +19,15 @@ app.post('/subscribe', subscribeValidator, async (c) => {
 		return c.json(getResponse('Something went wrong'), response.status);
 	}
 
-	return c.json(undefined, 204);
+	const { data } = await response.json();
+
+	return c.json({ id: data.id }, 201);
 });
 
-app.get('/subscribe/:email', checkSubscriptionValidator, async (c) => {
-	const email = c.req.param('email');
+app.get('/subscribe/:subscriptionId', checkSubscriptionValidator, async (c) => {
+	const subscriptionId = c.req.param('subscriptionId');
 
-	const response = await getSubscriptionByEmail(email, c);
+	const response = await getSubscriptionById(subscriptionId, c);
 
 	if (response.status !== 200) {
 		return c.json(getResponse('Unable to check subscription'), response.status);
@@ -35,6 +37,7 @@ app.get('/subscribe/:email', checkSubscriptionValidator, async (c) => {
 
 	return c.json(
 		{
+			id: data.id,
 			email: data.email,
 			status: data.status,
 		},
@@ -42,10 +45,10 @@ app.get('/subscribe/:email', checkSubscriptionValidator, async (c) => {
 	);
 });
 
-app.put('/subscribe/resend-confirmation', subscribeValidator, async (c) => {
-	const { email } = c.req.valid('json');
+app.put('/subscribe/resend-confirmation', resendEmailValidator, async (c) => {
+	const { subscriptionId } = c.req.valid('json');
 
-	const response = await getSubscriptionByEmail(email, c);
+	const response = await getSubscriptionById(subscriptionId, c);
 
 	if (response.status !== 200) {
 		return c.json(getResponse('Unable to resend confirmation email'), response.status);
@@ -55,12 +58,16 @@ app.put('/subscribe/resend-confirmation', subscribeValidator, async (c) => {
 
 	const isActive = data.status === 'active';
 
+	let id = data.id;
+
 	if (!isActive) {
 		await deleteSubscription(data.id, c);
-		await subscribe(email, c);
+		const newSubscriptionResponse = await subscribe(data.email, c);
+		const { data: newSubscription } = await newSubscriptionResponse.json();
+		id = newSubscription.id;
 	}
 
-	return c.json(undefined, 204);
+	return c.json({ id }, 201);
 });
 
 app.get('/index', async (c) => {
