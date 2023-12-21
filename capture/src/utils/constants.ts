@@ -9,8 +9,8 @@ export type Env = {
 export const ORIGIN = 'https://kodadot.xyz';
 
 
-const DEFAULT_VIEWPORT_WIDTH = 600;
-const DEFAULT_VIEWPORT_HEIGHT = 600;
+const DEFAULT_VIEWPORT_WIDTH = 400;
+const DEFAULT_VIEWPORT_HEIGHT = 400;
 
 export const viewportSettings = {
 	deviceScaleFactor: 1,

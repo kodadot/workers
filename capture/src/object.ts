@@ -1,5 +1,5 @@
 import puppeteer, { type Browser as PuppeteerBrowser } from '@cloudflare/puppeteer'
-import { Env } from './utils/constants'
+import { Env, viewportSettings } from './utils/constants'
 import { captureAll } from './utils/surf'
 import { Settings } from './utils/types'
 
@@ -69,6 +69,7 @@ export class Browser {
 		}
 
 		const page = await this.browser.newPage();
+		await page.setViewport(viewportSettings);
 
 		const captures = await captureAll(page, urls, body.settings);
 
