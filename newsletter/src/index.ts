@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { subscribe, getSubscriptionByEmail, deleteSubscription, indexPosts } from './utils/beehiiv';
+import { subscribe, deleteSubscription, indexPosts, getSubscriptionById } from './utils/beehiiv';
 import { HonoEnv } from './utils/types';
 import { cors } from 'hono/cors';
 import { allowedOrigin } from './utils/cors';
@@ -19,7 +19,7 @@ app.post('/subscribe', subscribeValidator, async (c) => {
 		return c.json(getResponse('Something went wrong'), response.status);
 	}
 
-	const { data } = await response.json();
+	const { data } = await response.json() as any;
 
 	return c.json({ id: data.id }, 201);
 });
@@ -33,7 +33,7 @@ app.get('/subscribe/:subscriptionId', checkSubscriptionValidator, async (c) => {
 		return c.json(getResponse('Unable to check subscription'), response.status);
 	}
 
-	const { data } = await response.json();
+	const { data } = await response.json() as any;
 
 	return c.json(
 		{
@@ -54,7 +54,7 @@ app.put('/subscribe/resend-confirmation', resendEmailValidator, async (c) => {
 		return c.json(getResponse('Unable to resend confirmation email'), response.status);
 	}
 
-	const { data } = await response.json();
+	const { data } = await response.json() as any;
 
 	const isActive = data.status === 'active';
 
@@ -63,7 +63,7 @@ app.put('/subscribe/resend-confirmation', resendEmailValidator, async (c) => {
 	if (!isActive) {
 		await deleteSubscription(data.id, c);
 		const newSubscriptionResponse = await subscribe(data.email, c);
-		const { data: newSubscription } = await newSubscriptionResponse.json();
+		const { data: newSubscription } = await newSubscriptionResponse.json() as any;
 		id = newSubscription.id;
 	}
 
