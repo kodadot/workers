@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { subscribe, getSubscriptionByEmail, deleteSubscription } from './utils/beehiiv';
+import { subscribe, getSubscriptionByEmail, deleteSubscription, indexPosts } from './utils/beehiiv';
 import { HonoEnv } from './utils/types';
 import { cors } from 'hono/cors';
 import { allowedOrigin } from './utils/cors';
@@ -61,6 +61,18 @@ app.put('/subscribe/resend-confirmation', subscribeValidator, async (c) => {
 	}
 
 	return c.json(undefined, 204);
+});
+
+app.get('/index', async (c) => {
+	const response = await indexPosts(c);
+
+	if (response.status !== 200) {
+		return c.json(getResponse('Unable to index posts'), response.status);
+	}
+
+	const { data } = (await response.json()) as { data: unknown };
+
+	return c.json(data, 200);
 });
 
 export default app;

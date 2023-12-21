@@ -42,3 +42,17 @@ export const deleteSubscription = (subscriptionId: string, c: Context<HonoEnv>) 
 		},
 	});
 };
+
+export const indexPosts = (c: Context<HonoEnv>) => {
+	const apiKey = c.env.BEEHIIV_API_KEY;
+	const publicationId = c.env.BEEHIIV_PUBLICATION_ID;
+
+	const beehiiv = new URL(BEEHIIV_API_URL);
+	beehiiv.pathname += `/publications/${publicationId}/posts`;
+
+	return fetch(beehiiv.toString(), {
+		headers: {
+			Authorization: `Bearer ${apiKey}`,
+		},
+	});
+};
