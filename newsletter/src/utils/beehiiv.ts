@@ -49,6 +49,8 @@ export const indexPosts = (c: Context<HonoEnv>) => {
 
 	const beehiiv = new URL(BEEHIIV_API_URL);
 	beehiiv.pathname += `/publications/${publicationId}/posts`;
+	beehiiv.searchParams.append('status', 'confirmed');
+	beehiiv.searchParams.append('direction', 'desc');
 
 	return fetch(beehiiv.toString(), {
 		headers: {
