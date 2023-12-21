@@ -19,7 +19,7 @@ export const subscribe = (email: string, c: Context<HonoEnv>) => {
 	});
 };
 
-export const getSubscriptionById = (subscriptionId: string, c: Context<HonoEnv>) => {
+export const getSubscriptionById = (subscriptionId: string, c: Context<HonoEnv>): Promise<Response> => {
 	const apiKey = c.env.BEEHIIV_API_KEY;
 	const publicationId = c.env.BEEHIIV_PUBLICATION_ID;
 
