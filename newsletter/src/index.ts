@@ -25,9 +25,9 @@ app.post('/subscribe', subscribeValidator, async (c) => {
 });
 
 app.get('/subscribe/:subscriptionId', checkSubscriptionValidator, async (c) => {
-	const email = c.req.param('subscriptionId');
+	const subscriptionId = c.req.param('subscriptionId');
 
-	const response = await getSubscriptionById(email, c);
+	const response = await getSubscriptionById(subscriptionId, c);
 
 	if (response.status !== 200) {
 		return c.json(getResponse('Unable to check subscription'), response.status);
