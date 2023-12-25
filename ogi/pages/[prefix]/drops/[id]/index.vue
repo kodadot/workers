@@ -12,7 +12,6 @@
 
 <script lang="ts" setup>
 import type { Prefix } from '@kodadot1/static'
-import { computed, reactive } from 'vue'
 
 const route = useRoute()
 
