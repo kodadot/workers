@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { chainNames, type Prefix } from '@kodadot1/static';
 import type { CSSProperties } from 'vue'
 
 // inherited attrs can mess up the satori parser
@@ -6,7 +7,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-defineProps<{
+const props = defineProps<{
   title: string
   image: string
   items: string
@@ -18,6 +19,8 @@ const cover: CSSProperties = {
   objectFit: 'cover',
   objectPosition: 'center',
 }
+
+const networkName = chainNames[props.network as Prefix]
 </script>
 
 <template>
@@ -44,7 +47,7 @@ const cover: CSSProperties = {
       </div> -->
 
       <div class="ml-16">
-        <div class="text-2xl font-bold m-0">{{ network }}</div>
+        <div class="text-2xl font-bold m-0">{{ networkName }}</div>
         <div class="text-gray-400 m-0">network</div>
       </div>
     </div>
