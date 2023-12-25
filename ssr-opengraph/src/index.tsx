@@ -7,7 +7,7 @@ import { ogiRequest } from './utils';
 
 const app = new Hono();
 
-const chains = ['bsx', 'snek', 'rmrk', 'ksm', 'ahp', 'ahk'];
+const chains = ['bsx', 'rmrk', 'ksm', 'ahp', 'ahk'];
 
 app.get('/', async (c) => {
   const useragent = c.req.header('User-Agent');
