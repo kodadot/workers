@@ -12,13 +12,13 @@
 
 <script lang="ts" setup>
 import { formatBalance } from '@polkadot/util'
-import { NAMES, type Prefix, CHAINS } from '@kodadot1/static'
+import { chainNames, type Prefix, CHAINS } from '@kodadot1/static'
 import { getNftById } from '@/utils/handler'
 
 const route = useRoute()
 const { prefix, id } = route.params
 const chain = prefix.toString() as Prefix
-const network = NAMES[prefix as Prefix]
+const network = chainNames[prefix as Prefix]
 
 const {
   data: { item },
