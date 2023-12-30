@@ -50,6 +50,13 @@ export const getItemListByCollectionId = async (prefix: Prefix, id: string) => {
   }>
 }
 
+export const getItemCountByCollectionId = async (chain: Prefix, id: string) => {
+  const client = getClient(chain)
+  const query = client.itemCountByCollectionId(id)
+
+  return await client.fetch(query)
+}
+
 export const getNftById = async (prefix: Prefix, id: string) => {
   const client = getClient(prefix)
   const query = client.itemById(id, extendFields(['meta', 'price']))
