@@ -67,6 +67,8 @@ export async function downloadStream({ token, videoUrl, account }: CFStream) {
 
 export async function uploadStream({ token, videoUrl, account }: CFStream) {
   const path = parsePath(videoUrl)
+  const expiryDate = new Date()
+  expiryDate.setDate(expiryDate.getDate() + 30)
 
   try {
     const uploadVideo = await fetch(
@@ -81,6 +83,7 @@ export async function uploadStream({ token, videoUrl, account }: CFStream) {
           meta: {
             name: path,
           },
+          scheduledDeletion: expiryDate,
         }),
       }
     )
