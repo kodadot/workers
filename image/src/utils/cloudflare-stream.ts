@@ -33,6 +33,11 @@ export async function searchStream({ token, path, account }: CFStream) {
 export async function downloadStream({ token, path, account }: CFStream) {
   try {
     const video = await searchStream({ token, path, account })
+
+    if (!video?.uid) {
+      return ''
+    }
+
     const downloadApi = `https://api.cloudflare.com/client/v4/accounts/${account}/stream/${video.uid}/downloads`
     const download = await fetch(downloadApi, {
       headers: {
@@ -41,7 +46,7 @@ export async function downloadStream({ token, path, account }: CFStream) {
     })
     const response: any = await download.json()
 
-    if (response.success && response.result.default.percentComplete === 100) {
+    if (response.success && response.result?.default?.percentComplete === 100) {
       return response.result.default.url
     }
 
@@ -58,7 +63,7 @@ export async function uploadStream({ token, path, account }: CFStream) {
   try {
     const search = await searchStream({ token, path, account })
 
-    if (search.readyToStream) {
+    if (search?.readyToStream) {
       return search.preview
     }
 
@@ -78,10 +83,6 @@ export async function uploadStream({ token, path, account }: CFStream) {
       }
     )
     const video: any = await uploadVideo.json()
-
-    if (video.success) {
-      console.log('video.result', video.result)
-    }
 
     return video.result
   } catch (error) {
