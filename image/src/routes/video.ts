@@ -1,13 +1,16 @@
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import { Env } from '../utils/constants'
 import {
   downloadStream,
   searchStream,
   uploadStream,
 } from '../utils/cloudflare-stream'
+import { allowedOrigin } from '../utils/cors'
 
 const app = new Hono<{ Bindings: Env }>()
 
+app.use('/*', cors({ origin: allowedOrigin }))
 app.post('/', async (c) => {
   const { videoUrl } = await c.req.json()
 
