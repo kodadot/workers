@@ -3,7 +3,6 @@ import { cors } from 'hono/cors'
 import { CACHE_DAY, Env } from '../utils/constants'
 import { fetchIPFS } from '../utils/ipfs'
 import { getImageByPath, ipfsToCFI } from '../utils/cloudflare-images'
-import { downloadStream, uploadStream } from '../utils/cloudflare-stream'
 import { allowedOrigin } from '../utils/cors'
 import type { ResponseType } from '../utils/types'
 
@@ -33,9 +32,7 @@ app.get('/*', async (c) => {
   console.log('object', object)
   console.log('mime type', mimeType)
 
-  // 1.
-  // - check existing image on cf-images && !isOriginal
-  // - upload video if doesn't exists on cf-streams
+  // 1. check existing image on cf-images && !isOriginal
   // ----------------------------------------
   console.log('step 1')
   if (mimeType?.includes('image') && !isOriginal && !isHead) {
@@ -47,24 +44,6 @@ app.get('/*', async (c) => {
 
     if (publicUrl) {
       return c.redirect(publicUrl)
-    }
-  }
-
-  if (mimeType?.includes('video') && !isHead) {
-    const video = await downloadStream({
-      account: c.env.CF_IMAGE_ACCOUNT,
-      token: c.env.IMAGE_API_TOKEN,
-      path,
-    })
-
-    if (video) {
-      return c.redirect(video)
-    } else {
-      await uploadStream({
-        account: c.env.CF_IMAGE_ACCOUNT,
-        token: c.env.IMAGE_API_TOKEN,
-        path,
-      })
     }
   }
 
@@ -145,21 +124,10 @@ app.get('/*', async (c) => {
     return c.redirect(imageUrl)
   }
 
-  // 5.
-  // - upload to cf-streams if video
-  // - return object from r2
+  // 5. return object from r2
   // ----------------------------------------
   console.log('step 5')
   const newObject = await c.env.MY_BUCKET.get(objectName)
-  const newMimeType = newObject?.httpMetadata?.contentType
-
-  if (newMimeType?.includes('video') && !isHead) {
-    await uploadStream({
-      account: c.env.CF_IMAGE_ACCOUNT,
-      token: c.env.IMAGE_API_TOKEN,
-      path,
-    })
-  }
 
   if (newObject !== null) {
     return renderR2Object(newObject, newObject?.httpMetadata?.contentType)
