@@ -1,7 +1,14 @@
-type CFStream = {
-  token: string
-  videoUrl: string
+type BaseParams = {
   account: string
+  token: string
+}
+
+type CFStream = BaseParams & {
+  videoUrl: string
+}
+
+type CFStreamDownload = BaseParams & {
+  videoUid: string
 }
 
 function parsePath(path: string) {
@@ -38,26 +45,26 @@ export async function searchStream({ token, videoUrl, account }: CFStream) {
   }
 }
 
-export async function downloadStream({ token, videoUrl, account }: CFStream) {
+export async function downloadStream({
+  token,
+  videoUid,
+  account,
+}: CFStreamDownload) {
   try {
-    const video = await searchStream({ token, videoUrl, account })
-
-    if (!video?.uid) {
-      return ''
-    }
-
-    const downloadApi = `https://api.cloudflare.com/client/v4/accounts/${account}/stream/${video.uid}/downloads`
+    const downloadApi = `https://api.cloudflare.com/client/v4/accounts/${account}/stream/${videoUid}/downloads`
     const download = await fetch(downloadApi, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      method: 'POST',
     })
     const response: any = await download.json()
 
-    if (response.success && response.result?.default?.percentComplete === 100) {
-      return response.result.default.url
+    if (response.success) {
+      return response.result
     }
 
+    console.log('uploadStream', response.errors[0], videoUid)
     return ''
   } catch (error) {
     console.error('error: download from cf-stream', error)
@@ -87,13 +94,13 @@ export async function uploadStream({ token, videoUrl, account }: CFStream) {
         }),
       }
     )
-    const video: any = await uploadVideo.json()
+    const response: any = await uploadVideo.json()
 
-    if (video.success) {
-      return video.result
+    if (response.success) {
+      return response.result
     }
 
-    console.log('uploadStream', video.errors[0], videoUrl)
+    console.log('uploadStream', response.errors[0], videoUrl)
     return ''
   } catch (error) {
     console.error('error: upload to cf-stream', error)
