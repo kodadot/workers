@@ -20,16 +20,34 @@ export async function searchStream({ token, path, account }: CFStream) {
     const search = await fetch(stream.toString(), options)
     const response: any = await search.json()
 
-    if (
-      response.success &&
-      response.result.length &&
-      response.result[0].readyToStream
-    ) {
-      return response.result[0].preview
+    if (response.success && response.result.length) {
+      return response.result[0]
     }
   } catch (error) {
     console.log('error: search stream', error)
 
+    return ''
+  }
+}
+
+export async function downloadStream({ token, path, account }: CFStream) {
+  try {
+    const video = await searchStream({ token, path, account })
+    const downloadApi = `https://api.cloudflare.com/client/v4/accounts/${account}/stream/${video.uid}/downloads`
+    const download = await fetch(downloadApi, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    const response: any = await download.json()
+
+    if (response.success && response.result.default.percentComplete === 100) {
+      return response.result.default.url
+    }
+
+    return ''
+  } catch (error) {
+    console.error('error: download from cf-stream', error)
     return ''
   }
 }
@@ -40,8 +58,8 @@ export async function uploadStream({ token, path, account }: CFStream) {
   try {
     const search = await searchStream({ token, path, account })
 
-    if (search) {
-      return search
+    if (search.readyToStream) {
+      return search.preview
     }
 
     const uploadVideo = await fetch(

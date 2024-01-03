@@ -3,7 +3,7 @@ import { cors } from 'hono/cors'
 import { CACHE_DAY, Env } from '../utils/constants'
 import { fetchIPFS } from '../utils/ipfs'
 import { getImageByPath, ipfsToCFI } from '../utils/cloudflare-images'
-import { searchStream, uploadStream } from '../utils/cloudflare-stream'
+import { downloadStream, uploadStream } from '../utils/cloudflare-stream'
 import { allowedOrigin } from '../utils/cors'
 import type { ResponseType } from '../utils/types'
 
@@ -35,7 +35,7 @@ app.get('/*', async (c) => {
 
   // 1.
   // - check existing image on cf-images && !isOriginal
-  // - check video on cf-streams (upload video if doesn't exists on cf-streams)
+  // - upload video if doesn't exists on cf-streams
   // ----------------------------------------
   console.log('step 1')
   if (mimeType?.includes('image') && !isOriginal && !isHead) {
@@ -51,7 +51,7 @@ app.get('/*', async (c) => {
   }
 
   if (mimeType?.includes('video') && !isHead) {
-    const video = await searchStream({
+    const video = await downloadStream({
       account: c.env.CF_IMAGE_ACCOUNT,
       token: c.env.IMAGE_API_TOKEN,
       path,
