@@ -50,7 +50,7 @@ app.get('/*', async (c) => {
     }
   }
 
-  if (mimeType?.includes('video')) {
+  if (mimeType?.includes('video') && !isHead) {
     const video = await searchStream({
       account: c.env.CF_IMAGE_ACCOUNT,
       token: c.env.IMAGE_API_TOKEN,
@@ -153,7 +153,7 @@ app.get('/*', async (c) => {
   const newObject = await c.env.MY_BUCKET.get(objectName)
   const newMimeType = newObject?.httpMetadata?.contentType
 
-  if (newMimeType?.includes('video')) {
+  if (newMimeType?.includes('video') && !isHead) {
     await uploadStream({
       account: c.env.CF_IMAGE_ACCOUNT,
       token: c.env.IMAGE_API_TOKEN,
