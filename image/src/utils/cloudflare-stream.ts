@@ -1,10 +1,16 @@
 type CFStream = {
   token: string
-  path: string
+  videoUrl: string
   account: string
 }
 
-export async function searchStream({ token, path, account }: CFStream) {
+function parsePath(path: string) {
+  const url = new URL(path)
+  return url.pathname
+}
+
+export async function searchStream({ token, videoUrl, account }: CFStream) {
+  const path = parsePath(videoUrl)
   const stream = new URL(
     `https://api.cloudflare.com/client/v4/accounts/${account}/stream`
   )
@@ -23,6 +29,8 @@ export async function searchStream({ token, path, account }: CFStream) {
     if (response.success && response.result.length) {
       return response.result[0]
     }
+
+    return ''
   } catch (error) {
     console.log('error: search stream', error)
 
@@ -30,9 +38,9 @@ export async function searchStream({ token, path, account }: CFStream) {
   }
 }
 
-export async function downloadStream({ token, path, account }: CFStream) {
+export async function downloadStream({ token, videoUrl, account }: CFStream) {
   try {
-    const video = await searchStream({ token, path, account })
+    const video = await searchStream({ token, videoUrl, account })
 
     if (!video?.uid) {
       return ''
@@ -57,16 +65,10 @@ export async function downloadStream({ token, path, account }: CFStream) {
   }
 }
 
-export async function uploadStream({ token, path, account }: CFStream) {
-  const url = `https://kodadot1.infura-ipfs.io/ipfs/${path}`
+export async function uploadStream({ token, videoUrl, account }: CFStream) {
+  const path = parsePath(videoUrl)
 
   try {
-    const search = await searchStream({ token, path, account })
-
-    if (search?.readyToStream) {
-      return search.preview
-    }
-
     const uploadVideo = await fetch(
       `https://api.cloudflare.com/client/v4/accounts/${account}/stream/copy`,
       {
@@ -75,7 +77,7 @@ export async function uploadStream({ token, path, account }: CFStream) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          url,
+          url: videoUrl,
           meta: {
             name: path,
           },
@@ -84,8 +86,14 @@ export async function uploadStream({ token, path, account }: CFStream) {
     )
     const video: any = await uploadVideo.json()
 
-    return video.result
+    if (video.success) {
+      return video.result
+    }
+
+    console.log('uploadStream', video.errors[0], videoUrl)
+    return ''
   } catch (error) {
     console.error('error: upload to cf-stream', error)
+    return ''
   }
 }
