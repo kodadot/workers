@@ -73,4 +73,17 @@ app.post('/download', async (c) => {
   })
 })
 
+app.options('/download', async (c) => {
+  c.res.headers.set('Access-Control-Allow-Origin', '*')
+  c.res.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS')
+  c.res.headers.set(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With'
+  )
+  c.res.headers.set('Access-Control-Max-Age', '86400')
+  c.res.headers.set('Access-Control-Allow-Credentials', 'true')
+
+  return c.text('')
+})
+
 export default app
