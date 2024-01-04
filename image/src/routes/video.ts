@@ -59,6 +59,7 @@ app.post('/download', async (c) => {
     return c.json({
       url: videoUrl,
       uid: exist.uid,
+      detail: exist,
       video: download,
     })
   }
