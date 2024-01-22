@@ -4,22 +4,27 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>
 
-export interface _CfKV {
-  key: string
-  value: Buffer | null
-}
-
 export interface Watchlist {
   id: Generated<number>
-  auth_address: string
+  name: string | null
+  address: string
+  isDefault: number
+  itemsCount: Generated<number>
+  createdAt: Generated<string>
+  updatedAt: Generated<string>
+}
+
+export interface WatchlistItem {
+  id: Generated<number>
   chain: string
-  entity_id: string
-  entity_type: string
-  created_at: Generated<string>
-  updated_at: Generated<string>
+  type: string
+  watchlistId: number
+  itemId: string
+  createdAt: Generated<string>
+  updatedAt: Generated<string>
 }
 
 export interface DB {
-  _cf_KV: _CfKV
   watchlist: Watchlist
+  watchlistItem: WatchlistItem
 }
