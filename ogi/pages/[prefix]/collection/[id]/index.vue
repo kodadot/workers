@@ -6,6 +6,7 @@
     <hr />
     <p>debug:</p>
     <div>{{ collection }}</div>
+    <div>total: {{ totalCount }}</div>
   </div>
 </template>
 
@@ -21,8 +22,10 @@ const {
   data: { collection },
 } = await getCollectionById(prefix, id)
 const {
-  data: { items },
-} = await getItemListByCollectionId(prefix, id)
+  data: {
+    itemCount: { totalCount },
+  },
+} = await getItemCountByCollectionId(prefix, id)
 
 useSeoMeta({
   title: seoTitle(collection.name),
@@ -39,7 +42,7 @@ defineOgImage({
   component: 'collection',
   title: collection.name,
   image: ipfsUrl(collection.meta.image),
-  items: items.length.toString(),
+  items: totalCount.toString() || '-',
   network: prefix,
 })
 </script>
