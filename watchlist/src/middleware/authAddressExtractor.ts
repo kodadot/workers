@@ -1,12 +1,13 @@
 import { MiddlewareHandler } from 'hono'
-import { isValidAddress, toSS58 } from '../utils/address'
+import { isAddress } from '@polkadot/util-crypto'
+import { toSS58 } from '../utils/address'
 import { HonoEnv } from '../utils/constants'
 
 export function authAddressExtractor(): MiddlewareHandler<HonoEnv> {
   return async (c, next) => {
     const rawAddress = c.req.header('x-auth-address')
 
-    if (!rawAddress || !isValidAddress(rawAddress)) {
+    if (!rawAddress || !isAddress(rawAddress)) {
       return c.json({ error: 'invalid auth address' }, 400)
     }
 
