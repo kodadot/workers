@@ -2,7 +2,7 @@ CREATE TABLE watchlist (
     id           INTEGER      PRIMARY KEY AUTOINCREMENT NOT NULL,
     name         TEXT         NULL,
     address      TEXT         NOT NULL,
-    is_default   BOOLEAN      NOT NULL,
+    is_default   BOOLEAN      NOT NULL DEFAULT FALSE,
     items_count  INTEGER      NOT NULL DEFAULT 0,
     created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
