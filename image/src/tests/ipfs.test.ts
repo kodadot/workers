@@ -117,7 +117,7 @@ test('ipfs - 302 - html', async () => {
   expect(data).toMatchInlineSnapshot(`
     Blob {
       Symbol(kHandle): Blob {},
-      Symbol(kLength): 657,
+      Symbol(kLength): 656,
       Symbol(kType): "text/html",
     }
   `)
@@ -136,7 +136,7 @@ test('ipfs - 200 - html', async () => {
   expect(data).toMatchInlineSnapshot(`
     Blob {
       Symbol(kHandle): Blob {},
-      Symbol(kLength): 657,
+      Symbol(kLength): 656,
       Symbol(kType): "text/html",
     }
   `)
