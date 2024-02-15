@@ -1,4 +1,4 @@
-## 🎈 my-party
+## 🎈 kodaparty
 
 Welcome to the party, pal!
 
