@@ -1,5 +1,5 @@
 import type * as Party from "partykit/server";
-import type { Connection, RemoveMessage, SyncMessage, UpdateMessage, UserDetails } from "./types";
+import type { Connection, MaybeUserDetails, RemoveMessage, SyncMessage, UpdateMessage, UserDetails } from "./types";
 
 export default class Server implements Party.Server {
   constructor(readonly room: Party.Room) { }
@@ -8,17 +8,17 @@ export default class Server implements Party.Server {
     console.log(`Connected: id: ${conn.id} room: ${this.room.id} url: ${new URL(ctx.request.url).pathname}`
     );
 
-    const connections = []
+    const connections = new Map<string, MaybeUserDetails>()
     for (const connection of this.room.getConnections()) {
       if (connection.id === conn.id) {
         continue
       }
-      connections.push(connection.state as UserDetails)
+      connections.set(connection.id, connection.state as MaybeUserDetails)
     }
 
     const message = <SyncMessage>{
       type: 'sync',
-      connections: connections
+      connections: Object.fromEntries(connections.entries())
     }
 
     conn.send(JSON.stringify(message));
