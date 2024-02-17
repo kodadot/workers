@@ -1,0 +1,8 @@
+name = "watchlist"
+main = "src/index.ts"
+compatibility_date = "2023-12-09"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "watchlist"
+database_id = "********"
