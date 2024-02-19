@@ -1,18 +1,38 @@
 import { type Connection as PartyConnection } from "partykit/server"
 
-type Cursor = {
+type CursorType = 'touch' | 'mouse'
+
+export type Cursor = {
     x: number
     y: number
-    cursor?: 'touch' | 'mouse'
+    type?: CursorType
     lastUpdate?: number
+}
+
+type EventType = 'drop_generating' | 'drop_minting' | 'drop_minted'
+
+export type Event = {
+    id: string,
+    type: EventType
+    image?: string
+    completed?: boolean
+    timestamp: number
 }
 
 export type UserDetails = {
     id: string
     spent?: number
-} & Cursor
+    cursor?: Cursor
+    lastEvent?: Event
+}
 
 export type MaybeUserDetails = UserDetails | null
+
+export type UpdateUserDetailsBody = {
+    spent?: number
+    event?: Omit<Event, 'timestamp'>
+    cursor?: Omit<Cursor, 'lastUpdate'>
+}
 
 export type UpdateMessage = {
     type: 'update',

@@ -1,5 +1,5 @@
 import type * as Party from "partykit/server";
-import type { Connection, MaybeUserDetails, RemoveMessage, SyncMessage, UpdateMessage, UserDetails } from "./types";
+import type { Connection, Cursor, Event, MaybeUserDetails, RemoveMessage, SyncMessage, UpdateMessage, UpdateUserDetailsBody, UserDetails } from "./types";
 
 export default class Server implements Party.Server {
   constructor(readonly room: Party.Room) { }
@@ -27,40 +27,68 @@ export default class Server implements Party.Server {
   onMessage(message: string, sender: Connection) {
     console.log(`onMessage: ${sender.id} sent message: ${message}`);
 
-    const data = JSON.parse(message)
+    const data = JSON.parse(message) as UpdateUserDetailsBody
 
-    const userDetails = <UserDetails>{
-      id: sender.id,
-      x: data.x,
-      y: data.y,
-      cursor: data.cursor,
-      spent: data.spent,
-      lastUpdate: Date.now()
-    }
+    const details = this.updateDetails(sender, data)
 
-    this.updateDetails(sender, userDetails)
-
-    const msg = userDetails.x && userDetails.y ? <UpdateMessage>{
+    const msg = <UpdateMessage>{
       type: 'update',
-      details: userDetails
-    } : <RemoveMessage>({ type: 'remove', id: sender.id, })
+      details: details
+    }
 
     this.room.broadcast(JSON.stringify(msg), [sender.id])
-  }
-
-  updateDetails(connection: Connection, details: UserDetails) {
-    const prevDetails = connection.state
-
-    const needsNew = prevDetails?.lastUpdate && details.lastUpdate as number - (prevDetails.lastUpdate || 0) > 100
-
-    if (!prevDetails || needsNew) {
-      connection.setState(details)
-    }
   }
 
   onClose(connection: Party.Connection) {
     const message = <RemoveMessage>({ type: 'remove', id: connection.id, })
     this.room.broadcast(JSON.stringify(message))
+  }
+
+  updateDetails(connection: Connection, body: UpdateUserDetailsBody) {
+    const prevDetails = connection.state as MaybeUserDetails
+
+    const updatedUserDetails = <UserDetails>{
+      id: connection.id,
+      spent: body.spent,
+      cursor: prevDetails?.cursor,
+      lastEvent: prevDetails?.lastEvent
+    }
+
+    const prevCursor = prevDetails?.cursor
+    const needsNewCursor = body.cursor && Date.now() - (prevCursor?.lastUpdate || 0) > 100
+
+    if (needsNewCursor) {
+      Object.assign(updatedUserDetails, {
+        cursor: {
+          x: body.cursor?.x,
+          y: body.cursor?.y,
+          type: body.cursor?.type,
+          lastUpdate: Date.now()
+        } as Cursor
+      })
+    }
+
+    const prevLastEvent = prevDetails?.lastEvent
+    const updateLastEvent = body.event && prevLastEvent?.id !== body.event?.id || prevLastEvent?.type === body.event?.type && body.event?.completed
+
+    if (updateLastEvent) {
+      Object.assign(updatedUserDetails, {
+        lastEvent: {
+          id: (body.event as Event).id,
+          type: (body.event as Event).type,
+          completed: (body.event as Event).completed,
+          image: body.event?.image,
+          timestamp: Date.now()
+        } as Event
+      })
+    }
+
+    if (!prevDetails || needsNewCursor || updateLastEvent) {
+      console.log(`Updating details: ${connection.id} with ${JSON.stringify(updatedUserDetails)}`);
+      connection.setState(updatedUserDetails)
+    }
+
+    return updatedUserDetails
   }
 }
 
