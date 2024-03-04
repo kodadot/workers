@@ -26,7 +26,7 @@ routes = [
   "*.kodadot.xyz/ahk/collection/*",
   "*.kodadot.xyz/ahk/drops/*",
   "*.kodadot.xyz/ahk/u/*",
-  "*.kodadot.xyz/sandbox.html"
+  "*.kodadot.xyz/sandbox.html*"
 ]
 
 [site]
