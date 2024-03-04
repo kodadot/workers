@@ -62,4 +62,8 @@ routes = [
   "kodadot.xyz/ahk/collection/*",
   "kodadot.xyz/ahk/drops/*",
   "kodadot.xyz/ahk/u/*",
+  "kodadot.xyz/sandbox.html*"
 ]
+
+[env.production.site]
+bucket = "./public"
