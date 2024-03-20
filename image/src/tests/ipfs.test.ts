@@ -91,7 +91,7 @@ test('ipfs - 200 - image - original', async () => {
   expect(data).toMatchInlineSnapshot(`
     Blob {
       Symbol(kHandle): Blob {},
-      Symbol(kLength): 429556,
+      Symbol(kLength): 386423,
       Symbol(kType): "image/jpeg",
     }
   `)
@@ -117,7 +117,7 @@ test('ipfs - 302 - html', async () => {
   expect(data).toMatchInlineSnapshot(`
     Blob {
       Symbol(kHandle): Blob {},
-      Symbol(kLength): 656,
+      Symbol(kLength): 279,
       Symbol(kType): "text/html",
     }
   `)
@@ -136,7 +136,7 @@ test('ipfs - 200 - html', async () => {
   expect(data).toMatchInlineSnapshot(`
     Blob {
       Symbol(kHandle): Blob {},
-      Symbol(kLength): 656,
+      Symbol(kLength): 279,
       Symbol(kType): "text/html",
     }
   `)
