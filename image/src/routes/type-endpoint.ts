@@ -18,6 +18,10 @@ app.get('/*', async (c) => {
   const path = encodeEndpoint(endpoint)
   const isHead = c.req.method === 'HEAD'
 
+  if (!endpoint) {
+    return c.text('Invalid endpoint', 400)
+  }
+
   // 1. check existing image on cf-images
   // ----------------------------------------
   const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`
@@ -32,7 +36,7 @@ app.get('/*', async (c) => {
 
   // 2. check existing object in r2 bucket
   // ----------------------------------------
-  const objectName = `type-url/${path}`
+  const objectName = `type-endpoint/${path}`
   const object = await c.env.MY_BUCKET.get(objectName)
 
   if (object !== null) {
