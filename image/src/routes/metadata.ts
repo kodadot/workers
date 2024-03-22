@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import type { Env } from '../utils/constants'
 import { normalize, contentFrom, type BaseMetadata } from '@kodadot1/hyperdata'
 import { ipfsUrl, toIPFSDedicated } from '../utils/ipfs'
-import { encodeEndpoint } from './type-url'
+import { encodeEndpoint } from './type-endpoint'
 import { cors } from 'hono/cors'
 import { allowedOrigin } from '../utils/cors'
 
