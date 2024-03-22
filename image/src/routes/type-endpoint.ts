@@ -14,7 +14,7 @@ export const encodeEndpoint = (endpoint: string) => {
 app.use('/*', cors({ origin: allowedOrigin }))
 
 app.get('/*', async (c) => {
-  const { endpoint } = c.req.query()
+  const endpoint = new URL(c.req.url.split('/endpoint/')[1]).toString()
   const path = encodeEndpoint(endpoint)
   const isHead = c.req.method === 'HEAD'
 
@@ -60,11 +60,19 @@ app.get('/*', async (c) => {
 
   // 4. upload to r2 bucket
   // ----------------------------------------
-  const fetchObject = await fetch(endpoint, { cf: CACHE_TTL_BY_STATUS })
+  const fetchObject = await fetch(endpoint, {
+    cf: CACHE_TTL_BY_STATUS,
+  })
   const statusCode = fetchObject.status
 
   if (statusCode === 200) {
-    await c.env.MY_BUCKET.put(objectName, fetchObject.body as ResponseType, {
+    let body
+    if (fetchObject.headers.get('content-length') == null) {
+      body = await fetchObject.text()
+    } else {
+      body = fetchObject.body
+    }
+    await c.env.MY_BUCKET.put(objectName, body as ResponseType, {
       httpMetadata: fetchObject.headers,
     })
 
