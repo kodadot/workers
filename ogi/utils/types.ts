@@ -20,6 +20,7 @@ export interface BaseItemMeta {
 
 export interface Collection extends BaseItem {
   meta: BaseItemMeta
+  max: number
 }
 
 export interface NFT extends BaseItem {
