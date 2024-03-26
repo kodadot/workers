@@ -14,7 +14,7 @@ type EventType = 'drop_generating' | 'drop_minting' | 'drop_minted'
 export type Event = {
     id: string,
     type: EventType
-    image?: string
+    mintingSession?: { image: string, amount: number }
     completed?: boolean
     timestamp: number
 }

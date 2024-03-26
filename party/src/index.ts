@@ -77,7 +77,7 @@ export default class Server implements Party.Server {
           id: (body.event as Event).id,
           type: (body.event as Event).type,
           completed: (body.event as Event).completed,
-          image: body.event?.image,
+          mintingSession: body.event?.mintingSession,
           timestamp: Date.now()
         } as Event
       })
