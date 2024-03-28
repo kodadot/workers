@@ -23,7 +23,8 @@ app.get('/', async (c) => {
       title: 'KodaDot - Your Generative Art Marketplace',
       description: 'One Stop NFT Shop on Polkadot',
       canonical: 'https://kodadot.xyz',
-      image: 'https://kodadot.xyz/k_card.png',
+      image:
+        'https://raw.githubusercontent.com/kodadot/nft-gallery/main/public/k_card.png', // change image url to bypass the cache
     },
   };
 
