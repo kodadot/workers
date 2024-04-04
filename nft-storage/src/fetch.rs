@@ -3,7 +3,7 @@ use serde::de::DeserializeOwned;
 use std::result::Result as StdResult;
 use worker::console_debug;
 
-const NFT_STORAGE_BASE_API: &str = "https://api.nft.storage/";
+const NFT_STORAGE_BASE_API: &str = "https://api.nft.storage";
 
 pub async fn call_post<T: DeserializeOwned, B: Into<Body>>(
     url: &str,

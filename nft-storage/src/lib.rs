@@ -28,7 +28,7 @@ fn log_request(req: &Request) {
     );
 }
 
-const NFT_STORAGE_BASE_API: &str = "https://api.nft.storage/";
+const NFT_STORAGE_BASE_API: &str = "https://api.nft.storage";
 
 fn universal_response<T: Serialize>(response: StdResult<T, reqwest::Error>) -> Result<Response> {
     match response {
