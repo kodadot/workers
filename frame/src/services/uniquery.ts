@@ -16,6 +16,30 @@ export async function getCollection(chain: string, id: string) {
   }
 }
 
+export async function getItemByOffset(
+  chain: string,
+  collection: string,
+  offset: string | number
+) {
+  const client = getClient(chain as any);
+  const query = client.itemListByCollectionId(collection, {
+    limit: 1,
+    offset: Number(offset),
+    orderBy: "createdAt_ASC",
+  });
+
+  console.log(query);
+
+  try {
+    const result = await client.fetch<any>(query);
+    return result.data?.items[0];
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+
 export async function getItem(chain: string, collection: string, id: string) {
   const client = getClient(chain as any)
   // const withImage = extendFields(['image', 'max' as any])
