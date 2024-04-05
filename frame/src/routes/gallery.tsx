@@ -1,15 +1,16 @@
-import { Button, Frog } from 'frog'
-import { getCollection, getItem } from '../services/uniquery'
-import { kodaUrl } from '../utils'
 import { $purifyOne } from '@kodadot1/minipfs'
+import { Button, Frog } from 'frog'
 import { HonoEnv } from '../constants'
+import { getCollection, getItemByOffset } from '../services/uniquery'
+import { kodaUrl } from '../utils'
 
 export const app = new Frog<HonoEnv>({})
 
 app.frame('/:chain/:id', async (c) => {
+
   const { chain, id } = c.req.param()
+  
   const collection = await getCollection(chain, id)
-  console.log({ collection })
   const image = $purifyOne(collection.image, 'kodadot_beta')
   const max = collection.max
   const supply = collection.supply
@@ -38,11 +39,11 @@ app.frame('/view/:chain/:id/:curr', async (c) => {
     throw new Error('The collection should have a maximum')
   }
   let max = Number(buttonValue)
-  let item = await getItem(chain, id, curr)
+  let item = await getItemByOffset(chain, id, Number(curr) - 1)
 
   if (!item) {
     curr = '1'
-    item = await getItem(chain, id, curr)
+    item = await getItemByOffset(chain, id, 0)
   }
 
   const image = $purifyOne(item.image, 'kodadot_beta')
