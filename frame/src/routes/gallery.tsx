@@ -7,8 +7,10 @@ import { kodaUrl } from '../utils'
 export const app = new Frog<HonoEnv>({})
 
 app.frame('/:chain/:id', async (c) => {
+
   const { chain, id } = c.req.param()
-  const collection = await getCollection(chain, 
+  
+  const collection = await getCollection(chain, id)
   const image = $purifyOne(collection.image, 'kodadot_beta')
   const max = collection.max
   const supply = collection.supply
