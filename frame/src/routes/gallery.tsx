@@ -8,12 +8,7 @@ export const app = new Frog<HonoEnv>({})
 
 app.frame('/:chain/:id', async (c) => {
   const { chain, id } = c.req.param()
-  const [collection, firstItemInCollection] = await Promise.all([
-    getCollection(chain, id),
-    getItemByOffset(chain, id, 0),
-  ]);
-  const firstItemId = firstItemInCollection.id.split("-")[1];
-
+  const collection = await getCollection(chain, 
   const image = $purifyOne(collection.image, 'kodadot_beta')
   const max = collection.max
   const supply = collection.supply
@@ -25,7 +20,7 @@ app.frame('/:chain/:id', async (c) => {
     image,
     imageAspectRatio: '1:1',
     intents: [
-      <Button action={`/view/${chain}/${id}/${firstItemId}`} value={supply}>
+      <Button action={`/view/${chain}/${id}/1`} value={supply}>
         {label}
       </Button>,
     ],
