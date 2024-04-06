@@ -1,5 +1,12 @@
-name = "kodadot-collections"
+name = "frame-beta"
 compatibility_date = "2023-12-01"
+main = "src/index.ts"
+
+[env.beta]
+name = 'frame-beta'
+
+[env.production]
+name = 'frame'
 
 # [vars]
 # MY_VARIABLE = "production_value"
