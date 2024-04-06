@@ -9,7 +9,7 @@ export const app = new Frog<HonoEnv>({})
 app.frame('/:chain/:id', async (c) => {
 
   const { chain, id } = c.req.param()
-  
+
   const collection = await getCollection(chain, id)
   const image = $purifyOne(collection.image, 'kodadot_beta')
   const max = collection.max
@@ -46,33 +46,42 @@ app.frame('/view/:chain/:id/:curr', async (c) => {
     item = await getItemByOffset(chain, id, 0)
   }
 
+  const itemId = item.id.split("-")[1]
+
+
   const image = $purifyOne(item.image, 'kodadot_beta')
 
   const random = max ? Math.floor(Math.random() * max) + 1 : curr + 1
 
   return c.res({
     image: image,
-    imageAspectRatio: '1:1',
+    imageAspectRatio: "1:1",
     intents: [
       parseInt(curr) > 1 ? (
-        <Button value={`${max}`} action={`/view/${chain}/${id}/${parseInt(curr) - 1}/`}>
-          {' '}
-          ←{' '}
+        <Button
+          value={`${max}`}
+          action={`/view/${chain}/${id}/${parseInt(curr) - 1}/`}
+        >
+          {" "}
+          ←{" "}
         </Button>
       ) : null,
-      <Button value={`${max}`} action={`/view/${chain}/${id}/${parseInt(curr) + 1}/`}>
-        {' '}
-        →{' '}
+      <Button
+        value={`${max}`}
+        action={`/view/${chain}/${id}/${parseInt(curr) + 1}/`}
+      >
+        {" "}
+        →{" "}
       </Button>,
 
       <Button action={`/view/${chain}/${id}/${random}`} value={`${max}`}>
-        {' '}
-        ↻{' '}
+        {" "}
+        ↻{" "}
       </Button>,
-      <Button.Link href={kodaUrl(chain, id, curr)}>View</Button.Link>,
+      <Button.Link href={kodaUrl(chain, id, itemId)}>View</Button.Link>,
     ],
-    browserLocation: kodaUrl(chain, id, curr),
-  })
+    browserLocation: kodaUrl(chain, id, itemId),
+  });
 })
 
 export default app
