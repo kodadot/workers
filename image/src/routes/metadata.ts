@@ -90,4 +90,17 @@ app.get('/*', async (c) => {
   return c.redirect(url)
 })
 
+app.delete('/*', async (c) => {
+  const { url } = c.req.query()
+  const key = 'v1.0.0-' + encodeEndpoint(url)
+
+  try {
+    await c.env.METADATA.delete(key)
+
+    return c.json({ status: 'ok' })
+  } catch (error) {
+    return c.json({ status: 'error', error }, 500)
+  }
+})
+
 export default app
