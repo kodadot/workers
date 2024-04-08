@@ -33,9 +33,11 @@ const getMimeType = async (url: string): Promise<string> => {
 
 app.use('/*', cors({ origin: allowedOrigin }))
 
+const VERSION_KEY = 'v1.0.1'
+
 app.get('/*', async (c) => {
   const { url } = c.req.query()
-  const key = 'v1.0.0-' + encodeEndpoint(url)
+  const key = VERSION_KEY + encodeEndpoint(url)
 
   // ensure ?url=url is present
   if (!url) {
@@ -57,6 +59,11 @@ app.get('/*', async (c) => {
     const externalUrl = toExternalGateway(url)
     const data = await fetch(externalUrl)
     console.log('fetch metadata status', externalUrl, data.status)
+
+    if (!data.ok) {
+      return c.redirect(url)
+    }
+
     const json = await data.json<BaseMetadata>()
     const content = contentFrom(json, true)
     // @ts-ignore
@@ -92,7 +99,7 @@ app.get('/*', async (c) => {
 
 app.delete('/*', async (c) => {
   const { url } = c.req.query()
-  const key = 'v1.0.0-' + encodeEndpoint(url)
+  const key = VERSION_KEY + encodeEndpoint(url)
 
   try {
     await c.env.METADATA.delete(key)
