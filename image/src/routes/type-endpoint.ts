@@ -4,11 +4,52 @@ import { CACHE_TTL_BY_STATUS, type Env } from '../utils/constants'
 import { urlToCFI } from '../utils/cloudflare-images'
 import { allowedOrigin } from '../utils/cors'
 import { ResponseType } from '../utils/types'
+import { ipfsUrl } from '../utils/ipfs'
 
 const app = new Hono<{ Bindings: Env }>()
 
 export const encodeEndpoint = (endpoint: string) => {
   return endpoint.replace(/[:,._/]/g, '-')
+}
+
+
+
+const writeMimeTypeToResponse = async (
+  R2Object: R2ObjectBody,
+): Promise<ReadableStream> => {
+  const decoder = new TextDecoder('utf-8')
+  const encoder = new TextEncoder()
+  const bodyStream = R2Object.body
+  let dataBytes = new Uint8Array() // Array to store bytes
+
+  for await (const chunk of bodyStream) {
+    dataBytes = new Uint8Array([...dataBytes, ...chunk]) // Concatenate chunks
+  }
+
+  const decodedString = decoder.decode(dataBytes)
+
+  const ipfsData = JSON.parse(decodedString).image
+
+  const ipfs1 = await ipfsUrl(ipfsData)
+
+  const getMimeType = await import('../utils/get-mime-type').then((module) => module.getMimeType)
+  const mime = await getMimeType(ipfs1 , 'typeEndpoint')
+
+  let finalResponse = JSON.parse(decodedString)
+  finalResponse.imageMimeType = mime
+  finalResponse = JSON.stringify(finalResponse)
+
+  const encodedData = encoder.encode(finalResponse)
+
+  // Create a custom ReadableStream
+  const stream = new ReadableStream({
+    start(controller) {
+      controller.enqueue(encodedData)
+      controller.close()
+    },
+  })
+
+  return stream
 }
 
 app.use('/*', cors({ origin: allowedOrigin }))
@@ -45,7 +86,8 @@ app.get('/*', async (c) => {
     headers.set('Access-Control-Allow-Origin', '*')
     headers.set('etag', object.httpEtag)
 
-    return new Response(object.body, {
+    const modifiedResponse = await writeMimeTypeToResponse(object)
+    return new Response(modifiedResponse, {
       headers,
     })
   }
@@ -88,7 +130,8 @@ app.get('/*', async (c) => {
       headers.set('Access-Control-Allow-Origin', '*')
       headers.set('etag', newObject.httpEtag)
 
-      return new Response(newObject.body, {
+      const modifiedResponse = await writeMimeTypeToResponse(newObject)
+      return new Response(modifiedResponse, {
         headers,
       })
     }
@@ -103,8 +146,6 @@ app.delete('/*', async (c) => {
   const endpoint = new URL(c.req.url.split('/endpoint/')[1]).toString()
   const path = encodeEndpoint(endpoint)
   const objectName = `type-endpoint/${path}`
-
-  console.log({ objectName })
 
   try {
     await c.env.MY_BUCKET.delete(objectName)

@@ -15,21 +15,7 @@ const toExternalGateway = (url: string) => {
   return url.includes(KODA_WORKERS) ? toIPFSDedicated(url) : url
 }
 
-const getMimeType = async (url: string): Promise<string> => {
-  if (!url) {
-    return ''
-  }
 
-  const externalUrl = toExternalGateway(url)
-  const data = await fetch(externalUrl, { method: 'HEAD' })
-  const contentType = data.headers.get('content-type')
-
-  if (data.status !== 200) {
-    return await getMimeType(url)
-  }
-
-  return contentType ?? ''
-}
 
 app.use('/*', cors({ origin: allowedOrigin }))
 
@@ -62,6 +48,7 @@ app.get('/*', async (c) => {
     // @ts-ignore
     const normalized = normalize(content, ipfsUrl)
 
+    const getMimeType = await import('../utils/get-mime-type').then((module) => module.getMimeType)
     const imageMimeType = await getMimeType(normalized.image)
     const animationUrlMimeType = await getMimeType(normalized.animationUrl)
 
