@@ -1,4 +1,4 @@
-import { encodeEndpoint } from '../routes/type-url'
+import { encodeEndpoint } from '../routes/type-endpoint'
 import { CFIApiResponse } from './types'
 
 type CFImages = {

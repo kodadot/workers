@@ -2,7 +2,7 @@ import { expect, test } from 'vitest'
 
 test('[head] ipfs - 200 - json', async () => {
   const res = await fetch(
-    'https://image-beta.w.kodadot.xyz/type/url?endpoint=https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-meta.json',
+    'https://image-beta.w.kodadot.xyz/type/endpoint/https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-meta.json',
     { method: 'HEAD' }
   )
 
@@ -13,7 +13,7 @@ test('[head] ipfs - 200 - json', async () => {
 
 test('[head] ipfs - 200 - image', async () => {
   const res = await fetch(
-    'https://image-beta.w.kodadot.xyz/type/url?endpoint=https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
+    'https://image-beta.w.kodadot.xyz/type/endpoint/https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
     { method: 'HEAD', redirect: 'manual' }
   )
 
@@ -22,9 +22,9 @@ test('[head] ipfs - 200 - image', async () => {
   expect(res.headers.get('content-type')).toBe('image/png')
 })
 
-test('type-url - 200 - json', async () => {
+test('type-endpoint - 200 - json', async () => {
   const res = await fetch(
-    'https://image-beta.w.kodadot.xyz/type/url?endpoint=https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-meta.json'
+    'https://image-beta.w.kodadot.xyz/type/endpoint/https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-meta.json'
   )
 
   expect(res.ok).toBe(true)
@@ -47,9 +47,9 @@ test('type-url - 200 - json', async () => {
   `)
 })
 
-test('type-url - 302 - image', async () => {
+test('type-endpoint - 302 - image', async () => {
   const res = await fetch(
-    'https://image-beta.w.kodadot.xyz/type/url?endpoint=https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
+    'https://image-beta.w.kodadot.xyz/type/endpoint/https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
     { redirect: 'manual' }
   )
 
@@ -75,9 +75,9 @@ test('type-url - 302 - image', async () => {
   `)
 })
 
-test('type-url - 200 - image - original', async () => {
+test('type-endpoint - 200 - image - original', async () => {
   const res = await fetch(
-    'https://image-beta.w.kodadot.xyz/type/url?endpoint=https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png?original=true'
+    'https://image-beta.w.kodadot.xyz/type/endpoint/https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png?original=true'
   )
 
   expect(res.ok).toBe(true)
@@ -92,4 +92,14 @@ test('type-url - 200 - image - original', async () => {
       Symbol(kType): "image/png",
     }
   `)
+})
+
+test('type-endpoint - 200 - html assets', async () => {
+  const res = await fetch(
+    'https://image-beta.w.kodadot.xyz/type/endpoint/https://arweave.net/JYh76DBFB1mvvpOS7jrKpOuJG2AFPt1NUp8-5Q9tMUY/index.html?&a=0x3c93690BBe585475FdfADaB3f59b4604008C7ac4&c=8453&tid=1&h=0xebee57cf2600aabca328750397f348b0fcb4e03449863c17c8305c887624ea4e&bh=0xfd6538c8182a8758bb52120ab0ee8820f4d1afc70f4dc1f0b52c9f7ff3e1bf18&bn=3656801&t=1694102949&wa=0x60B824cA6457330f923dd61cf14A011C3421BD6d&ms=1&mi=1&s=120&gp=0&gu=0'
+  )
+
+  expect(res.ok).toBe(true)
+  expect(res.status).toBe(200)
+  expect(res.headers.get('content-type')).toBe('text/html; charset=utf-8')
 })

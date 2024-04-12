@@ -24,7 +24,7 @@ export const usdPrice = async (prefix: Prefix, amount: string) => {
 }
 
 export const getDropById = async (id: string) => {
-  const drop = await fetch(`https://waifu-me.kodadot.workers.dev/drops/${id}`)
+  const drop = await fetch(`https://fxart.kodadot.workers.dev/drops/${id}`)
   return (await drop.json()) as DropItem
 }
 
@@ -87,7 +87,7 @@ export const parseImage = async (imagePath: string) => {
 
   // upload image to our cf-images
   // throw an error on satori if using original size image
-  await fetch(`https://image-beta.w.kodadot.xyz/type/url?endpoint=${rawImage}`)
+  await fetch(`https://image-beta.w.kodadot.xyz/type/endpoint/${rawImage}`)
 
   // then, get the small image
   return `https://imagedelivery.net/jk5b6spi_m_-9qC4VTnjpg/${encodeImage}/small`

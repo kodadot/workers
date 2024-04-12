@@ -14,9 +14,13 @@ export const encodeEndpoint = (endpoint: string) => {
 app.use('/*', cors({ origin: allowedOrigin }))
 
 app.get('/*', async (c) => {
-  const { endpoint } = c.req.query()
+  const endpoint = new URL(c.req.url.split('/endpoint/')[1]).toString()
   const path = encodeEndpoint(endpoint)
   const isHead = c.req.method === 'HEAD'
+
+  if (!endpoint) {
+    return c.text('Invalid endpoint', 400)
+  }
 
   // 1. check existing image on cf-images
   // ----------------------------------------
@@ -32,7 +36,7 @@ app.get('/*', async (c) => {
 
   // 2. check existing object in r2 bucket
   // ----------------------------------------
-  const objectName = `type-url/${path}`
+  const objectName = `type-endpoint/${path}`
   const object = await c.env.MY_BUCKET.get(objectName)
 
   if (object !== null) {
@@ -60,11 +64,19 @@ app.get('/*', async (c) => {
 
   // 4. upload to r2 bucket
   // ----------------------------------------
-  const fetchObject = await fetch(endpoint, { cf: CACHE_TTL_BY_STATUS })
+  const fetchObject = await fetch(endpoint, {
+    cf: CACHE_TTL_BY_STATUS,
+  })
   const statusCode = fetchObject.status
 
   if (statusCode === 200) {
-    await c.env.MY_BUCKET.put(objectName, fetchObject.body as ResponseType, {
+    let body
+    if (fetchObject.headers.get('content-length') == null) {
+      body = await fetchObject.text()
+    } else {
+      body = fetchObject.body
+    }
+    await c.env.MY_BUCKET.put(objectName, body as ResponseType, {
       httpMetadata: fetchObject.headers,
     })
 
@@ -85,6 +97,22 @@ app.get('/*', async (c) => {
   // 5. if all else fails, redirect to original endpoint
   // ----------------------------------------
   return c.redirect(endpoint, 302)
+})
+
+app.delete('/*', async (c) => {
+  const endpoint = new URL(c.req.url.split('/endpoint/')[1]).toString()
+  const path = encodeEndpoint(endpoint)
+  const objectName = `type-endpoint/${path}`
+
+  console.log({ objectName })
+
+  try {
+    await c.env.MY_BUCKET.delete(objectName)
+
+    return c.json({ status: 'ok' })
+  } catch (error) {
+    return c.json({ status: 'error', error }, 500)
+  }
 })
 
 export default app

@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { serveStatic } from 'hono/cloudflare-workers';
 import isbot from 'isbot';
 
 import { Opengraph } from './template';
@@ -19,10 +20,11 @@ app.get('/', async (c) => {
   const props = {
     name: 'KodaDot',
     siteData: {
-      title: 'KodaDot - One Stop Shop for Polkadot NFTs',
+      title: 'KodaDot - Your Generative Art Marketplace',
       description: 'One Stop NFT Shop on Polkadot',
       canonical: 'https://kodadot.xyz',
-      image: 'https://kodadot.xyz/k_card.png',
+      image:
+        'https://raw.githubusercontent.com/kodadot/nft-gallery/main/public/k_card.png', // change image url to bypass the cache
     },
   };
 
@@ -68,6 +70,8 @@ app.on(['GET', 'HEAD'], '/blog/:slug', async (c) => {
 
   return fetch(c.req.url);
 });
+
+app.get('/sandbox.html', serveStatic({ path: './sandbox.html' }));
 
 app.onError((err, c) => {
   console.error(`${err}`);

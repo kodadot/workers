@@ -22,7 +22,7 @@ test.each([
     'https://image-beta.w.kodadot.xyz/metadata?url=https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-meta.json',
   ],
   [
-    'https://image-beta.w.kodadot.xyz/metadata?url=https://image.w.kodadot.xyz/type/url?endpoint=https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-meta.json',
+    'https://image-beta.w.kodadot.xyz/metadata?url=https://image.w.kodadot.xyz/type/endpoint/https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-meta.json',
   ],
 ])('return json from non-ipfs', async (url) => {
   const res = await fetch(url)
@@ -68,8 +68,8 @@ test.each([
     'https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
   ],
   [
-    'https://image-beta.w.kodadot.xyz/metadata?url=https://image.w.kodadot.xyz/type/url?endpoint=https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
-    'https://image.w.kodadot.xyz/type/url?endpoint=https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
+    'https://image-beta.w.kodadot.xyz/metadata?url=https://image.w.kodadot.xyz/type/endpoint/https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
+    'https://image.w.kodadot.xyz/type/endpoint/https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
   ],
 ])('redirect from non-ipfs', async (url, redirectUrl) => {
   const res = await fetch(url, {
