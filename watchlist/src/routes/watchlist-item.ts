@@ -1,56 +1,33 @@
 import { Hono } from 'hono'
-import { HonoEnv } from '../utils/constants'
-import {
-  countWatchlistItems,
-  createWatchlistItem,
-  deleteWatchlistItem,
-  getDefaultWatchlist,
-  getOrCreateDefaultWatchlist,
-  getWatchlistById,
-  searchWatchlistItems,
-} from '../utils/db'
 import { watchlistItemCreateParamsValidator } from '../middleware/validator'
+import { HonoEnv } from '../utils/constants'
+import { countWatchlistItems, createWatchlistItem, deleteWatchlistItem, getWatchlistByPublicId, searchWatchlistItems } from '../utils/db'
 
-const app = new Hono<HonoEnv, {}, '/watchlists/:watchlistId/chains/:chain/items'>()
+const app = new Hono<HonoEnv, {}, '/watchlists/:watchlistPublicId/chains/:chain/items'>()
 
 app.get('/', async (c) => {
-  const { watchlistId, chain } = c.req.param()
-  const { type, limit, offset } = c.req.query()
-  const address = c.get('validatedAddress')
+  const { watchlistPublicId, chain } = c.req.param()
+  const { type, limit, offset, sort = 'createdAt_DESC' } = c.req.query()
 
-  const searchQuery = { address, chain, type, watchlistId: Number(watchlistId) }
-
-  if (watchlistId === 'default') {
-    const defaultWatchlist = await getDefaultWatchlist({ address }, c.env.DB)
-    if (!defaultWatchlist) {
-      return c.json({ data: [], total: 0 })
-    }
-    searchQuery.watchlistId = defaultWatchlist.id
-  }
+  const watchlist = await getWatchlistByPublicId(watchlistPublicId, c.env.DB)
+  const searchQuery = { chain, type, watchlistId: watchlist.id }
 
   const [watchlistItems, total] = await Promise.all([
-    searchWatchlistItems({ ...searchQuery, limit, offset }, c.env.DB),
+    searchWatchlistItems({ ...searchQuery, limit, offset, sort }, c.env.DB),
     countWatchlistItems({ ...searchQuery }, c.env.DB),
   ])
   return c.json({ data: watchlistItems, total })
 })
 
 app.post('/', watchlistItemCreateParamsValidator(), async (c) => {
-  const address = c.get('validatedAddress')
-  const { watchlistId, chain } = c.req.param()
+  const { watchlistPublicId, chain } = c.req.param()
   const { type, itemId } = c.req.valid('json')
 
-  let watchlist
-  if (watchlistId === 'default') {
-    watchlist = await getOrCreateDefaultWatchlist({ address }, c.env.DB)
-  } else {
-    watchlist = await getWatchlistById(Number(watchlistId), c.env.DB)
-  }
+  const watchlist = await getWatchlistByPublicId(watchlistPublicId, c.env.DB)
 
   const createParams = {
     watchlistId: watchlist.id,
     itemId,
-    address,
     chain,
     type,
   }
@@ -61,25 +38,18 @@ app.post('/', watchlistItemCreateParamsValidator(), async (c) => {
     return c.json({ error: 'item already exists' }, 409)
   }
 
-  const info = await createWatchlistItem(createParams, c.env.DB)
+  const result = await createWatchlistItem(createParams, c.env.DB)
 
-  return c.json(info)
+  return c.json(result)
 })
 
 app.get('/:itemId/exists', async (c) => {
-  const address = c.get('validatedAddress')
-  const { chain, watchlistId, itemId } = c.req.param()
+  const { chain, watchlistPublicId, itemId } = c.req.param()
   const { type } = c.req.query()
 
-  let watchlist
-  if (watchlistId === 'default') {
-    watchlist = await getOrCreateDefaultWatchlist({ address }, c.env.DB)
-  } else {
-    watchlist = await getWatchlistById(Number(watchlistId), c.env.DB)
-  }
+  const watchlist = await getWatchlistByPublicId(watchlistPublicId, c.env.DB)
 
   const searchQuery = {
-    address,
     chain,
     type,
     watchlistId: watchlist.id,
@@ -93,15 +63,9 @@ app.get('/:itemId/exists', async (c) => {
 })
 
 app.delete('/:itemId', async (c) => {
-  const address = c.get('validatedAddress')
-  const { chain, watchlistId, itemId } = c.req.param()
+  const { chain, watchlistPublicId, itemId } = c.req.param()
 
-  let watchlist
-  if (watchlistId === 'default') {
-    watchlist = await getOrCreateDefaultWatchlist({ address }, c.env.DB)
-  } else {
-    watchlist = await getWatchlistById(Number(watchlistId), c.env.DB)
-  }
+  const watchlist = await getWatchlistByPublicId(watchlistPublicId, c.env.DB)
 
   const params = {
     watchlistId: watchlist.id,

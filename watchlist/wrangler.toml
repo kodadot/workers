@@ -1,6 +1,6 @@
 name = "watchlist"
 main = "src/index.ts"
-compatibility_date = "2024-4-12"
+compatibility_date = "2024-04-12"
 
 [[d1_databases]]
 binding = "DB"

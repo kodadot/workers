@@ -1,16 +1,16 @@
 import { CamelCasePlugin, Kysely, sql } from 'kysely'
 import { D1Dialect } from 'kysely-d1'
+import { nanoid } from 'nanoid'
 import { DB } from './types'
 
 interface WatchlistSearchParams {
   address: string
-  isDefault?: 0 | 1
 }
 
 interface WatchlistCreateParams {
+  publicId?: string
   address: string
-  name?: string
-  isDefault?: 0 | 1
+  name: string
 }
 
 interface WatchlistItemCreateParams {
@@ -37,20 +37,15 @@ function createDB(database: D1Database) {
 export async function searchWatchlist(params: WatchlistSearchParams, database: D1Database) {
   const db = createDB(database)
 
-  let query = db.selectFrom('watchlist').selectAll().where('address', '=', params.address)
-
-  if (params.isDefault !== undefined) {
-    query.where('isDefault', '=', params.isDefault)
-  }
-
+  const query = db.selectFrom('watchlist').selectAll().where('address', '=', params.address)
   const result = await query.execute()
 
   return result
 }
 
-export async function getWatchlistById(id: number, database: D1Database) {
+export async function getWatchlistByPublicId(publicId: string, database: D1Database) {
   const db = createDB(database)
-  return db.selectFrom('watchlist').selectAll().where('id', '=', id).executeTakeFirstOrThrow()
+  return db.selectFrom('watchlist').selectAll().where('publicId', '=', publicId).executeTakeFirstOrThrow()
 }
 
 export async function deleteWatchlistById(id: number, database: D1Database) {
@@ -62,118 +57,28 @@ export async function deleteWatchlistById(id: number, database: D1Database) {
 export async function createWatchlist(params: WatchlistCreateParams, database: D1Database) {
   const db = createDB(database)
 
-  const currentDefault = await db
-    .selectFrom('watchlist')
-    .selectAll()
-    .where('address', '=', params.address)
-    .where('isDefault', '=', 1)
-    .executeTakeFirst()
-
-  if (params.isDefault && currentDefault) {
-    const updateResult = await db.updateTable('watchlist').set({ isDefault: 0 }).where('id', '=', currentDefault.id).executeTakeFirst()
-    if (!updateResult.numUpdatedRows) {
-      throw new Error('update watchlist failed')
-    }
-  }
-
-  try {
-    return db
-      .insertInto('watchlist')
-      .values({
-        address: params.address,
-        name: params.name,
-        isDefault: params.isDefault || 0,
-      })
-      .returningAll()
-      .executeTakeFirstOrThrow()
-  } catch (e) {
-    if (currentDefault) {
-      await db.updateTable('watchlist').set({ isDefault: 1 }).where('id', '=', currentDefault.id).execute()
-    }
-    throw e
-  }
+  return db
+    .insertInto('watchlist')
+    .values({
+      publicId: params.publicId || nanoid(),
+      address: params.address,
+      name: params.name,
+    })
+    .returningAll()
+    .executeTakeFirstOrThrow()
 }
 
-export async function updateWatchlist(params: Pick<WatchlistCreateParams, 'name' | 'address'> & { id: number }, database: D1Database) {
+export async function updateWatchlist(params: Pick<WatchlistCreateParams, 'name'> & { publicId: string }, database: D1Database) {
   const db = createDB(database)
 
   const updatedWatchlist = await db
     .updateTable('watchlist')
-    .set({ name: params.name })
-    .where('id', '=', params.id)
-    .where('address', '=', params.address)
+    .set({ name: params.name, updatedAt: sql`datetime('now')` })
+    .where('publicId', '=', params.publicId)
     .returningAll()
     .executeTakeFirstOrThrow()
 
   return updatedWatchlist
-}
-
-export async function getDefaultWatchlist(params: Omit<WatchlistSearchParams, 'isDefault'>, database: D1Database) {
-  const db = createDB(database)
-
-  return db.selectFrom('watchlist').selectAll().where('address', '=', params.address).where('isDefault', '=', 1).executeTakeFirst()
-}
-
-export async function getOrCreateDefaultWatchlist(params: WatchlistSearchParams, database: D1Database) {
-  const db = createDB(database)
-
-  const exists = await db
-    .selectFrom('watchlist')
-    .selectAll()
-    .where('address', '=', params.address)
-    .where('isDefault', '=', 1)
-    .executeTakeFirst()
-
-  if (!exists) {
-    const query = db
-      .insertInto('watchlist')
-      .values({
-        address: params.address,
-        isDefault: 1,
-      })
-      .returningAll()
-
-    return query.executeTakeFirstOrThrow()
-  }
-
-  return exists
-}
-
-export async function setDefaultWatchlist(params: WatchlistSearchParams & { id: number }, database: D1Database) {
-  const db = createDB(database)
-
-  const currentDefault = await db
-    .selectFrom('watchlist')
-    .select('id')
-    .where('address', '=', params.address)
-    .where('isDefault', '=', 1)
-    .executeTakeFirst()
-
-  if (currentDefault) {
-    await db
-      .updateTable('watchlist')
-      .set({ isDefault: 0, updatedAt: sql`datetime('now')` })
-      .where('id', '=', currentDefault.id)
-      .executeTakeFirstOrThrow()
-  }
-
-  try {
-    const newDefault = await db
-      .updateTable('watchlist')
-      .set({ isDefault: 1, updatedAt: sql`datetime('now')` })
-      .where('id', '=', params.id)
-      .executeTakeFirstOrThrow()
-    return newDefault
-  } catch (e) {
-    if (currentDefault) {
-      await db
-        .updateTable('watchlist')
-        .set({ isDefault: 1, updatedAt: sql`datetime('now')` })
-        .where('id', '=', currentDefault.id)
-        .executeTakeFirstOrThrow()
-    }
-    throw e
-  }
 }
 
 export async function searchWatchlistItems(searchQuery: WatchlistItemsSearchQuery, database: D1Database) {

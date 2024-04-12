@@ -3,12 +3,7 @@ import { z } from 'zod'
 
 export function watchlistCreateParamsValidator() {
   return validator('json', (value, c) => {
-    const parsed = z
-      .object({
-        name: z.string().optional(),
-        isDefault: z.literal(1).or(z.literal(0)).optional(),
-      })
-      .safeParse(value)
+    const parsed = z.object({ name: z.string() }).safeParse(value)
 
     if (!parsed.success) {
       return c.json({ error: parsed.error.format() }, 400)

@@ -1,23 +1,32 @@
 import { MiddlewareHandler } from 'hono'
 import { HonoEnv } from '../utils/constants'
-import { getWatchlistById } from '../utils/db'
+import { createWatchlist, getWatchlistByPublicId } from '../utils/db'
 
-export function ensureWatchlistIdExists(): MiddlewareHandler<HonoEnv, '/:watchlistId'> {
+export function ensureWatchlistPublicIdExists(): MiddlewareHandler<HonoEnv, '/:watchlistPublicId'> {
   return async (c, next) => {
-    const { watchlistId } = c.req.param()
+    const { watchlistPublicId } = c.req.param()
 
-    if (watchlistId === 'default' && Number.isNaN(Number(watchlistId))) {
+    if (watchlistPublicId === 'default' && Number.isNaN(Number(watchlistPublicId))) {
       return next()
     }
 
     const validatedAddress = c.get('validatedAddress')
+
+    let watchlist
+
     try {
-      const watchlist = await getWatchlistById(Number(watchlistId), c.env.DB)
-      if (watchlist.address !== validatedAddress) {
-        return c.json({ error: 'watchlist not found' }, 404)
-      }
+      watchlist = await getWatchlistByPublicId(watchlistPublicId, c.env.DB)
     } catch (error) {
       console.error(error)
+    }
+
+    if (!watchlist && watchlistPublicId === validatedAddress) {
+      // ensure default watchlist exists
+      await createWatchlist({ publicId: watchlistPublicId, address: validatedAddress, name: 'Default' }, c.env.DB)
+      return next()
+    }
+
+    if (!watchlist || watchlist.address !== validatedAddress) {
       return c.json({ error: 'watchlist not found' }, 404)
     }
 
