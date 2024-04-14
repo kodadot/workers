@@ -20,7 +20,7 @@ export const formatPrice = (chain: string, price: string) => {
 export const chainToken = {
   kusama: 'KSM',
   polkadot: 'DOT',
-  basilisk: 'BSX',
+  ethereum: 'ETH',
 };
 
 // get USD price from sub.id or kraken
