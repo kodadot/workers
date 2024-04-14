@@ -99,4 +99,20 @@ app.get('/*', async (c) => {
   return c.redirect(endpoint, 302)
 })
 
+app.delete('/*', async (c) => {
+  const endpoint = new URL(c.req.url.split('/endpoint/')[1]).toString()
+  const path = encodeEndpoint(endpoint)
+  const objectName = `type-endpoint/${path}`
+
+  console.log({ objectName })
+
+  try {
+    await c.env.MY_BUCKET.delete(objectName)
+
+    return c.json({ status: 'ok' })
+  } catch (error) {
+    return c.json({ status: 'error', error }, 500)
+  }
+})
+
 export default app
