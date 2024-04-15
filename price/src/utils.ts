@@ -55,7 +55,10 @@ export async function getPrice(
       const data = (await kraken.json()) as {
         result: { [key: string]: { a: [string] } };
       };
-      const price = data.result[pair].a[0];
+
+      const realPair = pair.startsWith('ETH') ? 'XETHZUSD' : pair;
+
+      const price = data.result[realPair].a[0];
 
       if (price) {
         return price;
