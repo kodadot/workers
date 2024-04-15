@@ -8,7 +8,7 @@ export const prefixChain = (prefix: Prefix) => {
     ahp: 'polkadot',
     ksm: 'kusama',
     rmrk: 'kusama',
-    bsx: 'kusama',
+    base: 'ethereum',
   }
 
   return token[prefix]

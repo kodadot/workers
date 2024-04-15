@@ -11,17 +11,17 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "nuxt": "^3.8.1",
+    "nuxt": "^3.11.2",
     "nuxt-og-image": "^2.2.4",
-    "prettier": "^3.0.3",
-    "vue": "^3.3.8",
-    "vue-router": "^4.2.5"
+    "prettier": "^3.2.5",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0"
   },
   "dependencies": {
-    "@kodadot1/minipfs": "^0.4.2-rc.0",
-    "@kodadot1/static": "^0.0.4",
-    "@kodadot1/uniquery": "^0.5.1-rc.0",
-    "@polkadot/util": "^12.5.1",
+    "@kodadot1/minipfs": "^0.4.3-rc.1",
+    "@kodadot1/static": "^0.0.5",
+    "@kodadot1/uniquery": "^0.6.0-rc.0",
+    "@polkadot/util": "^12.6.2",
     "remark-parse": "^11.0.0",
     "remark-stringify": "^11.0.0",
     "unified": "^11.0.4",
