@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Publish (beta or production)
         if: github.event.inputs.environment == 'beta' || github.event.inputs.environment == 'production'
