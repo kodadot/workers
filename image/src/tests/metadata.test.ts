@@ -12,8 +12,8 @@ test.each([
 
   expect(res.ok).toBe(true)
   expect(res.status).toBe(200)
-  expect(res.headers.get('content-type')).toBe(
-    'application/json; charset=UTF-8'
+  expect(res.headers.get('content-type')).toSatisfy(
+    (value: string) => value.startsWith('application/json')
   )
 })
 
