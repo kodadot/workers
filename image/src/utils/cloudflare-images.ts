@@ -111,6 +111,7 @@ export async function getImageByPath({
     }
   )
   const image = (await getImage.json()) as CFIApiResponse
+  console.log('getImageByPath', getImage.status)
 
   if (getImage.ok && image.result) {
     const variants = image.result.variants
