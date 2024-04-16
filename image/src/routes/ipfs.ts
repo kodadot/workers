@@ -41,9 +41,25 @@ app.get('/*', async (c) => {
     }
   }
 
-  // 2. check object from r2
+  // 2. upload images to cf-images and return it if !isOriginal
   // ----------------------------------------
   console.log('step 2')
+  if (mimeType?.includes('image') && !isOriginal && !isHead) {
+    const imageUrl = await ipfsToCFI({
+      path,
+      token: c.env.IMAGE_API_TOKEN,
+      gateway: c.env.DEDICATED_GATEWAY,
+      imageAccount: c.env.CF_IMAGE_ACCOUNT,
+    })
+
+    if (imageUrl) {
+      return c.redirect(imageUrl)
+    }
+  }
+
+  // 3. check object from r2
+  // ----------------------------------------
+  console.log('step 3')
   const renderR2Object = (r2Object: R2ObjectBody, mime?: string) => {
     // add trailing slash for html
     if (mime?.includes('html')) {
@@ -77,9 +93,9 @@ app.get('/*', async (c) => {
     return renderR2Object(object, mimeType)
   }
 
-  // 3. upload object to r2
+  // 4. upload object to r2
   // ----------------------------------------
-  console.log('step 3')
+  console.log('step 4')
   if (object === null) {
     const status = await fetchIPFS({
       path: fullPath,
@@ -102,20 +118,6 @@ app.get('/*', async (c) => {
         httpMetadata: status.response.headers,
       })
     }
-  }
-
-  // 4. upload images to cf-images and return it if !isOriginal
-  // ----------------------------------------
-  console.log('step 4')
-  const imageUrl = await ipfsToCFI({
-    path,
-    token: c.env.IMAGE_API_TOKEN,
-    gateway: c.env.DEDICATED_GATEWAY,
-    imageAccount: c.env.CF_IMAGE_ACCOUNT,
-  })
-
-  if (imageUrl && !isOriginal && !isHead) {
-    return c.redirect(imageUrl)
   }
 
   // 5. return object from r2
