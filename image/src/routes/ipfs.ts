@@ -48,7 +48,7 @@ app.get('/*', async (c) => {
     const imageUrl = await ipfsToCFI({
       path,
       token: c.env.IMAGE_API_TOKEN,
-      gateway: c.env.DEDICATED_GATEWAY,
+      gateway: c.env.DEDICATED_BACKUP_GATEWAY,
       imageAccount: c.env.CF_IMAGE_ACCOUNT,
     })
 
