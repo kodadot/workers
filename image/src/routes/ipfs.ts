@@ -99,8 +99,6 @@ app.get('/*', async (c) => {
   if (object === null) {
     const status = await fetchIPFS({
       path: fullPath,
-      gateway1: c.env.DEDICATED_GATEWAY,
-      gateway2: c.env.DEDICATED_BACKUP_GATEWAY,
     })
 
     const contentLength = status.response?.headers.get('content-length')
