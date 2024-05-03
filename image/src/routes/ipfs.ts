@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { ipfsProviders } from '@kodadot1/minipfs'
 import { CACHE_DAY, Env } from '../utils/constants'
 import { fetchIPFS } from '../utils/ipfs'
 import { getImageByPath, ipfsToCFI } from '../utils/cloudflare-images'
@@ -48,7 +49,7 @@ app.get('/*', async (c) => {
     const imageUrl = await ipfsToCFI({
       path,
       token: c.env.IMAGE_API_TOKEN,
-      gateway: c.env.DEDICATED_BACKUP_GATEWAY,
+      gateway: ipfsProviders.infura_kodadot1,
       imageAccount: c.env.CF_IMAGE_ACCOUNT,
     })
 
