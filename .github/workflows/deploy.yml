@@ -37,6 +37,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Publish (beta or production)
         if: github.event.inputs.environment == 'beta' || github.event.inputs.environment == 'production'
         uses: cloudflare/wrangler-action@v3
@@ -44,6 +48,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           workingDirectory: ./services/${{ github.event.inputs.worker }}
           command: publish --env ${{ github.event.inputs.environment }}
+          packageManager: pnpm
 
       - name: Publish (default)
         if: github.event.inputs.environment != 'beta' && github.event.inputs.environment != 'production'
@@ -51,3 +56,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           workingDirectory: ./services/${{ github.event.inputs.worker }}
+          packageManager: pnpm
