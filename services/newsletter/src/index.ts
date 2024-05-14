@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { subscribe, deleteSubscription, indexPosts, getSubscriptionById } from './utils/beehiiv';
 import { HonoEnv } from './utils/types';
 import { cors } from 'hono/cors';
-import { allowedOrigin } from './utils/cors';
+import { allowedOrigin } from '@kodadot/workers-utils';
 import { subscribeValidator, checkSubscriptionValidator, resendEmailValidator } from './middleware/validators';
 import { getResponse } from './utils/response';
 
@@ -19,7 +19,7 @@ app.post('/subscribe', subscribeValidator, async (c) => {
 		return c.json(getResponse('Something went wrong'), response.status);
 	}
 
-	const { data } = await response.json() as any;
+	const { data } = (await response.json()) as any;
 
 	return c.json({ id: data.id }, 201);
 });
@@ -33,7 +33,7 @@ app.get('/subscribe/:subscriptionId', checkSubscriptionValidator, async (c) => {
 		return c.json(getResponse('Unable to check subscription'), response.status);
 	}
 
-	const { data } = await response.json() as any;
+	const { data } = (await response.json()) as any;
 
 	return c.json(
 		{
@@ -41,7 +41,7 @@ app.get('/subscribe/:subscriptionId', checkSubscriptionValidator, async (c) => {
 			email: data.email,
 			status: data.status,
 		},
-		200
+		200,
 	);
 });
 
@@ -54,7 +54,7 @@ app.put('/subscribe/resend-confirmation', resendEmailValidator, async (c) => {
 		return c.json(getResponse('Unable to resend confirmation email'), response.status);
 	}
 
-	const { data } = await response.json() as any;
+	const { data } = (await response.json()) as any;
 
 	const isActive = data.status === 'active';
 
@@ -63,7 +63,7 @@ app.put('/subscribe/resend-confirmation', resendEmailValidator, async (c) => {
 	if (!isActive) {
 		await deleteSubscription(data.id, c);
 		const newSubscriptionResponse = await subscribe(data.email, c);
-		const { data: newSubscription } = await newSubscriptionResponse.json() as any;
+		const { data: newSubscription } = (await newSubscriptionResponse.json()) as any;
 		id = newSubscription.id;
 	}
 
