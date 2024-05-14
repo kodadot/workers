@@ -1,10 +1,10 @@
 import { Hono } from 'hono'
-import type { Env } from '../utils/constants'
+import { allowedOrigin } from '@kodadot/workers-utils'
 import { normalize, contentFrom, type BaseMetadata } from '@kodadot1/hyperdata'
+import type { Env } from '../utils/constants'
 import { ipfsUrl, toIPFSDedicated } from '../utils/ipfs'
 import { encodeEndpoint } from './type-endpoint'
 import { cors } from 'hono/cors'
-import { allowedOrigin } from '../utils/cors'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -77,7 +77,7 @@ app.get('/*', async (c) => {
 
     // cache it on KV
     c.executionCtx.waitUntil(
-      c.env.METADATA.put(key, JSON.stringify(attributes))
+      c.env.METADATA.put(key, JSON.stringify(attributes)),
     )
 
     return c.json(attributes)

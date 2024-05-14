@@ -160,6 +160,9 @@ importers:
 
   services/image:
     dependencies:
+      '@kodadot/workers-utils':
+        specifier: workspace:*
+        version: link:../../shared/utils
       '@kodadot1/hyperdata':
         specifier: ^0.0.1-rc.4
         version: 0.0.1-rc.4

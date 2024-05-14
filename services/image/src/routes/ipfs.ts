@@ -1,9 +1,9 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { allowedOrigin } from '@kodadot/workers-utils'
 import { CACHE_DAY, Env } from '../utils/constants'
 import { fetchIPFS } from '../utils/ipfs'
 import { getImageByPath, ipfsToCFI } from '../utils/cloudflare-images'
-import { allowedOrigin } from '../utils/cors'
 import type { ResponseType } from '../utils/types'
 
 const app = new Hono<{ Bindings: Env }>()
@@ -83,7 +83,7 @@ app.get('/*', async (c) => {
     response.headers.append('cache-control', `s-maxage=${CACHE_DAY}`)
     response.headers.append(
       'content-range',
-      `bytes 0-${r2Object.size - 1}/${r2Object.size}`
+      `bytes 0-${r2Object.size - 1}/${r2Object.size}`,
     )
 
     return response

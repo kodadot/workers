@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { allowedOrigin } from '@kodadot/workers-utils'
 import { CACHE_TTL_BY_STATUS, type Env } from '../utils/constants'
 import { urlToCFI } from '../utils/cloudflare-images'
-import { allowedOrigin } from '../utils/cors'
 import { ResponseType } from '../utils/types'
 
 const app = new Hono<{ Bindings: Env }>()

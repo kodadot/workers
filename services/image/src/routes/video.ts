@@ -1,12 +1,12 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { allowedOrigin } from '@kodadot/workers-utils'
 import { Env } from '../utils/constants'
 import {
   downloadStream,
   searchStream,
   uploadStream,
 } from '../utils/cloudflare-stream'
-import { allowedOrigin } from '../utils/cors'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -82,7 +82,7 @@ app.options('/download', async (c) => {
   c.res.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS')
   c.res.headers.set(
     'Access-Control-Allow-Headers',
-    'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With'
+    'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
   )
   c.res.headers.set('Access-Control-Max-Age', '86400')
   c.res.headers.set('Access-Control-Allow-Credentials', 'true')
