@@ -1,8 +1,8 @@
 import { Env, Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { allowedOrigin } from '@kodadot/workers-utils'
 
 import { Env as CloudflareEnv, OTTER } from './utils/constants'
-import { allowedOrigin } from './utils/cors'
 import { doSearch, insertInto, isTable, SearchQuery } from './utils/db'
 
 interface HonoEnv extends Env {

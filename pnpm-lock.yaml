@@ -232,6 +232,9 @@ importers:
 
   services/polysearch:
     dependencies:
+      '@kodadot/workers-utils':
+        specifier: workspace:*
+        version: link:../../shared/utils
       hono:
         specifier: ^3.1.6
         version: 3.12.12
