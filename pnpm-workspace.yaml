@@ -1,0 +1,4 @@
+packages:
+  - 'ogi'
+  - 'services/*'
+  - 'shared/*'
