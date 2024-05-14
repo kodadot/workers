@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./image
+        working-directory: ./services/image
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - run: npm ci
       - run: npm test
