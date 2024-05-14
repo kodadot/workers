@@ -1,8 +1,8 @@
 import { Context, Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { Env } from './utils/constants'
+import { allowedOrigin } from '@kodadot/workers-utils'
 
-import { allowedOrigin } from './utils/cors'
+import { Env } from './utils/constants'
 import { urlToFileName } from './utils/shared'
 import { Settings } from './utils/types'
 

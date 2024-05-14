@@ -56,6 +56,9 @@ importers:
 
   services/capture:
     dependencies:
+      '@kodadot/workers-utils':
+        specifier: workspace:*
+        version: link:../../shared/utils
       hono:
         specifier: ^3.9.0
         version: 3.12.12
