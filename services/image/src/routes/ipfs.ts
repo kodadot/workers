@@ -12,9 +12,6 @@ const app = new Hono<{ Bindings: Env }>()
 app.use('/*', etag())
 app.use('/*', cors({ origin: allowedOrigin }))
 app.get('/*', async (c) => {
-  const requestStartTime = Date.now()
-  const serverTiming: string[] = []
-
   const { original } = c.req.query()
   const isOriginal = original === 'true'
   const isHead = c.req.method === 'HEAD'
@@ -35,7 +32,6 @@ app.get('/*', async (c) => {
   // contruct r2 object
   const objectName = `ipfs/${path}`
   const object = await c.env.MY_BUCKET.get(objectName)
-  serverTiming.push(`bucket;dur=${Date.now() - requestStartTime}`)
   // TODO: check which one is faster to get mimeType from r2 or kv (probably kv, because only store mimeType string on kv)
   const mimeType = object?.httpMetadata?.contentType
   console.log('object', object)
@@ -106,7 +102,6 @@ app.get('/*', async (c) => {
       'content-range',
       `bytes 0-${r2Object.size - 1}/${r2Object.size}`,
     )
-    response.headers.append('server-timing', serverTiming.join(', '))
 
     c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()))
 
