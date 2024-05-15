@@ -23,6 +23,15 @@ app.get('/*', async (c) => {
   const path = url.pathname.replace('/ipfs/', '')
   const fullPath = `${path}${url.search}`
 
+  // Construct the cache key from the cache URL
+  const cacheKey = new Request(url.toString() + c.req.method + 'v1', c.req.raw)
+  const cache = caches.default
+  let response = await cache.match(cacheKey)
+
+  if (response) {
+    return new Response(response.body, response)
+  }
+
   // contruct r2 object
   const objectName = `ipfs/${path}`
   const object = await c.env.MY_BUCKET.get(objectName)
@@ -80,7 +89,7 @@ app.get('/*', async (c) => {
 
     const statusCode = c.req.raw.headers.get('range') !== null ? 206 : 200
 
-    const response = new Response(r2Object.body, {
+    response = new Response(r2Object.body, {
       headers,
       status: r2Object.body ? statusCode : 304,
     })
@@ -98,6 +107,8 @@ app.get('/*', async (c) => {
       `bytes 0-${r2Object.size - 1}/${r2Object.size}`,
     )
     response.headers.append('server-timing', serverTiming.join(', '))
+
+    c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()))
 
     return response
   }
