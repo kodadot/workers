@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { etag } from 'hono/etag'
 import { allowedOrigin } from '@kodadot/workers-utils'
-import { CACHE_DAY, Env } from '../utils/constants'
+import { CACHE_DAY, CACHE_MONTH, Env } from '../utils/constants'
 import { fetchIPFS } from '../utils/ipfs'
 import { getImageByPath, ipfsToCFI } from '../utils/cloudflare-images'
 import type { ResponseType } from '../utils/types'
@@ -86,6 +86,13 @@ app.get('/*', async (c) => {
     })
 
     response.headers.append('cache-control', `s-maxage=${CACHE_DAY}`)
+    response.headers.append('content-location', url.pathname)
+    response.headers.append('date', new Date().toUTCString())
+    response.headers.append(
+      'expires',
+      new Date(Date.now() + CACHE_MONTH * 1000 * 6).toUTCString(), // expires in 6 months
+    )
+    response.headers.append('vary', 'Accept-Encoding')
     response.headers.append(
       'content-range',
       `bytes 0-${r2Object.size - 1}/${r2Object.size}`,
