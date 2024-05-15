@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { etag } from 'hono/etag'
 import { allowedOrigin } from '@kodadot/workers-utils'
 import { CACHE_DAY, Env } from '../utils/constants'
 import { fetchIPFS } from '../utils/ipfs'
@@ -8,8 +9,12 @@ import type { ResponseType } from '../utils/types'
 
 const app = new Hono<{ Bindings: Env }>()
 
+app.use('/*', etag())
 app.use('/*', cors({ origin: allowedOrigin }))
 app.get('/*', async (c) => {
+  const requestStartTime = Date.now()
+  const serverTiming: string[] = []
+
   const { original } = c.req.query()
   const isOriginal = original === 'true'
   const isHead = c.req.method === 'HEAD'
@@ -21,6 +26,7 @@ app.get('/*', async (c) => {
   // contruct r2 object
   const objectName = `ipfs/${path}`
   const object = await c.env.MY_BUCKET.get(objectName)
+  serverTiming.push(`bucket;dur=${Date.now() - requestStartTime}`)
   // TODO: check which one is faster to get mimeType from r2 or kv (probably kv, because only store mimeType string on kv)
   const mimeType = object?.httpMetadata?.contentType
   console.log('object', object)
@@ -44,7 +50,7 @@ app.get('/*', async (c) => {
   // 2. upload images to cf-images and return it if !isOriginal
   // ----------------------------------------
   console.log('step 2')
-  if (!isOriginal && !isHead) {
+  if (!isOriginal && !isHead && mimeType?.includes('image')) {
     const imageUrl = await ipfsToCFI({
       path,
       token: c.env.IMAGE_API_TOKEN,
@@ -71,7 +77,6 @@ app.get('/*', async (c) => {
 
     const headers = new Headers()
     r2Object.writeHttpMetadata(headers)
-    headers.set('etag', r2Object.httpEtag)
 
     const statusCode = c.req.raw.headers.get('range') !== null ? 206 : 200
 
@@ -85,6 +90,7 @@ app.get('/*', async (c) => {
       'content-range',
       `bytes 0-${r2Object.size - 1}/${r2Object.size}`,
     )
+    response.headers.append('server-timing', serverTiming.join(', '))
 
     return response
   }
