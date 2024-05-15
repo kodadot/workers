@@ -48,7 +48,7 @@ app.get('/*', async (c) => {
     })
 
     if (publicUrl) {
-      return c.redirect(publicUrl)
+      return c.redirect(publicUrl, 301)
     }
   }
 
@@ -64,7 +64,7 @@ app.get('/*', async (c) => {
     })
 
     if (imageUrl) {
-      return c.redirect(imageUrl)
+      return c.redirect(imageUrl, 301)
     }
   }
 
@@ -76,7 +76,7 @@ app.get('/*', async (c) => {
     if (mime?.includes('html')) {
       // add trailing slash
       if (!url.pathname.endsWith('/')) {
-        return c.redirect(`${url.pathname}/${url.search}`)
+        return c.redirect(`${url.pathname}/${url.search}`, 301)
       }
     }
 
