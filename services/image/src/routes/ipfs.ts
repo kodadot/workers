@@ -9,7 +9,7 @@ import type { ResponseType } from '../utils/types'
 
 const app = new Hono<{ Bindings: Env }>()
 
-app.use('/*', etag())
+app.use(etag())
 app.use('/*', cors({ origin: allowedOrigin }))
 app.get('/*', async (c) => {
   const { original } = c.req.query()
@@ -37,6 +37,16 @@ app.get('/*', async (c) => {
   console.log('object', object)
   console.log('mime type', mimeType)
 
+  // set headers
+  c.header('cache-control', `s-maxage=${CACHE_DAY}`)
+  c.header('content-location', url.pathname)
+  c.header('date', new Date().toUTCString())
+  c.header(
+    'expires',
+    new Date(Date.now() + CACHE_MONTH * 1000 * 6).toUTCString(),
+  ) // expires in 6 months
+  c.header('vary', 'Accept-Encoding')
+
   // 1. check existing image on cf-images && !isOriginal
   // ----------------------------------------
   console.log('step 1')
@@ -48,7 +58,7 @@ app.get('/*', async (c) => {
     })
 
     if (publicUrl) {
-      return c.redirect(publicUrl)
+      return c.redirect(publicUrl, 301)
     }
   }
 
@@ -64,7 +74,7 @@ app.get('/*', async (c) => {
     })
 
     if (imageUrl) {
-      return c.redirect(imageUrl)
+      return c.redirect(imageUrl, 301)
     }
   }
 
@@ -76,7 +86,7 @@ app.get('/*', async (c) => {
     if (mime?.includes('html')) {
       // add trailing slash
       if (!url.pathname.endsWith('/')) {
-        return c.redirect(`${url.pathname}/${url.search}`)
+        return c.redirect(`${url.pathname}/${url.search}`, 301)
       }
     }
 
