@@ -6,13 +6,29 @@ on:
       worker:
         description: 'Name of the worker'
         required: true
+        type: choice
+        options: # please add manually if you add new worker
+          - capture
+          - counter
+          - durable-jpeg
+          - frame
+          - image
+          - keywise
+          - newsletter
+          - party
+          - polysearch
+          - price
+          - scheduled
+          - ssr-opengraph
       environment:
-        description: 'Choose an environment to deploy to: <beta|production>'
-        required: false
-        default: ''
-      commands:
-        description: 'Precommands'
-        default: 'npm install'
+        description: 'Choose an environment'
+        required: true
+        type: choice
+        default: 'beta'
+        options:
+          - default
+          - beta
+          - production
 
 jobs:
   deploy:
@@ -21,19 +37,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Publish (beta or production)
         if: github.event.inputs.environment == 'beta' || github.event.inputs.environment == 'production'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          preCommands: ${{ github.event.inputs.commands }}
-          workingDirectory: ${{ github.event.inputs.worker }}
+          workingDirectory: ./services/${{ github.event.inputs.worker }}
           command: publish --env ${{ github.event.inputs.environment }}
+          packageManager: pnpm
 
       - name: Publish (default)
         if: github.event.inputs.environment != 'beta' && github.event.inputs.environment != 'production'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          preCommands: ${{ github.event.inputs.commands }}
-          workingDirectory: ${{ github.event.inputs.worker }}
+          workingDirectory: ./services/${{ github.event.inputs.worker }}
+          packageManager: pnpm
