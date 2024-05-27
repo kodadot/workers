@@ -57,7 +57,7 @@ app.get('/*', async (c) => {
     const externalUrl = toExternalGateway(url)
     const data = await fetch(externalUrl)
     console.log('fetch metadata status', externalUrl, data.status)
-    const json = await data.json<BaseMetadata>()
+    const json = (await data.json()) as BaseMetadata
     const content = contentFrom(json, true)
     // @ts-ignore
     const normalized = normalize(content, ipfsUrl)
