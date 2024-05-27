@@ -6,7 +6,7 @@ import {
 } from '@kodadot1/minipfs'
 
 export function toIPFSDedicated(path: string) {
-  const infura = new URL(getProviderList(['infura_kodadot1'])[0])
+  const infura = new URL(getProviderList(['filebase_kodadot'])[0])
   const url = new URL(path)
   url.hostname = infura.hostname
 
