@@ -43,17 +43,17 @@ app.get('/*', async (c) => {
   }
 
   try {
+    // 0 redirect to internal url
+    if (url.includes('fxart-beta.kodadot.workers.dev')) {
+      return c.redirect(url, 301)
+    }
+
     // 1. check on KV. if exists, return the data
     // ----------------------------------------
     console.log('fetch metadata', url, key)
     const metadataKV = await c.env.METADATA.get(key)
     if (metadataKV) {
       return c.json(JSON.parse(metadataKV))
-    }
-
-    // 1.1 redirect to internal url
-    if (url.includes('fxart-beta.kodadot.workers.dev')) {
-      return c.redirect(url, 301)
     }
 
     // 2. put to KV
