@@ -44,7 +44,10 @@ app.get('/*', async (c) => {
 
   try {
     // 0 redirect to internal url
-    if (url.includes('fxart-beta.kodadot.workers.dev')) {
+    if (
+      url.includes('fxart-beta.kodadot.workers.dev') ||
+      url.includes('fxart.kodadot.workers.dev')
+    ) {
       return c.redirect(url, 301)
     }
 
