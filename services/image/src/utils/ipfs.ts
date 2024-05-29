@@ -1,7 +1,12 @@
-import { $purify, getProviderList, ipfsProviders } from '@kodadot1/minipfs'
+import {
+  $purify,
+  getProviderList,
+  ipfsProviders,
+  type HTTPS_URI,
+} from '@kodadot1/minipfs'
 
 export function toIPFSDedicated(path: string) {
-  const infura = new URL(getProviderList(['infura_kodadot1'])[0])
+  const infura = new URL(getProviderList(['filebase_kodadot'])[0])
   const url = new URL(path)
   url.hostname = infura.hostname
 
@@ -30,8 +35,10 @@ async function resolveGateway({
 export async function fetchIPFS({ path }: { path: string }) {
   console.log('ipfs path', path)
 
-  const gateways = [
+  const gateways: HTTPS_URI[] = [
     ipfsProviders.apillon,
+    ipfsProviders.ipfs,
+    ipfsProviders.dweb,
     ipfsProviders.cloudflare,
     ipfsProviders.filebase_kodadot,
     ipfsProviders.infura_kodadot1,
