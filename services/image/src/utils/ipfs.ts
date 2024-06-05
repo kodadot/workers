@@ -3,12 +3,14 @@ import {
   getProviderList,
   ipfsProviders,
   type HTTPS_URI,
+  type IPFSProviders,
 } from '@kodadot1/minipfs'
 
-export function toIPFSDedicated(path: string) {
-  const infura = new URL(getProviderList(['filebase_kodadot'])[0])
+export function toIpfsGw(path: string, provider?: IPFSProviders) {
+  const gw: IPFSProviders = provider || 'filebase_kodadot'
+  const gateway = new URL(getProviderList([gw])[0])
   const url = new URL(path)
-  url.hostname = infura.hostname
+  url.hostname = gateway.hostname
 
   return url.toString()
 }

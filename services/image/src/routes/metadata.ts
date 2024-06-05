@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { allowedOrigin } from '@kodadot/workers-utils'
 import { normalize, contentFrom, type BaseMetadata } from '@kodadot1/hyperdata'
 import type { Env } from '../utils/constants'
-import { ipfsUrl, toIPFSDedicated } from '../utils/ipfs'
+import { ipfsUrl, toIpfsGw } from '../utils/ipfs'
 import { encodeEndpoint } from './type-endpoint'
 import { cors } from 'hono/cors'
 
@@ -12,7 +12,7 @@ const app = new Hono<{ Bindings: Env }>()
 const toExternalGateway = (url: string) => {
   const KODA_WORKERS = 'w.kodadot.xyz/ipfs/'
 
-  return url.includes(KODA_WORKERS) ? toIPFSDedicated(url) : url
+  return url.includes(KODA_WORKERS) ? toIpfsGw(url) : url
 }
 
 const getMimeType = async (url: string): Promise<string> => {

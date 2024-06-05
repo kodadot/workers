@@ -2,9 +2,8 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { etag } from 'hono/etag'
 import { allowedOrigin } from '@kodadot/workers-utils'
-import { $purify } from '@kodadot1/minipfs'
 import { CACHE_DAY, CACHE_MONTH, Env } from '../utils/constants'
-import { fetchIPFS } from '../utils/ipfs'
+import { fetchIPFS, toIpfsGw } from '../utils/ipfs'
 import { getImageByPath, ipfsToCFI } from '../utils/cloudflare-images'
 import type { ResponseType } from '../utils/types'
 
@@ -114,8 +113,9 @@ app.get('/*', async (c) => {
 
   // 4. upload object to r2
   // ----------------------------------------
-  console.log('step 4')
-  const ipfsNftstorage = $purify(fullPath, ['nftstorage'])[0]
+  console.log('step 4', url.toString())
+  const ipfsNftstorage = toIpfsGw(url.toString(), 'nftstorage')
+  console.log('ipfsNftstorage', ipfsNftstorage)
   const status = await fetchIPFS({
     path: fullPath,
   })
