@@ -1,8 +1,5 @@
 export type Env = {
   MY_BUCKET: R2Bucket
-  DEDICATED_GATEWAY: string
-  DEDICATED_BACKUP_GATEWAY: string
-  CLOUDFLARE_GATEWAY: string
   CF_IMAGE_ACCOUNT: string
   CF_IMAGE_ID: string
   METADATA: KVNamespace

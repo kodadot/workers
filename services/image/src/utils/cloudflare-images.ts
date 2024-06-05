@@ -1,3 +1,4 @@
+import { ipfsProviders } from '@kodadot1/minipfs'
 import { encodeEndpoint } from '../routes/type-endpoint'
 import { CFIApiResponse } from './types'
 
@@ -41,7 +42,7 @@ async function uploadCFI({ token, url, id, imageAccount }: UploadCFI) {
 
   const uploadCfImage = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${imageAccount}/images/v1`,
-    requestOptions
+    requestOptions,
   )
   const image = (await uploadCfImage.json()) as CFIApiResponse
 
@@ -58,17 +59,11 @@ async function uploadCFI({ token, url, id, imageAccount }: UploadCFI) {
 }
 
 type IpfsToCFI = CFImages & {
-  gateway: string
   path: string
 }
 
-export async function ipfsToCFI({
-  token,
-  gateway,
-  path,
-  imageAccount,
-}: IpfsToCFI) {
-  const imageOnIpfs = `${gateway}/ipfs/${path}`
+export async function ipfsToCFI({ token, path, imageAccount }: IpfsToCFI) {
+  const imageOnIpfs = `${ipfsProviders.filebase_kodadot}/ipfs/${path}`
   const url = await resizeImage(imageOnIpfs)
 
   return await uploadCFI({
@@ -108,7 +103,7 @@ export async function getImageByPath({
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   )
   const image = (await getImage.json()) as CFIApiResponse
   console.log('getImageByPath', getImage.status)
