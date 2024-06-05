@@ -1,6 +1,5 @@
 import {
   $purify,
-  getProviderList,
   ipfsProviders,
   type HTTPS_URI,
   type IPFSProviders,
@@ -8,7 +7,7 @@ import {
 
 export function toIpfsGw(path: string, provider?: IPFSProviders) {
   const gw: IPFSProviders = provider || 'filebase_kodadot'
-  const gateway = new URL(getProviderList([gw])[0])
+  const gateway = new URL(ipfsProviders[gw])
   const url = new URL(path)
   url.hostname = gateway.hostname
 
