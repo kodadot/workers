@@ -36,9 +36,9 @@ export async function fetchIPFS({ path }: { path: string }) {
   console.log('ipfs path', path)
 
   const gateways: HTTPS_URI[] = [
-    ipfsProviders.fleek,
-    ipfsProviders.ipfs,
     ipfsProviders.filebase_kodadot,
+    ipfsProviders.ipfs,
+    ipfsProviders.dweb,
   ]
 
   for (const gateway of gateways) {
