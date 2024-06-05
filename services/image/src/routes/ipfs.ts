@@ -38,16 +38,6 @@ app.get('/*', async (c) => {
   console.log('object', object)
   console.log('mime type', mimeType)
 
-  // set headers
-  c.header('cache-control', `s-maxage=${CACHE_DAY}`)
-  c.header('content-location', url.pathname)
-  c.header('date', new Date().toUTCString())
-  c.header(
-    'expires',
-    new Date(Date.now() + CACHE_MONTH * 1000 * 6).toUTCString(),
-  ) // expires in 6 months
-  c.header('vary', 'Accept-Encoding')
-
   // 1. check existing image on cf-images && !isOriginal
   // ----------------------------------------
   console.log('step 1')
@@ -127,31 +117,26 @@ app.get('/*', async (c) => {
   // ----------------------------------------
   console.log('step 4')
   const ipfsNftstorage = $purify(fullPath, ['nftstorage'])[0]
-  try {
-    const status = await fetchIPFS({
-      path: fullPath,
-    })
+  const status = await fetchIPFS({
+    path: fullPath,
+  })
 
-    const contentLength = status.response?.headers.get('content-length')
+  const contentLength = status.response?.headers.get('content-length')
 
-    if (status.ok && status.response?.body && status.response?.headers) {
-      let body
+  if (status.ok && status.response?.body && status.response?.headers) {
+    let body
 
-      if (contentLength === null) {
-        body = await status.response?.text()
-      } else {
-        body = status.response.body as ResponseType
-      }
-
-      c.executionCtx.waitUntil(
-        c.env.MY_BUCKET.put(objectName, body, {
-          httpMetadata: status.response.headers as unknown as Headers,
-        }),
-      )
+    if (contentLength === null) {
+      body = await status.response?.text()
+    } else {
+      body = status.response.body as ResponseType
     }
-  } catch (error) {
-    console.log('error step 4', error)
-    return c.redirect(ipfsNftstorage)
+
+    c.executionCtx.waitUntil(
+      c.env.MY_BUCKET.put(objectName, body, {
+        httpMetadata: status.response.headers as unknown as Headers,
+      }),
+    )
   }
 
   return c.redirect(ipfsNftstorage)
