@@ -22,12 +22,12 @@ export function ipfsUrl(ipfs?: string) {
   return $purify(ipfs, ['kodadot_beta'])[0]
 }
 
-async function resolveGateway({
-  path = '',
-  gateway = ipfsProviders.infura_kodadot1,
-}) {
-  const response = await fetch(`${gateway}/ipfs/${path}`)
-  console.log('fetch IPFS status', gateway, response.status)
+async function resolveGateway({ path = '', gateway = ipfsProviders.ipfs }) {
+  const url = `${gateway}/ipfs/${path}`
+  console.log('fetch IPFS status', gateway, url)
+  const response = await fetch(url, {
+    signal: AbortSignal.timeout(2000),
+  })
 
   return response
 }
@@ -36,12 +36,9 @@ export async function fetchIPFS({ path }: { path: string }) {
   console.log('ipfs path', path)
 
   const gateways: HTTPS_URI[] = [
-    ipfsProviders.apillon,
+    ipfsProviders.fleek,
     ipfsProviders.ipfs,
-    ipfsProviders.dweb,
-    ipfsProviders.cloudflare,
     ipfsProviders.filebase_kodadot,
-    ipfsProviders.infura_kodadot1,
   ]
 
   for (const gateway of gateways) {

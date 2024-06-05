@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { etag } from 'hono/etag'
 import { allowedOrigin } from '@kodadot/workers-utils'
+import { $purify } from '@kodadot1/minipfs'
 import { CACHE_DAY, CACHE_MONTH, Env } from '../utils/constants'
 import { fetchIPFS } from '../utils/ipfs'
 import { getImageByPath, ipfsToCFI } from '../utils/cloudflare-images'
@@ -125,7 +126,8 @@ app.get('/*', async (c) => {
   // 4. upload object to r2
   // ----------------------------------------
   console.log('step 4')
-  if (object === null) {
+  const ipfsNftstorage = $purify(fullPath, ['nftstorage'])[0]
+  try {
     const status = await fetchIPFS({
       path: fullPath,
     })
@@ -141,20 +143,18 @@ app.get('/*', async (c) => {
         body = status.response.body as ResponseType
       }
 
-      await c.env.MY_BUCKET.put(objectName, body, {
-        httpMetadata: status.response.headers,
-      })
+      c.executionCtx.waitUntil(
+        c.env.MY_BUCKET.put(objectName, body, {
+          httpMetadata: status.response.headers as unknown as Headers,
+        }),
+      )
     }
+  } catch (error) {
+    console.log('error step 4', error)
+    return c.redirect(ipfsNftstorage)
   }
 
-  // 5. return object from r2
-  // ----------------------------------------
-  console.log('step 5')
-  const newObject = await c.env.MY_BUCKET.get(objectName)
-
-  if (newObject !== null) {
-    return renderR2Object(newObject, newObject?.httpMetadata?.contentType)
-  }
+  return c.redirect(ipfsNftstorage)
 })
 
 app.delete('/*', async (c) => {
