@@ -1,21 +1,12 @@
 name = "ssr-opengraph-beta"
 compatibility_date = "2023-06-22"
 main = "src/index.tsx"
+
+[env.beta]
+name = "ssr-opengraph-beta"
 routes = [
   "*.kodadot.xyz/",
   "*.kodadot.xyz/blog/*",
-  "*.kodadot.xyz/rmrk/gallery/*",
-  "*.kodadot.xyz/rmrk/detail/*",
-  "*.kodadot.xyz/rmrk/collection/*",
-  "*.kodadot.xyz/rmrk/u/*",
-  "*.kodadot.xyz/ksm/gallery/*",
-  "*.kodadot.xyz/ksm/detail/*",
-  "*.kodadot.xyz/ksm/collection/*",
-  "*.kodadot.xyz/ksm/u/*",
-  "*.kodadot.xyz/bsx/gallery/*",
-  "*.kodadot.xyz/bsx/detail/*",
-  "*.kodadot.xyz/bsx/collection/*",
-  "*.kodadot.xyz/bsx/u/*",
   "*.kodadot.xyz/ahp/gallery/*",
   "*.kodadot.xyz/ahp/detail/*",
   "*.kodadot.xyz/ahp/collection/*",
@@ -26,32 +17,29 @@ routes = [
   "*.kodadot.xyz/ahk/collection/*",
   "*.kodadot.xyz/ahk/drops/*",
   "*.kodadot.xyz/ahk/u/*",
-  "*.kodadot.xyz/sandbox.html*"
+  "*.kodadot.xyz/sandbox.html*",
+  "*.koda.art/",
+  "*.koda.art/blog/*",
+  "*.koda.art/ahp/gallery/*",
+  "*.koda.art/ahp/detail/*",
+  "*.koda.art/ahp/collection/*",
+  "*.koda.art/ahp/drops/*",
+  "*.koda.art/ahp/u/*",
+  "*.koda.art/ahk/gallery/*",
+  "*.koda.art/ahk/detail/*",
+  "*.koda.art/ahk/collection/*",
+  "*.koda.art/ahk/drops/*",
+  "*.koda.art/ahk/u/*",
 ]
 
-[site]
+[env.beta.site]
 bucket = "./public"
-
-[env.beta]
-name = "ssr-opengraph-beta"
 
 [env.production]
 name = "ssr-opengraph"
 routes = [
   "kodadot.xyz/",
   "kodadot.xyz/blog/*",
-  "kodadot.xyz/rmrk/gallery/*",
-  "kodadot.xyz/rmrk/detail/*",
-  "kodadot.xyz/rmrk/collection/*",
-  "kodadot.xyz/rmrk/u/*",
-  "kodadot.xyz/ksm/gallery/*",
-  "kodadot.xyz/ksm/detail/*",
-  "kodadot.xyz/ksm/collection/*",
-  "kodadot.xyz/ksm/u/*",
-  "kodadot.xyz/bsx/gallery/*",
-  "kodadot.xyz/bsx/detail/*",
-  "kodadot.xyz/bsx/collection/*",
-  "kodadot.xyz/bsx/u/*",
   "kodadot.xyz/ahp/gallery/*",
   "kodadot.xyz/ahp/detail/*",
   "kodadot.xyz/ahp/collection/*",
@@ -62,7 +50,19 @@ routes = [
   "kodadot.xyz/ahk/collection/*",
   "kodadot.xyz/ahk/drops/*",
   "kodadot.xyz/ahk/u/*",
-  "kodadot.xyz/sandbox.html*"
+  "kodadot.xyz/sandbox.html*",
+  "koda.art/",
+  "koda.art/blog/*",
+  "koda.art/ahp/gallery/*",
+  "koda.art/ahp/detail/*",
+  "koda.art/ahp/collection/*",
+  "koda.art/ahp/drops/*",
+  "koda.art/ahp/u/*",
+  "koda.art/ahk/gallery/*",
+  "koda.art/ahk/detail/*",
+  "koda.art/ahk/collection/*",
+  "koda.art/ahk/drops/*",
+  "koda.art/ahk/u/*",
 ]
 
 [env.production.site]
