@@ -7,7 +7,8 @@ type CFImages = {
 }
 
 type UploadCFI = CFImages & {
-  url: string
+  url?: string
+  file?: File
   id: string
 }
 
@@ -24,12 +25,26 @@ async function resizeImage(url: string) {
   return wsrvnl.toString()
 }
 
-async function uploadCFI({ token, url, id, imageAccount }: UploadCFI) {
+export async function uploadCFI({
+  token,
+  url,
+  id,
+  imageAccount,
+  file,
+}: UploadCFI) {
   const uploadHeaders = new Headers()
   uploadHeaders.append('Authorization', `Bearer ${token}`)
 
   const uploadFormData = new FormData()
-  uploadFormData.append('url', url)
+
+  if (url) {
+    uploadFormData.append('url', url)
+  }
+
+  if (file) {
+    uploadFormData.append('file', file)
+  }
+
   uploadFormData.append('id', id)
 
   const requestOptions = {
@@ -41,7 +56,7 @@ async function uploadCFI({ token, url, id, imageAccount }: UploadCFI) {
 
   const uploadCfImage = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${imageAccount}/images/v1`,
-    requestOptions
+    requestOptions,
   )
   const image = (await uploadCfImage.json()) as CFIApiResponse
 
@@ -108,7 +123,7 @@ export async function getImageByPath({
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   )
   const image = (await getImage.json()) as CFIApiResponse
   console.log('getImageByPath', getImage.status)

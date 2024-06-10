@@ -10,10 +10,12 @@
   },
   "type": "module",
   "dependencies": {
+    "@hono/valibot-validator": "^0.3.0",
     "@kodadot/workers-utils": "workspace:*",
     "@kodadot1/hyperdata": "^0.0.1-rc.4",
     "@kodadot1/minipfs": "^0.4.3-rc.1",
-    "hono": "^4.3.6"
+    "hono": "^4.3.6",
+    "valibot": "^0.31.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240512.0",

@@ -163,6 +163,9 @@ importers:
 
   services/image:
     dependencies:
+      '@hono/valibot-validator':
+        specifier: ^0.3.0
+        version: 0.3.0(hono@4.3.6)(valibot@0.31.1)
       '@kodadot/workers-utils':
         specifier: workspace:*
         version: link:../../shared/utils
@@ -175,6 +178,9 @@ importers:
       hono:
         specifier: ^4.3.6
         version: 4.3.6
+      valibot:
+        specifier: ^0.31.1
+        version: 0.31.1
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20240512.0
@@ -1409,6 +1415,12 @@ packages:
     peerDependencies:
       hono: '>=3.9.0'
       valibot: '>=0.13.1 <1'
+
+  '@hono/valibot-validator@0.3.0':
+    resolution: {integrity: sha512-EcGJKzLt11SK4K11yKHrhI93ECtKeSHAnnENHw5tCL0ZhyDIx96avc3Ua8/ri4fwVvRPuOzFQ2OBRsVvwZuqeQ==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      valibot: '>=0.31.0 <1'
 
   '@iarna/toml@2.2.5':
     resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
@@ -7009,6 +7021,9 @@ packages:
   valibot@0.30.0:
     resolution: {integrity: sha512-5POBdbSkM+3nvJ6ZlyQHsggisfRtyT4tVTo1EIIShs6qCdXJnyWU5TJ68vr8iTg5zpOLjXLRiBqNx+9zwZz/rA==}
 
+  valibot@0.31.1:
+    resolution: {integrity: sha512-2YYIhPrnVSz/gfT2/iXVTrSj92HwchCt9Cga/6hX4B26iCz9zkIsGTS0HjDYTZfTi1Un0X6aRvhBi1cfqs/i0Q==}
+
   validate-npm-package-license@3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==}
 
@@ -8369,6 +8384,11 @@ snapshots:
     dependencies:
       hono: 4.3.6
       valibot: 0.30.0
+
+  '@hono/valibot-validator@0.3.0(hono@4.3.6)(valibot@0.31.1)':
+    dependencies:
+      hono: 4.3.6
+      valibot: 0.31.1
 
   '@iarna/toml@2.2.5': {}
 
@@ -15709,6 +15729,8 @@ snapshots:
       source-map: 0.7.4
 
   valibot@0.30.0: {}
+
+  valibot@0.31.1: {}
 
   validate-npm-package-license@3.0.4:
     dependencies:
