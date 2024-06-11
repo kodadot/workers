@@ -15,6 +15,7 @@ on:
           - image
           - keywise
           - newsletter
+          - ogi-route
           - party
           - polysearch
           - price
