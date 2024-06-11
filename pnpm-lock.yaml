@@ -222,6 +222,9 @@ importers:
       hono:
         specifier: ^4.4.5
         version: 4.4.5
+      isbot:
+        specifier: ^5.1.9
+        version: 5.1.9
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20240605.0
@@ -269,7 +272,7 @@ importers:
         version: 0.30.1(jsdom@24.1.0)(terser@5.31.1)
       wrangler:
         specifier: 2.10.0
-        version: 2.10.0(cron-schedule@5.0.1)
+        version: 2.10.0(cron-schedule@3.0.6)
 
   services/price:
     dependencies:
@@ -300,7 +303,7 @@ importers:
         version: 0.31.4(jsdom@24.1.0)(terser@5.31.1)
       wrangler:
         specifier: 2.16.0
-        version: 2.16.0(cron-schedule@5.0.1)
+        version: 2.16.0(cron-schedule@3.0.6)
 
   services/ssr-opengraph:
     dependencies:
@@ -328,7 +331,7 @@ importers:
         version: 4.20240512.0
       wrangler:
         specifier: ^2.13.0
-        version: 2.16.0(cron-schedule@5.0.1)
+        version: 2.16.0(cron-schedule@3.0.6)
 
   shared/utils: {}
 
@@ -3807,10 +3810,6 @@ packages:
   cron-schedule@3.0.6:
     resolution: {integrity: sha512-izfGgKyzzIyLaeb1EtZ3KbglkS6AKp9cv7LxmiyoOu+fXfol1tQDC0Cof0enVZGNtudTHW+3lfuW9ZkLQss4Wg==}
 
-  cron-schedule@5.0.1:
-    resolution: {integrity: sha512-6rcwG2PxiHQqhgsk5ZjKmCBQHLZdoh96fXz/zw9MsVGK89fxY3ajoD+WRHlpgpfHFC1k9E2HnXuWevZlpe06vw==}
-    engines: {node: '>=18'}
-
   croner@8.0.2:
     resolution: {integrity: sha512-HgSdlSUX8mIgDTTiQpWUP4qY4IFRMsduPCYdca34Pelt8MVdxdaDOzreFtCscA6R+cRZd7UbD1CD3uyx6J3X1A==}
     engines: {node: '>=18.0'}
@@ -5028,6 +5027,10 @@ packages:
   isbot@3.8.0:
     resolution: {integrity: sha512-vne1mzQUTR+qsMLeCBL9+/tgnDXRyc2pygLGl/WsgA+EZKIiB5Ehu0CiVTHIIk30zhJ24uGz4M5Ppse37aR0Hg==}
     engines: {node: '>=12'}
+
+  isbot@5.1.9:
+    resolution: {integrity: sha512-NITFjA2Jpcv1qWCpzqZQoW/66H3xXbF+n4yJIXr/gIn/wgaSKOPXTTczswiKMYx+BVymG9lm30ZGPtFWqAD4hA==}
+    engines: {node: '>=18'}
 
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
@@ -12137,9 +12140,6 @@ snapshots:
 
   cron-schedule@3.0.6: {}
 
-  cron-schedule@5.0.1:
-    optional: true
-
   croner@8.0.2: {}
 
   cronstrue@2.50.0: {}
@@ -13468,6 +13468,8 @@ snapshots:
 
   isbot@3.8.0: {}
 
+  isbot@5.1.9: {}
+
   isexe@2.0.0: {}
 
   isexe@3.1.1: {}
@@ -14393,7 +14395,7 @@ snapshots:
 
   mimic-fn@4.0.0: {}
 
-  miniflare@2.12.0(cron-schedule@5.0.1):
+  miniflare@2.12.0(cron-schedule@3.0.6):
     dependencies:
       '@miniflare/cache': 2.12.0
       '@miniflare/cli-parser': 2.12.0
@@ -14417,12 +14419,12 @@ snapshots:
       source-map-support: 0.5.21
       undici: 5.11.0
     optionalDependencies:
-      cron-schedule: 5.0.1
+      cron-schedule: 3.0.6
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  miniflare@2.13.0(cron-schedule@5.0.1):
+  miniflare@2.13.0(cron-schedule@3.0.6):
     dependencies:
       '@miniflare/cache': 2.13.0
       '@miniflare/cli-parser': 2.13.0
@@ -14446,7 +14448,7 @@ snapshots:
       source-map-support: 0.5.21
       undici: 5.20.0
     optionalDependencies:
-      cron-schedule: 5.0.1
+      cron-schedule: 3.0.6
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -17328,7 +17330,7 @@ snapshots:
       satori: 0.10.13
       yoga-wasm-web: 0.3.3
 
-  wrangler@2.10.0(cron-schedule@5.0.1):
+  wrangler@2.10.0(cron-schedule@3.0.6):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.2.0
       '@esbuild-plugins/node-globals-polyfill': 0.1.1(esbuild@0.16.3)
@@ -17339,7 +17341,7 @@ snapshots:
       blake3-wasm: 2.1.5
       chokidar: 3.6.0
       esbuild: 0.16.3
-      miniflare: 2.12.0(cron-schedule@5.0.1)
+      miniflare: 2.12.0(cron-schedule@3.0.6)
       nanoid: 3.3.7
       path-to-regexp: 6.2.2
       selfsigned: 2.4.1
@@ -17354,7 +17356,7 @@ snapshots:
       - ioredis
       - utf-8-validate
 
-  wrangler@2.16.0(cron-schedule@5.0.1):
+  wrangler@2.16.0(cron-schedule@3.0.6):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.2.0
       '@esbuild-plugins/node-globals-polyfill': 0.1.1(esbuild@0.16.3)
@@ -17365,7 +17367,7 @@ snapshots:
       blake3-wasm: 2.1.5
       chokidar: 3.6.0
       esbuild: 0.16.3
-      miniflare: 2.13.0(cron-schedule@5.0.1)
+      miniflare: 2.13.0(cron-schedule@3.0.6)
       nanoid: 3.3.7
       path-to-regexp: 6.2.2
       selfsigned: 2.4.1
