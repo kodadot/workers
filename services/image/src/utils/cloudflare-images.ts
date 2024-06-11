@@ -1,3 +1,4 @@
+import { ipfsProviders } from '@kodadot1/minipfs'
 import { encodeEndpoint } from '../routes/type-endpoint'
 import { CFIApiResponse } from './types'
 
@@ -73,17 +74,11 @@ export async function uploadCFI({
 }
 
 type IpfsToCFI = CFImages & {
-  gateway: string
   path: string
 }
 
-export async function ipfsToCFI({
-  token,
-  gateway,
-  path,
-  imageAccount,
-}: IpfsToCFI) {
-  const imageOnIpfs = `${gateway}/ipfs/${path}`
+export async function ipfsToCFI({ token, path, imageAccount }: IpfsToCFI) {
+  const imageOnIpfs = `${ipfsProviders.filebase_kodadot}/ipfs/${path}`
   const url = await resizeImage(imageOnIpfs)
 
   return await uploadCFI({

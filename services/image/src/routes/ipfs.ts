@@ -3,7 +3,7 @@ import { cors } from 'hono/cors'
 import { etag } from 'hono/etag'
 import { allowedOrigin } from '@kodadot/workers-utils'
 import { CACHE_DAY, CACHE_MONTH, Env } from '../utils/constants'
-import { fetchIPFS } from '../utils/ipfs'
+import { fetchIPFS, toIpfsGw } from '../utils/ipfs'
 import { getImageByPath, ipfsToCFI } from '../utils/cloudflare-images'
 import type { ResponseType } from '../utils/types'
 
@@ -37,16 +37,6 @@ app.get('/*', async (c) => {
   console.log('object', object)
   console.log('mime type', mimeType)
 
-  // set headers
-  c.header('cache-control', `s-maxage=${CACHE_DAY}`)
-  c.header('content-location', url.pathname)
-  c.header('date', new Date().toUTCString())
-  c.header(
-    'expires',
-    new Date(Date.now() + CACHE_MONTH * 1000 * 6).toUTCString(),
-  ) // expires in 6 months
-  c.header('vary', 'Accept-Encoding')
-
   // 1. check existing image on cf-images && !isOriginal
   // ----------------------------------------
   console.log('step 1')
@@ -69,7 +59,6 @@ app.get('/*', async (c) => {
     const imageUrl = await ipfsToCFI({
       path,
       token: c.env.IMAGE_API_TOKEN,
-      gateway: c.env.DEDICATED_BACKUP_GATEWAY,
       imageAccount: c.env.CF_IMAGE_ACCOUNT,
     })
 
@@ -124,37 +113,32 @@ app.get('/*', async (c) => {
 
   // 4. upload object to r2
   // ----------------------------------------
-  console.log('step 4')
-  if (object === null) {
-    const status = await fetchIPFS({
-      path: fullPath,
-    })
+  console.log('step 4', url.toString())
+  const ipfsNftstorage = toIpfsGw(url.toString(), 'nftstorage')
+  console.log('ipfsNftstorage', ipfsNftstorage)
+  const status = await fetchIPFS({
+    path: fullPath,
+  })
 
-    const contentLength = status.response?.headers.get('content-length')
+  const contentLength = status.response?.headers.get('content-length')
 
-    if (status.ok && status.response?.body && status.response?.headers) {
-      let body
+  if (status.ok && status.response?.body && status.response?.headers) {
+    let body
 
-      if (contentLength === null) {
-        body = await status.response?.text()
-      } else {
-        body = status.response.body as ResponseType
-      }
-
-      await c.env.MY_BUCKET.put(objectName, body, {
-        httpMetadata: status.response.headers,
-      })
+    if (contentLength === null) {
+      body = await status.response?.text()
+    } else {
+      body = status.response.body as ResponseType
     }
+
+    c.executionCtx.waitUntil(
+      c.env.MY_BUCKET.put(objectName, body, {
+        httpMetadata: status.response.headers as unknown as Headers,
+      }),
+    )
   }
 
-  // 5. return object from r2
-  // ----------------------------------------
-  console.log('step 5')
-  const newObject = await c.env.MY_BUCKET.get(objectName)
-
-  if (newObject !== null) {
-    return renderR2Object(newObject, newObject?.httpMetadata?.contentType)
-  }
+  return c.redirect(ipfsNftstorage)
 })
 
 app.delete('/*', async (c) => {
