@@ -48,7 +48,15 @@ app.get('/*', async (c) => {
     })
 
     if (publicUrl) {
-      return c.redirect(publicUrl, 301)
+      return fetch(publicUrl, {
+        cf: {
+          cacheTtlByStatus: {
+            '200-299': CACHE_DAY,
+            '404': 0,
+            '500-599': 0,
+          },
+        },
+      })
     }
   }
 
