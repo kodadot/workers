@@ -11,14 +11,14 @@
   "type": "module",
   "dependencies": {
     "@kodadot/workers-utils": "workspace:*",
-    "@kodadot1/hyperdata": "^0.0.1-rc.4",
-    "@kodadot1/minipfs": "^0.4.3-rc.1",
-    "hono": "^4.3.6"
+    "@kodadot1/hyperdata": "0.0.1-rc.4",
+    "@kodadot1/minipfs": "0.4.3-rc.2",
+    "hono": "^4.4.3"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240512.0",
+    "@cloudflare/workers-types": "^4.20240603.0",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0",
-    "wrangler": "^3.56.0"
+    "wrangler": "^3.59.0"
   }
 }
