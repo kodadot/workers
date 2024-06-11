@@ -6,27 +6,6 @@ import { META_TITLE } from './constant';
 import type { Prefix } from '@kodadot1/static';
 import type { NFT, NFTMeta } from './types';
 
-export const getNftById = async (chain: Prefix, id: string) => {
-  const client = getClient(chain);
-  const query = client.itemById(id, extendFields(['meta', 'price']));
-
-  return await client.fetch(query);
-};
-
-export const getCollectionById = async (chain: Prefix, id: string) => {
-  const client = getClient(chain);
-  const query = client.collectionById(id, extendFields(['meta']));
-
-  return await client.fetch(query);
-};
-
-export const getItemListByCollectionId = async (chain: Prefix, id: string) => {
-  const client = getClient(chain);
-  const query = client.itemListByCollectionId(id);
-
-  return await client.fetch(query);
-};
-
 export const getItemListByIssuer = async (chain: Prefix, id: string) => {
   const client = getClient(chain);
   const query = client.itemListByIssuer(id);

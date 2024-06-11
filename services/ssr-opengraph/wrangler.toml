@@ -1,6 +1,7 @@
 name = "ssr-opengraph-beta"
 compatibility_date = "2023-06-22"
 main = "src/index.tsx"
+account_id = "b3f9fdfd827152316d080a5ddee59915"
 
 [env.beta]
 name = "ssr-opengraph-beta"
@@ -17,7 +18,6 @@ routes = [
   "*.kodadot.xyz/ahk/collection/*",
   "*.kodadot.xyz/ahk/drops/*",
   "*.kodadot.xyz/ahk/u/*",
-  "*.kodadot.xyz/sandbox.html*",
   "*.koda.art/",
   "*.koda.art/blog/*",
   "*.koda.art/ahp/gallery/*",
@@ -50,7 +50,6 @@ routes = [
   "kodadot.xyz/ahk/collection/*",
   "kodadot.xyz/ahk/drops/*",
   "kodadot.xyz/ahk/u/*",
-  "kodadot.xyz/sandbox.html*",
   "koda.art/",
   "koda.art/blog/*",
   "koda.art/ahp/gallery/*",

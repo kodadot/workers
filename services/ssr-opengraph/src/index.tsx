@@ -1,5 +1,4 @@
 import { Hono } from 'hono';
-import { serveStatic } from 'hono/cloudflare-workers';
 import isbot from 'isbot';
 
 import { Opengraph } from './template';
@@ -70,8 +69,6 @@ app.on(['GET', 'HEAD'], '/blog/:slug', async (c) => {
 
   return fetch(c.req.url);
 });
-
-app.get('/sandbox.html', serveStatic({ path: './sandbox.html' }));
 
 app.onError((err, c) => {
   console.error(`${err}`);
