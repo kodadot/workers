@@ -15,6 +15,7 @@
     "@kodadot1/hyperdata": "^0.0.1-rc.4",
     "@kodadot1/minipfs": "^0.4.3-rc.1",
     "hono": "^4.3.6",
+    "ipfs-only-hash": "^4.0.0",
     "valibot": "^0.31.1"
   },
   "devDependencies": {
