@@ -1,21 +1,36 @@
-name = "ogi-route"
+name = "ogi-route-default"
 compatibility_date = "2023-12-01"
 
-# [vars]
-# MY_VAR = "my-variable"
+[env.beta]
+name = "ogi-route-beta"
+routes = [
+  "*.koda.art/",
+  "*.koda.art/blog/*",
+  "*.koda.art/ahp/gallery/*",
+  "*.koda.art/ahp/detail/*",
+  "*.koda.art/ahp/collection/*",
+  "*.koda.art/ahp/drops/*",
+  "*.koda.art/ahp/u/*",
+  "*.koda.art/ahk/gallery/*",
+  "*.koda.art/ahk/detail/*",
+  "*.koda.art/ahk/collection/*",
+  "*.koda.art/ahk/drops/*",
+  "*.koda.art/ahk/u/*",
+]
 
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
-# [[r2_buckets]]
-# binding = "MY_BUCKET"
-# bucket_name = "my-bucket"
-
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "my-database"
-# database_id = ""
-
-# [ai]
-# binding = "AI"
+[env.production]
+name = "ogi-route"
+routes = [
+  "koda.art/",
+  "koda.art/blog/*",
+  "koda.art/ahp/gallery/*",
+  "koda.art/ahp/detail/*",
+  "koda.art/ahp/collection/*",
+  "koda.art/ahp/drops/*",
+  "koda.art/ahp/u/*",
+  "koda.art/ahk/gallery/*",
+  "koda.art/ahk/detail/*",
+  "koda.art/ahk/collection/*",
+  "koda.art/ahk/drops/*",
+  "koda.art/ahk/u/*",
+]
