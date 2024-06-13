@@ -6,7 +6,7 @@ This service can help to achieve that. So, our DAPP looks better regarding SEO (
 
 Services:
 
-- [ogi-route](https://github.com/kodadot/workers/tree/main/services/ogi-route). Act as a load balancer to proxy user agent to render ogi or nft-gallery.
+- [ogi-route](https://github.com/kodadot/workers/tree/main/services/ogi-route). Act as a load balancer to proxy user agent to render ogi or nft-gallery. Ref: https://developers.cloudflare.com/workers/configuration/routing/routes/.
 - [ogi](https://github.com/kodadot/workers/tree/main/ogi). It acts as a mini SSR page to render meta tags.
 - [nft-gallery](https://github.com/kodadot/nft-gallery). Our DAPP
 
