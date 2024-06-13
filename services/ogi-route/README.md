@@ -10,6 +10,16 @@ Services:
 - [ogi](https://github.com/kodadot/workers/tree/main/ogi). It acts as a mini SSR page to render meta tags.
 - [nft-gallery](https://github.com/kodadot/nft-gallery). Our DAPP
 
+Third-party similar services:
+
+- https://prerender.io/
+- https://ostr.io/
+
+Better alternative implementation:
+
+- Append meta tags to the HTML response from the server.
+- Even Better: Use SSR. Ref: https://github.com/kodadot/nft-gallery/pull/9155 (but, so many breaking changes)
+
 ## Architecture diagram
 
 ```mermaid
