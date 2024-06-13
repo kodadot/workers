@@ -18,6 +18,11 @@ routes = [
   "*.koda.art/ahk/collection/*",
   "*.koda.art/ahk/drops/*",
   "*.koda.art/ahk/u/*",
+  "*.koda.art/base/gallery/*",
+  "*.koda.art/base/detail/*",
+  "*.koda.art/base/collection/*",
+  "*.koda.art/base/drops/*",
+  "*.koda.art/base/u/*",
 ]
 
 [env.production]
@@ -35,4 +40,9 @@ routes = [
   "koda.art/ahk/collection/*",
   "koda.art/ahk/drops/*",
   "koda.art/ahk/u/*",
+  "koda.art/base/gallery/*",
+  "koda.art/base/detail/*",
+  "koda.art/base/collection/*",
+  "koda.art/base/drops/*",
+  "koda.art/base/u/*",
 ]
