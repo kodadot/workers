@@ -4,6 +4,10 @@ import { ogiRequest } from './utils'
 
 const app = new Hono()
 
+app.get('/sandbox.html', (c) => {
+  return fetch('https://playground-r2.koda.art/sandbox.html')
+})
+
 app.get('/*', (c) => {
   const useragent = c.req.header('User-Agent')
 
