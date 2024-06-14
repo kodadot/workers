@@ -7,7 +7,7 @@ account_id = "b3f9fdfd827152316d080a5ddee59915"
 name = "ogi-route-beta"
 routes = [
   "*.koda.art/",
-  "*.koda.art/sandbox.html",
+  "*.koda.art/sandbox.html*",
   "*.koda.art/blog/*",
   "*.koda.art/ahp/gallery/*",
   "*.koda.art/ahp/detail/*",
@@ -30,7 +30,7 @@ routes = [
 name = "ogi-route"
 routes = [
   "koda.art/",
-  "koda.art/sandbox.html",
+  "koda.art/sandbox.html*",
   "koda.art/blog/*",
   "koda.art/ahp/gallery/*",
   "koda.art/ahp/detail/*",
