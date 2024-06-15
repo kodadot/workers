@@ -5,15 +5,19 @@ import { Env } from '../utils/constants'
 import { getImageByPath, uploadCFI } from '../utils/cloudflare-images'
 import { vValidator } from '@hono/valibot-validator'
 import Hash from 'ipfs-only-hash'
-
-import {
-  UploadImage,
-  uploadImageRequestSchema,
-} from '../schemas/uploadImageRequestSchema'
+import { blob, object } from 'valibot'
 
 const app = new Hono<{ Bindings: Env }>()
 
 app.use('/*', cors({ origin: allowedOrigin }))
+
+type UploadImage = {
+  file: File
+}
+
+const uploadImageRequestSchema = object({
+  file: blob('File is required'),
+})
 
 app.post('/upload', vValidator('form', uploadImageRequestSchema), async (c) => {
   const { file } = await c.req.parseBody<UploadImage>()
