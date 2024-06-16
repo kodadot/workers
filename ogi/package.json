@@ -18,6 +18,7 @@
     "vue-router": "^4.3.0"
   },
   "dependencies": {
+    "@kodadot/workers-utils": "workspace:*",
     "@kodadot1/minipfs": "^0.4.3-rc.1",
     "@kodadot1/static": "^0.0.5",
     "@kodadot1/uniquery": "^0.6.0-rc.0",
