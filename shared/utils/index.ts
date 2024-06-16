@@ -17,3 +17,7 @@ export const allowedOrigin = (origin: string): string | undefined | null => {
   }
   return ORIGIN
 }
+
+export const encodeEndpoint = (endpoint: string) => {
+  return endpoint.replace(/[^a-zA-Z0-9]/g, '-')
+}

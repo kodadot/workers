@@ -1,5 +1,5 @@
 import { ipfsProviders } from '@kodadot1/minipfs'
-import { encodeEndpoint } from '../routes/type-endpoint'
+import { encodeEndpoint } from '@kodadot/workers-utils'
 import { CFIApiResponse } from './types'
 
 type CFImages = {
