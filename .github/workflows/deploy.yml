@@ -15,6 +15,7 @@ on:
           - image
           - keywise
           - newsletter
+          - ogi-route
           - party
           - polysearch
           - price
@@ -41,16 +42,16 @@ jobs:
         with:
           version: 9
 
-      - name: Publish (beta or production)
+      - name: Deploy (beta or production)
         if: github.event.inputs.environment == 'beta' || github.event.inputs.environment == 'production'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           workingDirectory: ./services/${{ github.event.inputs.worker }}
-          command: publish --env ${{ github.event.inputs.environment }}
+          command: deploy --env ${{ github.event.inputs.environment }}
           packageManager: pnpm
 
-      - name: Publish (default)
+      - name: Deploy (default)
         if: github.event.inputs.environment != 'beta' && github.event.inputs.environment != 'production'
         uses: cloudflare/wrangler-action@v3
         with:
