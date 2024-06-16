@@ -1,5 +1,6 @@
 import type { Prefix } from '@kodadot1/static'
 import type { Collection, BaseItem, NFT, DropItem } from '@/utils/types'
+import { encodeEndpoint } from '@kodadot/workers-utils'
 import { getClient, extendFields } from '@kodadot1/uniquery'
 
 export const prefixChain = (prefix: Prefix) => {
@@ -77,12 +78,10 @@ export const getMarkdown = async (slug: string) => {
   return text
 }
 
-const encodeEndpoint = (endpoint: string) => {
-  return endpoint.replace(/[:,._/]/g, '-')
-}
-
-export const parseImage = async (imagePath: string) => {
-  const rawImage = `https://raw.githubusercontent.com/kodadot/nft-gallery/main/public${imagePath}`
+export const parseImage = async (imagePath: string, github = true) => {
+  const rawImage = github
+    ? `https://raw.githubusercontent.com/kodadot/nft-gallery/main/public${imagePath}`
+    : imagePath
   const encodeImage = encodeEndpoint(rawImage)
 
   // upload image to our cf-images
