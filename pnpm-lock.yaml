@@ -223,6 +223,22 @@ importers:
         specifier: ^3.0.0
         version: 3.55.0(@cloudflare/workers-types@4.20240512.0)
 
+  services/ogi-route:
+    dependencies:
+      hono:
+        specifier: ^4.4.5
+        version: 4.4.5
+      isbot:
+        specifier: ^5.1.9
+        version: 5.1.9
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20240605.0
+        version: 4.20240605.0
+      wrangler:
+        specifier: ^3.60.1
+        version: 3.60.1(@cloudflare/workers-types@4.20240605.0)
+
   services/party:
     dependencies:
       partysocket:
@@ -4667,6 +4683,10 @@ packages:
   isbot@3.8.0:
     resolution: {integrity: sha512-vne1mzQUTR+qsMLeCBL9+/tgnDXRyc2pygLGl/WsgA+EZKIiB5Ehu0CiVTHIIk30zhJ24uGz4M5Ppse37aR0Hg==}
     engines: {node: '>=12'}
+
+  isbot@5.1.9:
+    resolution: {integrity: sha512-NITFjA2Jpcv1qWCpzqZQoW/66H3xXbF+n4yJIXr/gIn/wgaSKOPXTTczswiKMYx+BVymG9lm30ZGPtFWqAD4hA==}
+    engines: {node: '>=18'}
 
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
@@ -12632,6 +12652,8 @@ snapshots:
   isarray@1.0.0: {}
 
   isbot@3.8.0: {}
+
+  isbot@5.1.9: {}
 
   isexe@2.0.0: {}
 
