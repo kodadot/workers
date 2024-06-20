@@ -40,9 +40,11 @@ useSeoMeta({
 
 defineOgImage({
   component: 'collection',
-  title: collection.name,
-  image: ipfsUrl(collection.meta.image),
-  items: totalCount.toString() || '-',
-  network: prefix,
+  props: {
+    title: collection.name,
+    image: ipfsUrl(collection.meta.image),
+    items: totalCount.toString() || '-',
+    network: prefix,
+  },
 })
 </script>

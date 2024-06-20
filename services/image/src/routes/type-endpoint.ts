@@ -1,15 +1,11 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { allowedOrigin } from '@kodadot/workers-utils'
+import { allowedOrigin, encodeEndpoint } from '@kodadot/workers-utils'
 import { CACHE_TTL_BY_STATUS, type Env } from '../utils/constants'
 import { urlToCFI } from '../utils/cloudflare-images'
 import { ResponseType } from '../utils/types'
 
 const app = new Hono<{ Bindings: Env }>()
-
-export const encodeEndpoint = (endpoint: string) => {
-  return endpoint.replace(/[:,._/]/g, '-')
-}
 
 app.use('/*', cors({ origin: allowedOrigin }))
 
@@ -77,7 +73,7 @@ app.get('/*', async (c) => {
       body = fetchObject.body
     }
     await c.env.MY_BUCKET.put(objectName, body as ResponseType, {
-      httpMetadata: fetchObject.headers,
+      httpMetadata: fetchObject.headers as unknown as Headers,
     })
 
     const newObject = await c.env.MY_BUCKET.get(objectName)

@@ -1,11 +1,11 @@
 <template>
   <div>
     <h1>title: {{ name }}</h1>
-    <p>image: {{ image }}</p>
+    <p>image: {{ cfImage }}</p>
     <p>price: {{ price }} {{ symbol }}</p>
     <p>usd: {{ usd }}</p>
     <p>network: {{ network }}</p>
-    <img :src="ipfsUrl(image)" :alt="name" />
+    <img :src="cfImage" :alt="name" />
     <div>{{ item }}</div>
   </div>
 </template>
@@ -38,15 +38,21 @@ const price = formatBalance(item.price, {
   forceUnit: symbol,
 })
 const usd = await usdPrice(chain, price)
+const cfImage = await parseImage(
+  ipfsUrl(image || 'https://kodadot.xyz/k_card.png'),
+  false,
+)
 
 defineOgImage({
   component: 'gallery',
-  title: name,
-  image: ipfsUrl(image || 'https://kodadot.xyz/k_card.png'),
-  usd,
-  price,
-  symbol,
-  network,
+  props: {
+    title: name,
+    image: cfImage,
+    usd,
+    price,
+    symbol,
+    network,
+  },
 })
 
 useSeoMeta({
