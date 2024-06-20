@@ -73,11 +73,11 @@ export async function uploadCFI({
   return ''
 }
 
-type DeleteCFIUpload = CFImages & {
+type DeleteCFI = CFImages & {
   id: string
 }
 
-export async function deleteCFI({ token, id, imageAccount }: DeleteCFIUpload) {
+export async function deleteCFI({ token, id, imageAccount }: DeleteCFI) {
   const uploadHeaders = new Headers()
   uploadHeaders.append('Authorization', `Bearer ${token}`)
 
