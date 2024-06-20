@@ -114,8 +114,6 @@ app.get('/*', async (c) => {
   // 4. upload object to r2
   // ----------------------------------------
   console.log('step 4', url.toString())
-  const ipfsNftstorage = toIpfsGw(url.toString(), 'w3s')
-  console.log('ipfsNftstorage', ipfsNftstorage)
   const status = await fetchIPFS({
     path: fullPath,
   })
@@ -138,7 +136,14 @@ app.get('/*', async (c) => {
     )
   }
 
-  return c.redirect(ipfsNftstorage)
+  // 5. return object from r2
+  // ----------------------------------------
+  console.log('step 5')
+  const newObject = await c.env.MY_BUCKET.get(objectName)
+
+  if (newObject !== null) {
+    return renderR2Object(newObject, newObject?.httpMetadata?.contentType)
+  }
 })
 
 app.delete('/*', async (c) => {
