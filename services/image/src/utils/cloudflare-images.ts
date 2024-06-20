@@ -73,6 +73,29 @@ export async function uploadCFI({
   return ''
 }
 
+type DeleteCFIUpload = CFImages & {
+  id: string
+}
+
+export async function deleteCFI({ token, id, imageAccount }: DeleteCFIUpload) {
+  const uploadHeaders = new Headers()
+  uploadHeaders.append('Authorization', `Bearer ${token}`)
+
+  const requestOptions = {
+    method: 'DELETE',
+    headers: uploadHeaders,
+  }
+
+  const deleteCfImage = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${imageAccount}/images/v1/${id}`,
+    requestOptions,
+  )
+
+  const response = (await deleteCfImage.json()) as CFIApiResponse
+
+  return response.success
+}
+
 type IpfsToCFI = CFImages & {
   path: string
 }
