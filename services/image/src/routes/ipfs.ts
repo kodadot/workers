@@ -114,7 +114,7 @@ app.get('/*', async (c) => {
   // 4. upload object to r2
   // ----------------------------------------
   console.log('step 4', url.toString())
-  const ipfsNftstorage = toIpfsGw(url.toString(), 'nftstorage')
+  const ipfsNftstorage = toIpfsGw(url.toString(), 'w3s')
   console.log('ipfsNftstorage', ipfsNftstorage)
   const status = await fetchIPFS({
     path: fullPath,
