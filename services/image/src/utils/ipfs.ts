@@ -1,9 +1,15 @@
-import { $purify, getProviderList, ipfsProviders } from '@kodadot1/minipfs'
+import {
+  $purify,
+  ipfsProviders,
+  type HTTPS_URI,
+  type IPFSProviders,
+} from '@kodadot1/minipfs'
 
-export function toIPFSDedicated(path: string) {
-  const infura = new URL(getProviderList(['infura_kodadot1'])[0])
+export function toIpfsGw(path: string, provider?: IPFSProviders) {
+  const gw: IPFSProviders = provider || 'filebase_kodadot'
+  const gateway = new URL(ipfsProviders[gw])
   const url = new URL(path)
-  url.hostname = infura.hostname
+  url.hostname = gateway.hostname
 
   return url.toString()
 }
@@ -17,11 +23,12 @@ export function ipfsUrl(ipfs?: string) {
   return $purify(ipfs, ['kodadot_beta'])[0]
 }
 
-async function resolveGateway({
-  path = '',
-  gateway = ipfsProviders.infura_kodadot1,
-}) {
-  const response = await fetch(`${gateway}/ipfs/${path}`)
+async function resolveGateway({ path = '', gateway = ipfsProviders.ipfs }) {
+  const url = `${gateway}/ipfs/${path}`
+  console.log('gateway url', url)
+  const response = await fetch(url, {
+    signal: AbortSignal.timeout(2000),
+  })
   console.log('fetch IPFS status', gateway, response.status)
 
   return response
@@ -30,22 +37,22 @@ async function resolveGateway({
 export async function fetchIPFS({ path }: { path: string }) {
   console.log('ipfs path', path)
 
-  const gateways = [
-    ipfsProviders.apillon,
-    ipfsProviders.cloudflare,
+  const gateways: HTTPS_URI[] = [
+    ipfsProviders.ipfs,
     ipfsProviders.filebase_kodadot,
-    ipfsProviders.infura_kodadot1,
   ]
 
   for (const gateway of gateways) {
-    const response = await resolveGateway({ path, gateway })
+    try {
+      const response = await resolveGateway({ path, gateway })
 
-    if (response.status === 200) {
-      return {
-        response: response,
-        ok: true,
+      if (response.status === 200) {
+        return {
+          response: response,
+          ok: true,
+        }
       }
-    }
+    } catch (error) {}
   }
 
   return {

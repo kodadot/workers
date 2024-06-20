@@ -5,9 +5,6 @@ compatibility_date = "2023-01-03"
 usage_model = "bundled"
 
 [vars]
-DEDICATED_GATEWAY = 'https://kodadot-ultra.myfilebase.com'
-DEDICATED_BACKUP_GATEWAY = 'https://kodadot1.infura-ipfs.io'
-CLOUDFLARE_GATEWAY = 'https://cloudflare-ipfs.com'
 CF_IMAGE_ACCOUNT = 'b3f9fdfd827152316d080a5ddee59915'
 CF_IMAGE_ID = 'jk5b6spi_m_-9qC4VTnjpg'
 
@@ -29,9 +26,6 @@ preview_id = "e4e4e08fa2774b4eb32aabc647fe01b0"
 name = 'image-beta'
 
 [env.beta.vars]
-DEDICATED_GATEWAY = 'https://kodadot-ultra.myfilebase.com'
-DEDICATED_BACKUP_GATEWAY = 'https://kodadot1.infura-ipfs.io'
-CLOUDFLARE_GATEWAY = 'https://cloudflare-ipfs.com'
 CF_IMAGE_ACCOUNT = 'b3f9fdfd827152316d080a5ddee59915'
 CF_IMAGE_ID = 'jk5b6spi_m_-9qC4VTnjpg'
 
@@ -50,9 +44,6 @@ preview_id = "e4e4e08fa2774b4eb32aabc647fe01b0"
 name = 'image'
 
 [env.production.vars]
-DEDICATED_GATEWAY = 'https://kodadot-ultra.myfilebase.com'
-DEDICATED_BACKUP_GATEWAY = 'https://kodadot1.infura-ipfs.io'
-CLOUDFLARE_GATEWAY = 'https://cloudflare-ipfs.com'
 CF_IMAGE_ACCOUNT = 'b3f9fdfd827152316d080a5ddee59915'
 CF_IMAGE_ID = 'jk5b6spi_m_-9qC4VTnjpg'
 

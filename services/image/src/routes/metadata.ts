@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { allowedOrigin } from '@kodadot/workers-utils'
 import { normalize, contentFrom, type BaseMetadata } from '@kodadot1/hyperdata'
 import type { Env } from '../utils/constants'
-import { ipfsUrl, toIPFSDedicated } from '../utils/ipfs'
+import { ipfsUrl, toIpfsGw } from '../utils/ipfs'
 import { encodeEndpoint } from './type-endpoint'
 import { cors } from 'hono/cors'
 
@@ -12,7 +12,7 @@ const app = new Hono<{ Bindings: Env }>()
 const toExternalGateway = (url: string) => {
   const KODA_WORKERS = 'w.kodadot.xyz/ipfs/'
 
-  return url.includes(KODA_WORKERS) ? toIPFSDedicated(url) : url
+  return url.includes(KODA_WORKERS) ? toIpfsGw(url) : url
 }
 
 const getMimeType = async (url: string): Promise<string> => {
@@ -43,21 +43,28 @@ app.get('/*', async (c) => {
   }
 
   try {
+    // 0 redirect to internal url
+    if (
+      url.includes('fxart-beta.kodadot.workers.dev') ||
+      url.includes('fxart.kodadot.workers.dev')
+    ) {
+      return c.redirect(url, 301)
+    }
+
     // 1. check on KV. if exists, return the data
     // ----------------------------------------
+    console.log('fetch metadata', url, key)
     const metadataKV = await c.env.METADATA.get(key)
     if (metadataKV) {
       return c.json(JSON.parse(metadataKV))
     }
-
-    // TODO: additional layer, check metadata on R2 bucket
 
     // 2. put to KV
     // ----------------------------------------
     const externalUrl = toExternalGateway(url)
     const data = await fetch(externalUrl)
     console.log('fetch metadata status', externalUrl, data.status)
-    const json = await data.json<BaseMetadata>()
+    const json = (await data.json()) as BaseMetadata
     const content = contentFrom(json, true)
     // @ts-ignore
     const normalized = normalize(content, ipfsUrl)
