@@ -143,20 +143,17 @@ const transformationParams = [
 export function getCFIFlexibleVariant(
   queryParams: { [param: string]: string },
   url: string,
-) {
-  const hasTransformationParam = Object.keys(queryParams)
-    .map((param) => transformationParams.includes(param))
-    .some(Boolean)
+): string {
+  const transformations = Object.keys(queryParams)
+    .filter((param) => transformationParams.includes(param))
+    .map((param) => `${param}=${queryParams[param]}`)
+    .join(',')
 
-  if (!hasTransformationParam) {
+  if (!transformations) {
     return url
   }
 
   url = url.split('/public')[0]
-
-  const transformations = Object.keys(queryParams)
-    .map((param) => `${param}=${queryParams[param]}`)
-    .join(',')
 
   return `${url}/${transformations}`
 }
