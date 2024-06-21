@@ -142,7 +142,7 @@ const transformationParams = [
 
 export function getCFIFlexibleVariant(
   queryParams: { [param: string]: string },
-  url: string,
+  publicUrl: string,
 ): string {
   const transformations = Object.keys(queryParams)
     .filter((param) => transformationParams.includes(param))
@@ -150,10 +150,10 @@ export function getCFIFlexibleVariant(
     .join(',')
 
   if (!transformations) {
-    return url
+    return publicUrl
   }
 
-  url = url.split('/public')[0]
+  publicUrl = publicUrl.split('/public')[0]
 
-  return `${url}/${transformations}`
+  return `${publicUrl}/${transformations}`
 }
