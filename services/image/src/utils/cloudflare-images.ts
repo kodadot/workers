@@ -119,3 +119,44 @@ export async function getImageByPath({
 
   return ''
 }
+
+const transformationParams = [
+  'w',
+  'width',
+  'h',
+  'height',
+  'anim',
+  'background',
+  'blur',
+  'brightness',
+  'fit',
+  'fromat',
+  'q',
+  'quality',
+  'sharpen',
+  'trim.width',
+  'trim.height',
+  'trim.left',
+  'trim.top',
+]
+
+export function getCFIFlexibleVariant(
+  queryParams: { [param: string]: string },
+  url: string,
+) {
+  const hasTransformationParam = Object.keys(queryParams)
+    .map((param) => transformationParams.includes(param))
+    .some(Boolean)
+
+  if (!hasTransformationParam) {
+    return url
+  }
+
+  url = url.split('/public')[0]
+
+  const transformations = Object.keys(queryParams)
+    .map((param) => `${param}=${queryParams[param]}`)
+    .join(',')
+
+  return `${url}/${transformations}`
+}

@@ -143,3 +143,16 @@ test('ipfs - 200 - html', async () => {
     }
   `)
 })
+
+test('ipfs - flexible variant - image ', async () => {
+  const res = await fetch(
+    'https://image-beta.w.kodadot.xyz/ipfs/bafybeidv3wgydacgpre67lkciihrttvwl5nibzftxfppy6lfanjja4v7zm?w=100',
+    { redirect: 'manual' },
+  )
+
+  const redirectURL = res.headers.get('location')
+
+  expect(redirectURL).toBe(
+    'https://imagedelivery.net/jk5b6spi_m_-9qC4VTnjpg/bafybeidv3wgydacgpre67lkciihrttvwl5nibzftxfppy6lfanjja4v7zm/w=100',
+  )
+})
