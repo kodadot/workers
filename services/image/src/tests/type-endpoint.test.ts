@@ -88,7 +88,7 @@ test('type-endpoint - 200 - image - original', async () => {
   expect(data).toMatchInlineSnapshot(`
     Blob {
       Symbol(kHandle): Blob {},
-      Symbol(kLength): 86783,
+      Symbol(kLength): 631349,
       Symbol(kType): "image/png",
     }
   `)
