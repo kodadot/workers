@@ -4,7 +4,11 @@ import { etag } from 'hono/etag'
 import { allowedOrigin } from '@kodadot/workers-utils'
 import { CACHE_DAY, CACHE_MONTH, Env } from '../utils/constants'
 import { fetchIPFS, toIpfsGw } from '../utils/ipfs'
-import { getImageByPath, ipfsToCFI } from '../utils/cloudflare-images'
+import {
+  getCFIFlexibleVariant,
+  getImageByPath,
+  ipfsToCFI,
+} from '../utils/cloudflare-images'
 import type { ResponseType } from '../utils/types'
 
 const app = new Hono<{ Bindings: Env }>()
@@ -12,7 +16,8 @@ const app = new Hono<{ Bindings: Env }>()
 app.use(etag())
 app.use('/*', cors({ origin: allowedOrigin }))
 app.get('/*', async (c) => {
-  const { original } = c.req.query()
+  const query = c.req.query()
+  const { original } = query
   const isOriginal = original === 'true'
   const isHead = c.req.method === 'HEAD'
 
@@ -48,7 +53,7 @@ app.get('/*', async (c) => {
     })
 
     if (publicUrl) {
-      return c.redirect(publicUrl, 301)
+      return c.redirect(getCFIFlexibleVariant(query, publicUrl), 301)
     }
   }
 
@@ -63,7 +68,7 @@ app.get('/*', async (c) => {
     })
 
     if (imageUrl) {
-      return c.redirect(imageUrl, 301)
+      return c.redirect(getCFIFlexibleVariant(query, imageUrl), 301)
     }
   }
 
