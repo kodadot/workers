@@ -11,7 +11,9 @@ const { image, text } = route.query
 
 defineOgImage({
   component: 'base',
-  text: text,
-  image: image,
+  props: {
+    text: text,
+    image: image,
+  },
 })
 </script>

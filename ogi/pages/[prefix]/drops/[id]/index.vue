@@ -26,9 +26,11 @@ const {
 
 defineOgImage({
   component: 'drops',
-  title: collection.name,
-  image: ipfsUrl(drop.image),
-  items: String(collection.max),
+  props: {
+    title: collection.name,
+    image: ipfsUrl(drop.image),
+    items: String(collection.max),
+  },
 })
 
 useSeoMeta({

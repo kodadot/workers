@@ -50,7 +50,9 @@ useSeoMeta({
 
 defineOgImage({
   component: 'blog',
-  title: title,
-  image: parsedImage,
+  props: {
+    title: title,
+    image: parsedImage,
+  },
 })
 </script>

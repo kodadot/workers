@@ -1,5 +1,5 @@
 import {
-  $purify,
+  $purifyOne,
   ipfsProviders,
   type HTTPS_URI,
   type IPFSProviders,
@@ -20,7 +20,7 @@ export function ipfsUrl(ipfs?: string) {
   }
 
   // TODO: 'kodadot_beta' for beta, 'kodadot' for prod
-  return $purify(ipfs, ['kodadot_beta'])[0]
+  return $purifyOne(ipfs, 'kodadot_beta')
 }
 
 async function resolveGateway({ path = '', gateway = ipfsProviders.ipfs }) {

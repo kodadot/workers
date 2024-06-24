@@ -1,9 +1,8 @@
 import { Hono } from 'hono'
-import { allowedOrigin } from '@kodadot/workers-utils'
+import { allowedOrigin, encodeEndpoint } from '@kodadot/workers-utils'
 import { normalize, contentFrom, type BaseMetadata } from '@kodadot1/hyperdata'
 import type { Env } from '../utils/constants'
 import { ipfsUrl, toIpfsGw } from '../utils/ipfs'
-import { encodeEndpoint } from './type-endpoint'
 import { cors } from 'hono/cors'
 
 const app = new Hono<{ Bindings: Env }>()
