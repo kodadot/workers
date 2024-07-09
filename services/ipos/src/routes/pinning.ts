@@ -14,12 +14,16 @@ app.post('/pinJson', vValidator('json', object({})), async (c) => {
 
   const bytes = Uint8Array.from(json)
 
-  const size = bytes.byteLength
-
   const cid = await fs.addBytes(bytes)
 
+  const stats = await fs.stat(cid)
+
   return c.json(
-    pinResponse({ cid: cid.toString(), type: 'application/json', size }),
+    pinResponse({
+      cid: cid.toString(),
+      type: 'application/json',
+      size: Number(stats.fileSize),
+    }),
   )
 })
 
