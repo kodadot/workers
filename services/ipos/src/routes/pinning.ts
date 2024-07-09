@@ -4,22 +4,24 @@ import { vValidator } from '@hono/valibot-validator'
 import { blob, object, union } from 'valibot'
 import { createNode } from '../utils/helia'
 import { unixfs } from '@helia/unixfs'
+import { getUint8ArrayFromFile } from '../utils/helpers'
 
 const app = new Hono<HonoEnv>()
 
 app.post('/pinJson', vValidator('json', object({})), async (c) => {
   const json = await c.req.json()
 
-  const fs = unixfs(await createNode(c))
+  const helia = await createNode(c)
+  const fs = unixfs(helia)
 
   const bytes = Uint8Array.from(json)
-
   const cid = await fs.addBytes(bytes)
 
   const stats = await fs.stat(cid)
+  await helia.stop()
 
   return c.json(
-    pinResponse({
+    getPinResponse({
       cid: cid.toString(),
       type: 'application/json',
       size: Number(stats.fileSize),
@@ -45,13 +47,15 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
 
   const files = [body?.['file[]'], [body.file]].flat().filter(Boolean)
 
-  const fs = unixfs(await createNode(c))
+  const helia = await createNode(c)
+  const fs = unixfs(helia)
 
-  const filesWithCIDs: { file: File; cid: any }[] = await Promise.all(
+  const addedFiles: { file: File; cid: any }[] = await Promise.all(
     files.map(async (file: File) => {
       try {
-        const content = Uint8Array.from(await file.arrayBuffer())
+        const content = await getUint8ArrayFromFile(file)
         const cid = await fs.addFile({ path: file.name, content })
+        console.log('File added', cid)
         return { file, cid }
       } catch (error) {
         throw new Error(`Failed to add file ${file.name}: ${error?.message}`)
@@ -59,34 +63,38 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
     }),
   )
 
+  const { cid: addedFileCid, file } = addedFiles[0]
+  let cid = addedFileCid
+  let type = file.type
+
   if (files?.length > 1) {
+    console.log('Creating directory')
     let dirCid = await fs.addDirectory()
-    for (const { file, cid } of filesWithCIDs) {
+    for (const { file, cid } of addedFiles) {
       dirCid = await fs.cp(cid, dirCid, file.name)
     }
 
-    const stats = await fs.stat(dirCid)
-    return c.json(
-      pinResponse({
-        cid: dirCid.toString(),
-        type: stats.type,
-        size: Number(stats.fileSize),
-      }),
-    )
+    cid = dirCid.toString()
+    type = 'directory'
   }
 
-  const { cid, file } = filesWithCIDs[0]
   const stats = await fs.stat(cid)
+  await helia.stop()
+
   return c.json(
-    pinResponse({
+    getPinResponse({
       cid: cid.toString(),
-      type: file.type,
+      type: type,
       size: Number(stats.fileSize),
     }),
   )
 })
 
-const pinResponse = (value: { cid: string; type: string; size: number }) => ({
+const getPinResponse = (value: {
+  cid: string
+  type: string
+  size: number
+}) => ({
   ok: true,
   value,
 })
