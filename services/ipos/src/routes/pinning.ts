@@ -49,7 +49,7 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
   const body = (await c.req.parseBody({ all: true })) as PinFIle
 
   const files: File[] = [[(body as PinSingleFile)[fileKey]]]
-    .flat()
+    .flat(2)
     .filter(Boolean)
 
   const helia = await createNode(c)
