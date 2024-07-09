@@ -1,0 +1,30 @@
+diff --git a/dist-es/stream-collector.js b/dist-es/stream-collector.js
+index 4b796dd2d480bb6598b9e2b9194ee3b47a96003d..c0d21833a0b4383be3d007eccbeec0585a18f752 100644
+--- a/dist-es/stream-collector.js
++++ b/dist-es/stream-collector.js
+@@ -31,20 +31,9 @@ async function collectStream(stream) {
+     }
+     return collected;
+ }
+-function readToBase64(blob) {
+-    return new Promise((resolve, reject) => {
+-        const reader = new FileReader();
+-        reader.onloadend = () => {
+-            if (reader.readyState !== 2) {
+-                return reject(new Error("Reader aborted too early"));
+-            }
+-            const result = (reader.result ?? "");
+-            const commaIndex = result.indexOf(",");
+-            const dataOffset = commaIndex > -1 ? commaIndex + 1 : result.length;
+-            resolve(result.substring(dataOffset));
+-        };
+-        reader.onabort = () => reject(new Error("Read aborted"));
+-        reader.onerror = () => reject(reader.error);
+-        reader.readAsDataURL(blob);
+-    });
++async function readToBase64(blob) {
++  const arrayBuffer = await blob.arrayBuffer();
++  const uint8Array = new Uint8Array(arrayBuffer);
++  const base64String = btoa(String.fromCharCode.apply(null, uint8Array));
++  return base64String;
+ }

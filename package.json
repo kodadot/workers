@@ -12,5 +12,10 @@
   "engines": {
     "pnpm": ">=9",
     "node": ">=20"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@smithy/fetch-http-handler@3.2.0": "patches/@smithy__fetch-http-handler@3.2.0.patch"
+    }
   }
 }
