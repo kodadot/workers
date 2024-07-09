@@ -30,7 +30,7 @@ app.post('/pinJson', vValidator('json', object({})), async (c) => {
 })
 
 type PinSingleFile = { file: File }
-type PingMultipleFiles = { 'file[]': File[] }
+type PingMultipleFiles = { 'file[]': File[] | File }
 type PinFIle = PinSingleFile | PingMultipleFiles
 
 const pinFileRequestSchema = union([
@@ -45,7 +45,12 @@ const pinFileRequestSchema = union([
 app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
   const body = (await c.req.parseBody()) as PinFIle
 
-  const files = [body?.['file[]'], [body.file]].flat().filter(Boolean)
+  const files: File[] = [
+    (body as PingMultipleFiles)?.['file[]'],
+    [(body as PinSingleFile).file],
+  ]
+    .flat()
+    .filter(Boolean)
 
   const helia = await createNode(c)
   const fs = unixfs(helia)
@@ -67,7 +72,7 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
   let cid = addedFileCid
   let type = file.type
 
-  if (files?.length > 1) {
+  if (files.length > 1) {
     console.log('Creating directory')
     let dirCid = await fs.addDirectory()
     for (const { file, cid } of addedFiles) {
