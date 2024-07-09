@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { HonoEnv } from '../utils/constants'
 import { vValidator } from '@hono/valibot-validator'
-import { blob, object, union } from 'valibot'
+import { blob, object, union, array } from 'valibot'
 import { createNode } from '../utils/helia'
 import { unixfs } from '@helia/unixfs'
 import { getUint8ArrayFromFile } from '../utils/helpers'
@@ -29,26 +29,26 @@ app.post('/pinJson', vValidator('json', object({})), async (c) => {
   )
 })
 
-type PinSingleFile = { file: File }
-type PingMultipleFiles = { 'file[]': File[] | File }
+const fileRequiredMessage = 'File is required'
+const fileKey = 'file'
+
+type PinSingleFile = { [fileKey]: File }
+type PingMultipleFiles = { [fileKey]: File[] }
 type PinFIle = PinSingleFile | PingMultipleFiles
 
 const pinFileRequestSchema = union([
   object({
-    file: blob('File is required'),
+    [fileKey]: blob(fileRequiredMessage),
   }),
   object({
-    'file[]': blob('File is required'),
+    [fileKey]: array(blob(fileRequiredMessage)),
   }),
 ])
 
 app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
-  const body = (await c.req.parseBody()) as PinFIle
+  const body = (await c.req.parseBody({ all: true })) as PinFIle
 
-  const files: File[] = [
-    (body as PingMultipleFiles)?.['file[]'],
-    [(body as PinSingleFile).file],
-  ]
+  const files: File[] = [[(body as PinSingleFile)[fileKey]]]
     .flat()
     .filter(Boolean)
 
