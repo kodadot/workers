@@ -55,24 +55,28 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
     }),
   )
 
-  let cid
-
   if (files?.length > 1) {
     let dirCid = await fs.addDirectory()
     for (const { file, cid } of filesWithCIDs) {
       dirCid = await fs.cp(cid, dirCid, file.name)
     }
-    cid = dirCid
-  } else {
-    cid = filesWithCIDs[0].cid
+
+    const stats = await fs.stat(dirCid)
+    return c.json(
+      pinResponse({
+        cid: dirCid.toString(),
+        type: stats.type,
+        size: Number(stats.fileSize),
+      }),
+    )
   }
 
+  const { cid, file } = filesWithCIDs[0]
   const stats = await fs.stat(cid)
-
   return c.json(
     pinResponse({
-      cid: cid?.toString(),
-      type: stats.type,
+      cid: cid.toString(),
+      type: file.type,
       size: Number(stats.fileSize),
     }),
   )
