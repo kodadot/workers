@@ -76,6 +76,7 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
     console.log('Creating directory')
     let dirCid = await fs.addDirectory()
     for (const { file, cid } of addedFiles) {
+      console.log(`Adding file ${cid} to directory ${dirCid}`)
       dirCid = await fs.cp(cid, dirCid, file.name)
     }
 
