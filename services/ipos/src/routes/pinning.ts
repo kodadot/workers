@@ -41,8 +41,6 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
 
   const files = [body?.['file[]'], [body.file]].flat().filter(Boolean)
 
-  console.log(files)
-
   const fs = unixfs(await createNode(c))
 
   const filesWithCIDs: { file: File; cid: any }[] = await Promise.all(

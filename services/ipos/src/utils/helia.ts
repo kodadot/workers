@@ -4,10 +4,8 @@ import { Context } from 'hono'
 
 import { getS3 } from './s3'
 import { HonoEnv } from './constants'
-import { UnixFS } from '@helia/unixfs'
 
 export async function createNode(c: Context<HonoEnv>) {
   const blockstore = new S3Blockstore(getS3(c), 'ipos')
   return await createHelia({ blockstore })
 }
-
