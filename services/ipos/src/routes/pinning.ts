@@ -32,25 +32,19 @@ app.post('/pinJson', vValidator('json', object({})), async (c) => {
 const fileRequiredMessage = 'File is required'
 const fileKey = 'file'
 
-type PinSingleFile = { [fileKey]: File }
-type PingMultipleFiles = { [fileKey]: File[] }
-type PinFIle = PinSingleFile | PingMultipleFiles
+type PinFIle = { [fileKey]: File } | { [fileKey]: File[] }
 
-const pinFileRequestSchema = union([
-  object({
-    [fileKey]: blob(fileRequiredMessage),
-  }),
-  object({
-    [fileKey]: array(blob(fileRequiredMessage)),
-  }),
-])
+const pinFileRequestSchema = object({
+  [fileKey]: union([
+    blob(fileRequiredMessage),
+    array(blob(fileRequiredMessage)),
+  ]),
+})
 
 app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
   const body = (await c.req.parseBody({ all: true })) as PinFIle
 
-  const files: File[] = [[(body as PinSingleFile)[fileKey]]]
-    .flat(2)
-    .filter(Boolean)
+  const files: File[] = [[body[fileKey]]].flat(2).filter(Boolean)
 
   const helia = await createNode(c)
   const fs = unixfs(helia)
