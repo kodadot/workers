@@ -4,27 +4,26 @@ import { vValidator } from '@hono/valibot-validator'
 import { blob, object, union, array } from 'valibot'
 import { createNode } from '../utils/helia'
 import { unixfs } from '@helia/unixfs'
-import { getUint8ArrayFromFile } from '../utils/helpers'
+import { getUint8ArrayFromFile, getObjectSize } from '../utils/format'
+import { json } from '@helia/json'
 
 const app = new Hono<HonoEnv>()
 
 app.post('/pinJson', vValidator('json', object({})), async (c) => {
-  const json = await c.req.json()
+  const body = await c.req.json()
 
   const helia = await createNode(c)
-  const fs = unixfs(helia)
+  const j = json(helia)
 
-  const bytes = Uint8Array.from(json)
-  const cid = await fs.addBytes(bytes)
+  const cid = await j.add(body)
 
-  const stats = await fs.stat(cid)
   await helia.stop()
 
   return c.json(
     getPinResponse({
       cid: cid.toString(),
       type: 'application/json',
-      size: Number(stats.fileSize),
+      size: getObjectSize(body),
     }),
   )
 })

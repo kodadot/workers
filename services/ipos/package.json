@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.609.0",
+    "@helia/json": "^3.0.4",
     "@helia/unixfs": "^3.0.6",
     "@hono/valibot-validator": "^0.2.5",
     "blockstore-s3": "^1.0.15",

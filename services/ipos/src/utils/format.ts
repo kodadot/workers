@@ -5,3 +5,7 @@ export async function getUint8ArrayFromFile(file: File) {
   const buffer = Buffer.from(arrayBuffer)
   return Uint8Array.from(buffer)
 }
+
+export function getObjectSize(obj: Record<string, any>) {
+  return Buffer.byteLength(JSON.stringify(obj))
+}
