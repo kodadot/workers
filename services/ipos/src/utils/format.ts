@@ -1,9 +1,7 @@
 import { Buffer } from 'node:buffer'
 
-export async function getUint8ArrayFromFile(file: File) {
-  const arrayBuffer = await file.arrayBuffer()
-  const buffer = Buffer.from(arrayBuffer)
-  return Uint8Array.from(buffer)
+export async function getUint8ArrayFromFile(file: File): Promise<Uint8Array> {
+  return new Uint8Array(await file.arrayBuffer())
 }
 
 export function getObjectSize(obj: Record<string, any>) {
