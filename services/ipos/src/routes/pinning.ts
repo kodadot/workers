@@ -11,17 +11,19 @@ const app = new Hono<HonoEnv>()
 app.post('/pinJson', vValidator('json', object({})), async (c) => {
   const body = await c.req.json()
   const type = 'application/json'
-  const stringObject = JSON.stringify(body)
   const s3 = getS3(c)
 
-  const cid = await Hash.of(stringObject)
+  const content = JSON.stringify(body)
+  const cid = await Hash.of(content)
 
   await s3.putObject({
-    Body: stringObject,
+    Body: content,
     Bucket: c.env.FILEBASE_BUCKET_NAME,
     Key: cid,
     ContentType: type,
   })
+
+  await c.env.BUCKET.put(cid, new Blob([content], { type }))
 
   return c.json(
     getPinResponse({
