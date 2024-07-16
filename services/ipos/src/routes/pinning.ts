@@ -2,27 +2,31 @@ import { Hono } from 'hono'
 import { HonoEnv } from '../utils/constants'
 import { vValidator } from '@hono/valibot-validator'
 import { blob, object, union, array } from 'valibot'
-import { createNode } from '../utils/helia'
-import { unixfs } from '@helia/unixfs'
 import { getUint8ArrayFromFile, getObjectSize } from '../utils/format'
-import { json } from '@helia/json'
+import { getS3 } from '../utils/s3'
+import Hash from 'ipfs-only-hash'
 
 const app = new Hono<HonoEnv>()
 
 app.post('/pinJson', vValidator('json', object({})), async (c) => {
   const body = await c.req.json()
+  const type = 'application/json'
+  const stringObject = JSON.stringify(body)
+  const s3 = getS3(c)
 
-  const helia = await createNode(c)
-  const j = json(helia)
+  const cid = await Hash.of(stringObject)
 
-  const cid = await j.add(body)
-
-  await helia.stop()
+  await s3.putObject({
+    Body: stringObject,
+    Bucket: c.env.FILEBASE_BUCKET_NAME,
+    Key: cid,
+    ContentType: type,
+  })
 
   return c.json(
     getPinResponse({
-      cid: cid.toString(),
-      type: 'application/json',
+      cid: cid,
+      type: type,
       size: getObjectSize(body),
     }),
   )
