@@ -18,9 +18,13 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.609.0",
+    "@helia/unixfs": "^3.0.6",
     "@hono/valibot-validator": "^0.2.5",
+    "blockstore-core": "^4.4.1",
+    "helia": "^4.2.4",
     "hono": "^4.4.12",
     "ipfs-only-hash": "^4.0.0",
+    "ipfs-unixfs-importer": "^15.2.5",
     "valibot": "^0.30.0"
   }
 }

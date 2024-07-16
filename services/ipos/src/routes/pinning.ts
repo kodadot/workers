@@ -2,7 +2,11 @@ import { Hono } from 'hono'
 import { HonoEnv } from '../utils/constants'
 import { vValidator } from '@hono/valibot-validator'
 import { blob, object, union, array } from 'valibot'
-import { getUint8ArrayFromFile, getObjectSize } from '../utils/format'
+import {
+  getUint8ArrayFromFile,
+  getObjectSize,
+  getDirectoryCID,
+} from '../utils/format'
 import { getS3 } from '../utils/s3'
 import Hash from 'ipfs-only-hash'
 
@@ -49,16 +53,35 @@ const pinFileRequestSchema = object({
 app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
   const body = (await c.req.parseBody({ all: true })) as PinFIle
 
-  const files: File[] = [[body[fileKey]]].flat(2).filter(Boolean)
+  const files = await Promise.all(
+    ([[body[fileKey]]].flat(2).filter(Boolean) as File[]).map(async (file) => ({
+      file,
+      content: await getUint8ArrayFromFile(file),
+    })),
+  )
 
-  const helia = await createNode(c)
-  const fs = unixfs(helia)
+  const hasMultipleFiles = files.length > 1
+  const s3 = getS3(c)
+
+  let directoryCId: string | undefined
+
+  if (hasMultipleFiles) {
+    directoryCId = await getDirectoryCID({ files, c })
+  }
 
   const addedFiles: { file: File; cid: any }[] = await Promise.all(
-    files.map(async (file: File) => {
+    files.map(async ({ file, content }) => {
       try {
-        const content = await getUint8ArrayFromFile(file)
-        const cid = await fs.addFile({ path: file.name, content })
+        const cid = await Hash.of(content)
+        const prefix = directoryCId ? `${directoryCId}/` : ''
+
+        await s3.putObject({
+          Body: content,
+          Bucket: c.env.FILEBASE_BUCKET_NAME,
+          Key: `${prefix}${cid}`,
+          ContentType: file.type,
+        })
+
         console.log('File added', cid)
         return { file, cid }
       } catch (error) {
@@ -71,26 +94,16 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
   let cid = addedFileCid
   let type = file.type
 
-  if (files.length > 1) {
-    console.log('Creating directory')
-    let dirCid = await fs.addDirectory()
-    for (const { file, cid } of addedFiles) {
-      console.log(`Adding file ${cid} to directory ${dirCid}`)
-      dirCid = await fs.cp(cid, dirCid, file.name)
-    }
-
-    cid = dirCid.toString()
+  if (hasMultipleFiles) {
+    cid = directoryCId
     type = 'directory'
   }
-
-  const stats = await fs.stat(cid)
-  await helia.stop()
 
   return c.json(
     getPinResponse({
       cid: cid.toString(),
       type: type,
-      size: Number(stats.fileSize),
+      size: Number('0'),
     }),
   )
 })
