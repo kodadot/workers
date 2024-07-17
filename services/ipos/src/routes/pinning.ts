@@ -91,6 +91,7 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
     c.executionCtx.waitUntil(c.env.BUCKET.put(cid, content)),
   )
 
+  const size = files.reduce((reducer, file) => reducer + file.file.size, 0)
   const { cid: addedFileCid, file } = addedFiles[0]
   let cid = addedFileCid
   let type = file.type
@@ -104,7 +105,7 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
     getPinResponse({
       cid: cid.toString(),
       type: type,
-      size: Number('0'),
+      size: size,
     }),
   )
 })
