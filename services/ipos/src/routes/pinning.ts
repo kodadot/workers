@@ -87,8 +87,10 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
       }),
     )
 
-  addedFiles.forEach(({ content, cid }) =>
-    c.executionCtx.waitUntil(c.env.BUCKET.put(cid, content)),
+  c.executionCtx.waitUntil(
+    Promise.all(
+      addedFiles.map(({ content, cid }) => c.env.BUCKET.put(cid, content)),
+    ),
   )
 
   const size = files.reduce((reducer, file) => reducer + file.file.size, 0)
@@ -103,7 +105,7 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
 
   return c.json(
     getPinResponse({
-      cid: cid.toString(),
+      cid: cid,
       type: type,
       size: size,
     }),
