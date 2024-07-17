@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { HonoEnv } from '../utils/constants'
 import { vValidator } from '@hono/valibot-validator'
 import { blob, object, union, array } from 'valibot'
-import { getUint8ArrayFromFile, getObjectSize, hashOf } from '../utils/format'
+import { getUint8ArrayFromFile, getObjectSize, hashOf, keyOf } from '../utils/format'
 import { getS3 } from '../utils/s3'
 import { getDirectoryCID } from '../utils/helia'
 
@@ -23,7 +23,7 @@ app.post('/pinJson', vValidator('json', object({})), async (c) => {
     ContentType: type,
   })
 
-  c.executionCtx.waitUntil(c.env.BUCKET.put(cid, new Blob([content], { type })))
+  c.executionCtx.waitUntil(c.env.BUCKET.put(keyOf(cid), new Blob([content], { type })))
 
   return c.json(
     getPinResponse({
@@ -89,7 +89,7 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
 
   c.executionCtx.waitUntil(
     Promise.all(
-      addedFiles.map(({ content, cid }) => c.env.BUCKET.put(cid, content)),
+      addedFiles.map(({ content, cid }) => c.env.BUCKET.put(keyOf(cid), content)),
     ),
   )
 

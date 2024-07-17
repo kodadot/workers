@@ -14,3 +14,7 @@ export function getObjectSize(obj: Record<string, any>) {
 export async function hashOf(content: ImportContent | string): Promise<CID> {
   return CID.parse(await Hash.of(content, { onlyHash: true, cidVersion: 1 }))
 }
+
+export function keyOf(cid: string) {
+  return `ipfs/${cid}`
+}
