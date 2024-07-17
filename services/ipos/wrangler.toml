@@ -23,7 +23,7 @@ FILEBASE_BUCKET_NAME='koda-art'
 
 [[env.beta.r2_buckets]]
 binding = 'BUCKET'
-preview_bucket_name = 'alpha-stockpile'
+bucket_name = 'alpha-stockpile'
 
 # production environment
 [env.production]
