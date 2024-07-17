@@ -14,7 +14,7 @@ app.post('/pinJson', vValidator('json', object({})), async (c) => {
   const s3 = getS3(c)
 
   const content = JSON.stringify(body)
-  const cid = (await hashOf(content)).toV0().toString()
+  const cid = (await hashOf(content)).toV1().toString()
 
   await s3.putObject({
     Body: content,
@@ -37,7 +37,7 @@ app.post('/pinJson', vValidator('json', object({})), async (c) => {
 const fileRequiredMessage = 'File is required'
 const fileKey = 'file'
 
-type PinFIle = { [fileKey]: File } | { [fileKey]: File[] }
+type PinFile = { [fileKey]: File } | { [fileKey]: File[] }
 
 const pinFileRequestSchema = object({
   [fileKey]: union([
@@ -47,7 +47,7 @@ const pinFileRequestSchema = object({
 })
 
 app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
-  const body = (await c.req.parseBody({ all: true })) as PinFIle
+  const body = (await c.req.parseBody({ all: true })) as PinFile
 
   const files = await Promise.all(
     ([[body[fileKey]]].flat(2).filter(Boolean) as File[]).map(async (file) => ({
@@ -62,14 +62,14 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
   let directoryCId: string | undefined
 
   if (hasMultipleFiles) {
-    directoryCId = (await getDirectoryCID({ files, c })).toV0().toString()
+    directoryCId = (await getDirectoryCID({ files, c })).toV1().toString()
   }
 
   const addedFiles: { file: File; cid: string; content: Uint8Array }[] =
     await Promise.all(
       files.map(async ({ file, content }) => {
         try {
-          const cid = (await hashOf(content)).toV0().toString()
+          const cid = (await hashOf(content)).toV1().toString()
           const prefix = directoryCId ? `${directoryCId}/` : ''
 
           await s3.putObject({
