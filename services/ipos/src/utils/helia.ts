@@ -38,6 +38,5 @@ export async function getDirectoryCID({
     dirCid = await fs.cp(cid, dirCid, file.name)
   }
 
-
   return dirCid
 }
