@@ -29,10 +29,10 @@ preview_bucket_name = 'alpha-stockpile'
 [env.production]
 name = 'ipos'
 
-[env.beta.vars]
+[env.production.vars]
 S3_ACCESS_KEY_ID = ''
 FILEBASE_BUCKET_NAME='koda-art'
 
-[[env.beta.r2_buckets]]
+[[env.production.r2_buckets]]
 binding = 'BUCKET'
 bucket_name = 'stockpile'
