@@ -12,5 +12,5 @@ export function getObjectSize(obj: Record<string, any>) {
 }
 
 export async function hashOf(content: ImportContent | string): Promise<CID> {
-  return CID.parse(await Hash.of(content))
+  return CID.parse(await Hash.of(content, { onlyHash: true, cidVersion: 1 }))
 }

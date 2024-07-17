@@ -5,7 +5,7 @@ compatibility_date = "2024-07-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-S3_ACCESS_KEY_ID = ''
+# S3_ACCESS_KEY_ID = ''
 FILEBASE_BUCKET_NAME='koda-art'
 
 [[r2_buckets]]
@@ -18,7 +18,7 @@ preview_bucket_name = 'alpha-stockpile'
 name = 'ipos-beta'
 
 [env.beta.vars]
-S3_ACCESS_KEY_ID = ''
+# S3_ACCESS_KEY_ID = ''
 FILEBASE_BUCKET_NAME='koda-art'
 
 [[env.beta.r2_buckets]]
@@ -30,7 +30,7 @@ bucket_name = 'alpha-stockpile'
 name = 'ipos'
 
 [env.production.vars]
-S3_ACCESS_KEY_ID = ''
+# S3_ACCESS_KEY_ID = ''
 FILEBASE_BUCKET_NAME='koda-art'
 
 [[env.production.r2_buckets]]

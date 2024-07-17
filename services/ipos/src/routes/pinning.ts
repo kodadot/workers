@@ -14,7 +14,7 @@ app.post('/pinJson', vValidator('json', object({})), async (c) => {
   const s3 = getS3(c)
 
   const content = JSON.stringify(body)
-  const cid = (await hashOf(content)).toV1().toString()
+  const cid = (await hashOf(content)).toV0().toString()
 
   await s3.putObject({
     Body: content,
@@ -62,14 +62,14 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
   let directoryCId: string | undefined
 
   if (hasMultipleFiles) {
-    directoryCId = (await getDirectoryCID({ files, c })).toV1().toString()
+    directoryCId = (await getDirectoryCID({ files, c })).toV0().toString()
   }
 
   const addedFiles: { file: File; cid: string; content: Uint8Array }[] =
     await Promise.all(
       files.map(async ({ file, content }) => {
         try {
-          const cid = (await hashOf(content)).toV1().toString()
+          const cid = (await hashOf(content)).toV0().toString()
           const prefix = directoryCId ? `${directoryCId}/` : ''
 
           await s3.putObject({
