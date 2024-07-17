@@ -2,13 +2,9 @@ import { Hono } from 'hono'
 import { HonoEnv } from '../utils/constants'
 import { vValidator } from '@hono/valibot-validator'
 import { blob, object, union, array } from 'valibot'
-import {
-  getUint8ArrayFromFile,
-  getObjectSize,
-  getDirectoryCID,
-} from '../utils/format'
+import { getUint8ArrayFromFile, getObjectSize, hashOf } from '../utils/format'
 import { getS3 } from '../utils/s3'
-import Hash from 'ipfs-only-hash'
+import { getDirectoryCID } from '../utils/helia'
 
 const app = new Hono<HonoEnv>()
 
@@ -18,7 +14,7 @@ app.post('/pinJson', vValidator('json', object({})), async (c) => {
   const s3 = getS3(c)
 
   const content = JSON.stringify(body)
-  const cid = await Hash.of(content)
+  const cid = (await hashOf(content)).toV0().toString()
 
   await s3.putObject({
     Body: content,
@@ -27,7 +23,7 @@ app.post('/pinJson', vValidator('json', object({})), async (c) => {
     ContentType: type,
   })
 
-  await c.env.BUCKET.put(cid, new Blob([content], { type }))
+  c.executionCtx.waitUntil(c.env.BUCKET.put(cid, new Blob([content], { type })))
 
   return c.json(
     getPinResponse({
@@ -66,28 +62,33 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
   let directoryCId: string | undefined
 
   if (hasMultipleFiles) {
-    directoryCId = await getDirectoryCID({ files, c })
+    directoryCId = (await getDirectoryCID({ files, c })).toV0().toString()
   }
 
-  const addedFiles: { file: File; cid: any }[] = await Promise.all(
-    files.map(async ({ file, content }) => {
-      try {
-        const cid = await Hash.of(content)
-        const prefix = directoryCId ? `${directoryCId}/` : ''
+  const addedFiles: { file: File; cid: string; content: Uint8Array }[] =
+    await Promise.all(
+      files.map(async ({ file, content }) => {
+        try {
+          const cid = (await hashOf(content)).toV0().toString()
+          const prefix = directoryCId ? `${directoryCId}/` : ''
 
-        await s3.putObject({
-          Body: content,
-          Bucket: c.env.FILEBASE_BUCKET_NAME,
-          Key: `${prefix}${cid}`,
-          ContentType: file.type,
-        })
+          await s3.putObject({
+            Body: content,
+            Bucket: c.env.FILEBASE_BUCKET_NAME,
+            Key: `${prefix}${cid}`,
+            ContentType: file.type,
+          })
 
-        console.log('File added', cid)
-        return { file, cid }
-      } catch (error) {
-        throw new Error(`Failed to add file ${file.name}: ${error?.message}`)
-      }
-    }),
+          console.log('File added', cid)
+          return { file, cid, content }
+        } catch (error) {
+          throw new Error(`Failed to add file ${file.name}: ${error?.message}`)
+        }
+      }),
+    )
+
+  addedFiles.forEach(({ content, cid }) =>
+    c.executionCtx.waitUntil(c.env.BUCKET.put(cid, content)),
   )
 
   const { cid: addedFileCid, file } = addedFiles[0]
@@ -95,7 +96,7 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
   let type = file.type
 
   if (hasMultipleFiles) {
-    cid = directoryCId
+    cid = directoryCId as string
     type = 'directory'
   }
 
