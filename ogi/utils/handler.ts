@@ -86,6 +86,8 @@ export const parseImage = async (imagePath: string, github = true) => {
   const image = new URL(
     `https://image-beta.w.kodadot.xyz/type/endpoint/${rawImage}`,
   )
+  // use smaller image here
+  // because there is a chance satori will throw error if using original size image
   image.searchParams.set('w', '400')
 
   return image.toString()
