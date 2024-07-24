@@ -22,7 +22,7 @@ app.get('/*', async (c) => {
   // ----------------------------------------
   let cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`
   cfImage = getCFIFlexibleVariant(c.req.query(), cfImage)
-  const currentImage = await fetch(cfImage, { method: 'HEAD' })
+  const currentImage = await fetch(cfImage)
 
   if (currentImage.ok && !isHead) {
     return c.redirect(cfImage, 302)
