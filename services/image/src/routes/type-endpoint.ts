@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { allowedOrigin, encodeEndpoint } from '@kodadot/workers-utils'
 import { CACHE_TTL_BY_STATUS, type Env } from '../utils/constants'
-import { urlToCFI } from '../utils/cloudflare-images'
+import { getCFIFlexibleVariant, urlToCFI } from '../utils/cloudflare-images'
 import { ResponseType } from '../utils/types'
 
 const app = new Hono<{ Bindings: Env }>()
@@ -20,11 +20,9 @@ app.get('/*', async (c) => {
 
   // 1. check existing image on cf-images
   // ----------------------------------------
-  const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`
-  const currentImage = await fetch(cfImage, {
-    method: 'HEAD',
-    cf: CACHE_TTL_BY_STATUS,
-  })
+  let cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`
+  cfImage = getCFIFlexibleVariant(c.req.query(), cfImage)
+  const currentImage = await fetch(cfImage, { method: 'HEAD' })
 
   if (currentImage.ok && !isHead) {
     return c.redirect(cfImage, 302)
