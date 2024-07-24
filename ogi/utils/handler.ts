@@ -89,6 +89,13 @@ export const parseImage = async (imagePath: string, github = true) => {
   // use smaller image here
   // because there is a chance satori will throw error if using original size image
   image.searchParams.set('w', '400')
+  const response = await $fetch.raw(image.toString(), {
+    redirect: 'manual',
+  })
+  const location = response.headers.get('location')
+  if (location) {
+    return location
+  }
 
   return image.toString()
 }
