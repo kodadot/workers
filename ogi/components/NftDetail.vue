@@ -38,10 +38,12 @@ const price = formatBalance(item.price, {
   forceUnit: symbol,
 })
 const usd = await usdPrice(chain, price)
-const cfImage = await parseImage(
+const cfImage = useState(() => '')
+
+await callOnce(async () => cfImage.value = await parseImage(
   ipfsUrl(image || 'https://kodadot.xyz/k_card.png'),
   false,
-)
+))
 
 defineOgImage({
   component: 'gallery',

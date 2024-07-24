@@ -93,9 +93,6 @@ export const parseImage = async (imagePath: string, github = true) => {
     redirect: 'manual',
   })
   const location = response.headers.get('location')
-  if (location) {
-    return location
-  }
-
-  return image.toString()
+  
+  return location || image.toString()
 }
