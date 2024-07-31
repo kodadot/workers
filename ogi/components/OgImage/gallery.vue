@@ -9,9 +9,9 @@ defineOptions({
 const props = defineProps<{
   title: string
   image: string
-  usd: string
-  price: string
-  symbol: string
+  usd?: string
+  price?: string
+  symbol?: string
   network: string
 }>()
 
@@ -21,11 +21,11 @@ const cover: CSSProperties = {
 }
 
 const parseUsd = computed(() =>
-  parseFloat(props.usd) ? `$${parseFloat(props.usd)}` : '--',
+  props.usd && parseFloat(props.usd) ? `$${parseFloat(props.usd)}` : '--',
 )
 
 const parsePrice = computed(() =>
-  parseFloat(props.price) ? `${parseFloat(props.price)} ${props.symbol}` : '--',
+  props.price && parseFloat(props.price) ? `${parseFloat(props.price)} ${props.symbol}` : '--',
 )
 </script>
 
@@ -33,13 +33,8 @@ const parsePrice = computed(() =>
   <img :src="image" :alt="title" :style="cover" class="h-full w-full" />
 
   <div
-    class="flex flex-col justify-end h-full w-full bg-slate-900/85 text-white p-20 text-2xl font-bold absolute inset-0"
-  >
-    <img
-      :src="image"
-      :alt="title"
-      class="w-30 rounded-md border border-white"
-    />
+    class="flex flex-col justify-end h-full w-full bg-slate-900/85 text-white p-20 text-2xl font-bold absolute inset-0">
+    <img :src="image" :alt="title" class="w-30 rounded-md border border-white" />
     <h1 class="mb-6 font-bold">{{ title }}</h1>
     <div class="flex flex-row">
       <div>
@@ -59,9 +54,6 @@ const parsePrice = computed(() =>
     </div>
   </div>
 
-  <img
-    src="https://raw.githubusercontent.com/kodadot/kodadot-presskit/main/pre-v4/png/KodalightV4.png"
-    alt="logo"
-    class="absolute top-20 right-20 w-40"
-  />
+  <img src="https://raw.githubusercontent.com/kodadot/kodadot-presskit/main/pre-v4/png/KodalightV4.png" alt="logo"
+    class="absolute top-20 right-20 w-40" />
 </template>

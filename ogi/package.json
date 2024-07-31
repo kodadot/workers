@@ -25,6 +25,7 @@
     "@polkadot/util": "^12.6.2",
     "remark-parse": "^11.0.0",
     "remark-stringify": "^11.0.0",
+    "thirdweb": "^5.42.0",
     "unified": "^11.0.4",
     "vfile-matter": "^5.0.0"
   }

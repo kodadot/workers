@@ -1,3 +1,3 @@
-export const seoTitle = (title: string) => {
+export const seoTitle = (title='') => {
   return `${title} | Generative Art Marketplace`
 }
