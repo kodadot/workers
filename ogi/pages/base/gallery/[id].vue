@@ -33,8 +33,10 @@ const item = await getNFT({
     tokenId: token
 })
 
-const imageUri = item.metadata.image || 'https://kodadot.xyz/k_card.png'
-const image = await parseImage(ipfsUrl(imageUri), false)
+const imageUri = item.metadata.image || 'https://koda.art/k_card.png'
+const image = useState(() => '')
+// ensure to callOnce to avoid missmatch content between ssr/csr
+await callOnce(async () => image.value = await parseImage(imageUri, false))
 
 defineOgImage({
     component: 'gallery',
