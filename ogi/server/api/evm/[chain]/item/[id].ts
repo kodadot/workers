@@ -1,9 +1,9 @@
 import { createThirdwebClient, getContract } from 'thirdweb'
 import {
   base,
-  optimism,
-  avalanche,
-  polygon,
+  // optimism,
+  // avalanche,
+  // polygon,
   type ChainOptions,
 } from 'thirdweb/chains'
 import { getNFT, getNFTs, totalSupply } from 'thirdweb/extensions/erc721'
@@ -11,9 +11,9 @@ import { getNFT, getNFTs, totalSupply } from 'thirdweb/extensions/erc721'
 // evm chains
 const chains: { [key: string]: Readonly<ChainOptions & { rpc: string }> } = {
   base,
-  optimism,
-  avalanche,
-  polygon,
+  // optimism,
+  // avalanche,
+  // polygon,
 }
 
 export default defineEventHandler(async (event) => {
