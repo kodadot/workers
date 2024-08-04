@@ -1,9 +1,23 @@
 import { createThirdwebClient, getContract } from 'thirdweb'
-import { base } from 'thirdweb/chains'
+import {
+  base,
+  optimism,
+  avalanche,
+  polygon,
+  type ChainOptions,
+} from 'thirdweb/chains'
 import { getNFT, getNFTs, totalSupply } from 'thirdweb/extensions/erc721'
 
+// evm chains
+const chains: { [key: string]: Readonly<ChainOptions & { rpc: string }> } = {
+  base,
+  optimism,
+  avalanche,
+  polygon,
+}
+
 export default defineEventHandler(async (event) => {
-  const { id: paramId } = getRouterParams(event)
+  const { id: paramId, chain } = getRouterParams(event)
   const id = paramId.toString().split('-')
 
   const address = id[0]
@@ -14,12 +28,12 @@ export default defineEventHandler(async (event) => {
   })
   const contract = getContract({
     client,
-    chain: base,
+    chain: chains[chain],
     address: address,
   })
   const [item, items, supply] = await Promise.all([
     getNFT({ contract, tokenId: token }),
-    getNFTs({ contract, count: 1000 }),
+    getNFTs({ contract, count: 10000 }),
     totalSupply({ contract }),
   ])
   const claimed = items.filter((item) => item.tokenURI).length
@@ -29,7 +43,7 @@ export default defineEventHandler(async (event) => {
     collection: {
       supply: supply.toString(),
       claimed: claimed.toString(),
-      basecan: `https://basescan.org/token/${address}`
     },
+    explorers: chains[chain].blockExplorers?.map(explorer => explorer.url + '/token/' + address),
   }
 })
