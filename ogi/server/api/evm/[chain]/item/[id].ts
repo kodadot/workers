@@ -1,9 +1,9 @@
 import { createThirdwebClient, getContract } from 'thirdweb'
 import {
   base,
-  // optimism,
-  // avalanche,
-  // polygon,
+  optimism,
+  avalanche,
+  polygon,
   type ChainOptions,
 } from 'thirdweb/chains'
 import { getNFT, getNFTs, totalSupply } from 'thirdweb/extensions/erc721'
@@ -11,9 +11,9 @@ import { getNFT, getNFTs, totalSupply } from 'thirdweb/extensions/erc721'
 // evm chains
 const chains: { [key: string]: Readonly<ChainOptions & { rpc: string }> } = {
   base,
-  // optimism,
-  // avalanche,
-  // polygon,
+  optimism,
+  avalanche,
+  polygon,
 }
 
 export default defineEventHandler(async (event) => {
@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
   })
   const [item, items, supply] = await Promise.all([
     getNFT({ contract, tokenId: token }),
-    getNFTs({ contract, count: 10000 }),
+    getNFTs({ contract, count: 1000 }),
     totalSupply({ contract }),
   ])
   const claimed = items.filter((item) => item.tokenURI).length
