@@ -33,10 +33,15 @@ export default defineEventHandler(async (event) => {
   })
   const [item, items, supply] = await Promise.all([
     getNFT({ contract, tokenId: token }),
-    getNFTs({ contract, count: 1000 }),
+    getNFTs({ contract, count: 10000 }),
     totalSupply({ contract }),
   ])
   const claimed = items.filter((item) => item.tokenURI).length
+
+  // set headers access-control-origin
+  setHeader(event, 'Access-Control-Allow-Origin', '*')
+  // set headers swr cache 1 minute
+  setHeader(event, 'Cache-Control', 's-maxage=60, stale-while-revalidate')
 
   return {
     item,
