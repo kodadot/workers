@@ -1,21 +1,18 @@
 import { getContract } from 'thirdweb'
-import { getNFT, getNFTs, totalSupply } from 'thirdweb/extensions/erc721'
+import { getContractMetadata } from 'thirdweb/extensions/common'
+import { getNFTs, totalSupply } from 'thirdweb/extensions/erc721'
 import { chains, thirdwebClient } from '~/server/utils/evm'
 
 export default defineEventHandler(async (event) => {
-  const { id: paramId, chain } = getRouterParams(event)
-  const id = paramId.toString().split('-')
-
-  const address = id[0]
-  const token = id[1] as unknown as bigint
+  const { id: address, chain } = getRouterParams(event)
 
   const contract = getContract({
     client: thirdwebClient,
     chain: chains[chain],
     address: address,
   })
-  const [item, items, supply] = await Promise.all([
-    getNFT({ contract, tokenId: token }),
+  const [metadata, items, supply] = await Promise.all([
+    getContractMetadata({ contract }),
     getNFTs({ contract, count: 10000 }).catch(() => []),
     totalSupply({ contract }).catch(() => 0),
   ])
@@ -27,11 +24,9 @@ export default defineEventHandler(async (event) => {
   setHeader(event, 'Cache-Control', 's-maxage=60, stale-while-revalidate')
 
   return {
-    item,
-    collection: {
-      supply: supply.toString(),
-      claimed: claimed.toString(),
-    },
+    metadata,
+    supply: supply.toString(),
+    claimed: claimed.toString(),
     explorers: chains[chain].blockExplorers?.map(
       (explorer) => explorer.url + '/token/' + address,
     ),
