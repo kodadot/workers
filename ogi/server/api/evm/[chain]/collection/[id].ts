@@ -1,14 +1,22 @@
 import { getContract } from 'thirdweb'
 import { getContractMetadata } from 'thirdweb/extensions/common'
 import { getNFTs, totalSupply } from 'thirdweb/extensions/erc721'
-import { chains, thirdwebClient } from '~/server/utils/evm'
+import { chains, ExtendedPrefix, thirdwebClient } from '~/server/utils/evm'
 
 export default defineEventHandler(async (event) => {
   const { id: address, chain } = getRouterParams(event)
+  const selectedChain = chains[chain as ExtendedPrefix]
+
+  if (!selectedChain) {
+    throw createError({
+      statusCode: 404,
+      message: 'Chain not found',
+    })
+  }
 
   const contract = getContract({
     client: thirdwebClient,
-    chain: chains[chain],
+    chain: selectedChain,
     address: address,
   })
   const [metadata, items, supply] = await Promise.all([
@@ -27,7 +35,7 @@ export default defineEventHandler(async (event) => {
     metadata,
     supply: supply.toString(),
     claimed: claimed.toString(),
-    explorers: chains[chain].blockExplorers?.map(
+    explorers: selectedChain.blockExplorers?.map(
       (explorer) => explorer.url + '/token/' + address,
     ),
   }
