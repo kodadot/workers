@@ -21,6 +21,7 @@ export const chainToken = {
   kusama: 'KSM',
   polkadot: 'DOT',
   ethereum: 'ETH',
+  mantel: 'MNT',
 };
 
 // get USD price from sub.id or kraken
