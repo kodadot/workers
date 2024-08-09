@@ -2,7 +2,10 @@
 name = "repl"
 version = "0.1.0"
 authors = ["Viki Val <viktorko99@gmail.com>"]
-edition = "2018"
+edition = "2021"
+description = "A Cloudflare Worker for Replicate.com"
+license = "MIT"
+repository = "https://github.com/kodadot/workers"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
