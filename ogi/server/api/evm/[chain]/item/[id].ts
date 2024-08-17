@@ -31,8 +31,8 @@ export default defineEventHandler(async (event) => {
 
   // set headers access-control-origin
   setHeader(event, 'Access-Control-Allow-Origin', '*')
-  // set headers swr cache 1 minute
-  setHeader(event, 'Cache-Control', 's-maxage=60, stale-while-revalidate')
+  // set headers swr cache 5 minutes
+  setHeader(event, 'Cache-Control', 'public, max-age=300, s-maxage=300, stale-while-revalidate=86400')
 
   return {
     item,
