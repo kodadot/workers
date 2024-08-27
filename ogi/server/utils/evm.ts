@@ -53,7 +53,7 @@ export type ExtendedPrefix =
   | 'optimism'
   | 'avalanche'
   | 'polygon'
-  | 'mantle'
+  | 'mnt'
 
 export const chains: Record<ExtendedPrefix, Chain> = {
   base,
@@ -61,7 +61,7 @@ export const chains: Record<ExtendedPrefix, Chain> = {
   avalanche,
   polygon,
   imx,
-  mantle,
+  mnt: mantle,
 }
 
 export const thirdwebClient = createThirdwebClient({
