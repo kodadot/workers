@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
+import { KODA_LOGO_URL } from '@/utils/constants'
 
 defineOptions({
   inheritAttrs: false,
@@ -38,7 +39,7 @@ const cover: CSSProperties = {
   </div>
 
   <img
-    src="https://raw.githubusercontent.com/kodadot/kodadot-presskit/main/pre-v4/png/KodalightV4.png"
+    :src="KODA_LOGO_URL"
     alt="logo"
     class="absolute top-10 right-10 w-40"
   />
