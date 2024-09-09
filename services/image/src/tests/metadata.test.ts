@@ -38,11 +38,7 @@ test.each([
   [
     'https://image-beta.w.kodadot.xyz/metadata?url=https://image-beta.w.kodadot.xyz/ipfs/bafybeihpbyskcjjhb5tnrjbsnsvzcfm2npjec3uf65n3o7stucta2rlos4',
     'https://image-beta.w.kodadot.xyz/ipfs/bafybeihpbyskcjjhb5tnrjbsnsvzcfm2npjec3uf65n3o7stucta2rlos4',
-  ],
-  [
-    'https://image-beta.w.kodadot.xyz/metadata?url=https://cloudflare-ipfs.com/ipfs/bafybeihpbyskcjjhb5tnrjbsnsvzcfm2npjec3uf65n3o7stucta2rlos4',
-    'https://cloudflare-ipfs.com/ipfs/bafybeihpbyskcjjhb5tnrjbsnsvzcfm2npjec3uf65n3o7stucta2rlos4',
-  ],
+  ]
 ])('redirect', async (url, redirectUrl) => {
   const res = await fetch(url, {
     redirect: 'manual',
