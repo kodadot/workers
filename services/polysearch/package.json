@@ -9,14 +9,14 @@
   },
   "dependencies": {
     "@kodadot/workers-utils": "workspace:*",
-    "hono": "^4.5.1",
+    "hono": "^4.5.11",
     "kysely": "^0.27.4",
     "kysely-d1": "^0.3.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240725.0",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.4",
-    "wrangler": "3.67.0"
+    "@cloudflare/workers-types": "^4.20240909.0",
+    "typescript": "^5.6.2",
+    "vitest": "^2.0.5",
+    "wrangler": "3.75.0"
   }
 }
