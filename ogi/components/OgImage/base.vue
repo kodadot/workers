@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
-
+import { KODA_LOGO_URL } from '@/utils/constants'
 // inherited attrs can mess up the satori parser
 defineOptions({
   inheritAttrs: false,
@@ -32,7 +32,7 @@ const cover: ComputedRef<CSSProperties> = computed(() => {
     class="flex flex-col justify-end h-full w-full bg-slate-900/75 text-white p-10 text-2xl font-bold absolute inset-0"
   >
     <img
-      src="https://raw.githubusercontent.com/kodadot/kodadot-presskit/main/pre-v4/png/KodalightV4.png"
+      :src="KODA_LOGO_URL"
       alt="logo"
       class="absolute left-10 bottom-10 w-60"
     />

@@ -4,7 +4,9 @@ import { HonoEnv } from '../constants'
 import { getCollection, getItemByOffset } from '../services/uniquery'
 import { kodaUrl } from '../utils'
 
-export const app = new Frog<HonoEnv>({})
+export const app = new Frog<HonoEnv>({
+  title: 'koda.art gallery',
+})
 
 app.frame('/:chain/:id', async (c) => {
 

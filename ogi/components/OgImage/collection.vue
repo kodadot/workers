@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { chainNames, type Prefix } from '@kodadot1/static';
 import type { CSSProperties } from 'vue'
+import { KODA_LOGO_URL } from '@/utils/constants'
 
 // inherited attrs can mess up the satori parser
 defineOptions({
@@ -54,7 +55,7 @@ const networkName = chainNames[props.network as Prefix]
   </div>
 
   <img
-    src="https://raw.githubusercontent.com/kodadot/kodadot-presskit/main/pre-v4/png/KodalightV4.png"
+    :src="KODA_LOGO_URL"
     alt="logo"
     class="absolute top-10 right-10 w-40"
   />
