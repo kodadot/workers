@@ -66,8 +66,7 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
 	const s3 = getS3(c)
 
 	let cid: string
-	let file: Uint8Array | File
-	let size: number
+	let file: Blob | File
 	let type: string
 
 	if (files.length > 1) {
@@ -78,9 +77,8 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
 			})),
 		)
 
-		cid = root.toString() as string
+		cid = root.toString()
 		file = car
-		size = file.byteLength
 		type = 'directory'
 
 		await s3.putObject({
@@ -97,7 +95,6 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
 		cid = (await hashOf(content)).toV0().toString()
 
 		file = f
-		size = f.size
 		type = f.type
 
 		await s3.putObject({
@@ -114,7 +111,7 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
 		getPinResponse({
 			cid: cid,
 			type: type,
-			size: size,
+			size: file.size,
 		}),
 	)
 })
