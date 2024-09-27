@@ -1,5 +1,3 @@
-// Patch: `ipfs-car` library has been patched to work with CID v0 which is not supported by the original implementation.
-// see `import { pack } from 'ipfs-car/pack'`
 import { packToBlob } from 'ipfs-car/pack/blob'
 import type { CID } from 'multiformats'
 
@@ -12,7 +10,7 @@ export default async function toCar(
 	})
 
 	return {
-		root: root as CID,
+		root: root as CID, // v1 CID
 		car: car as Blob,
 	}
 }

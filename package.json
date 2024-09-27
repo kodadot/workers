@@ -12,10 +12,5 @@
   "engines": {
     "pnpm": ">=9",
     "node": ">=20"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "ipfs-car@0.9.2": "patches/ipfs-car@0.9.2.patch"
-    }
   }
 }
