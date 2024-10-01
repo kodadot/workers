@@ -4,16 +4,16 @@
 
 <script lang="ts" setup>
 useSeoMeta({
-  title: 'KodaDot - Your Generative Art Marketplace',
+  title: seoTitle('Koda'),
   viewport: 'width=device-width, initial-scale=1',
-  description: 'One Stop NFT Shop on Polkadot',
-  ogTitle: 'KodaDot - NFT Market Explorer',
-  ogDescription: 'One Stop NFT Shop on Polkadot',
+  description: KODA_DESCRIPTION,
+  ogTitle: seoTitle('Koda'),
+  description: KODA_DESCRIPTION,
   ogType: 'website',
   ogImage: 'https://koda.art/k_card.png',
   twitterCard: 'summary_large_image',
-  twitterTitle: 'KodaDot - NFT Market Explorer',
-  twitterDescription: 'One Stop NFT Shop on Polkadot',
+  twitterTitle: seoTitle('Koda'),
+  description: KODA_DESCRIPTION,
   twitterImage: 'https://koda.art/k_card.png',
   twitterSite: '@KodaDot'
 })
