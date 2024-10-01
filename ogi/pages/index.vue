@@ -14,7 +14,7 @@ useSeoMeta({
   twitterCard: 'summary_large_image',
   twitterTitle: seoTitle('Koda'),
   description: KODA_DESCRIPTION,
-  twitterImage: 'https://koda.art/k_card.png',
+  twitterImage: KODA_BANNER_URL,
   twitterSite: '@KodaDot'
 })
 </script>
