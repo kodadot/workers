@@ -10,7 +10,7 @@ useSeoMeta({
   ogTitle: seoTitle('Koda'),
   description: KODA_DESCRIPTION,
   ogType: 'website',
-  ogImage: 'https://koda.art/k_card.png',
+  ogImage: KODA_BANNER_URL,
   twitterCard: 'summary_large_image',
   twitterTitle: seoTitle('Koda'),
   description: KODA_DESCRIPTION,
