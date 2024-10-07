@@ -8,12 +8,12 @@ useSeoMeta({
   viewport: 'width=device-width, initial-scale=1',
   description: KODA_DESCRIPTION,
   ogTitle: seoTitle('Koda'),
-  description: KODA_DESCRIPTION,
+  ogDescription: KODA_DESCRIPTION,
   ogType: 'website',
   ogImage: KODA_BANNER_URL,
   twitterCard: 'summary_large_image',
   twitterTitle: seoTitle('Koda'),
-  description: KODA_DESCRIPTION,
+  twitterDescription: KODA_DESCRIPTION,
   twitterImage: KODA_BANNER_URL,
   twitterSite: '@KodaDot'
 })
