@@ -7,3 +7,21 @@ main = "src/index.ts"
 binding = "TOKENPRICE"
 id = "571aaa4380994d05b5627769c280935e"
 preview_id = "571aaa4380994d05b5627769c280935e"
+
+# beta environment
+[env.beta]
+name = 'price-beta'
+
+[[env.beta.kv_namespaces]]
+binding = "TOKENPRICE"
+id = "571aaa4380994d05b5627769c280935e"
+preview_id = "571aaa4380994d05b5627769c280935e"
+
+# production environment
+[env.production]
+name = 'price'
+
+[[env.production.kv_namespaces]]
+binding = "TOKENPRICE"
+id = "571aaa4380994d05b5627769c280935e"
+preview_id = "571aaa4380994d05b5627769c280935e"
