@@ -19,7 +19,7 @@ app.post('/pinJson', vValidator('json', object({})), async (c) => {
 	const s3 = getS3(c)
 
 	const content = JSON.stringify(body)
-	const cid = (await hashOf(content)).toV0().toString()
+	const cid = (await hashOf(content)).toString()
 
 	await s3.putObject({
 		Body: content,
@@ -100,7 +100,7 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
 		c.executionCtx.waitUntil(Promise.allSettled(promises))
 	} else {
 		const { content, file: f } = files[0]
-		cid = (await hashOf(content)).toV0().toString()
+		cid = (await hashOf(content)).toString()
 
 		file = f
 		type = f.type
