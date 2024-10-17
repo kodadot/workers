@@ -91,7 +91,7 @@ app.post('/pinFile', vValidator('form', pinFileRequestSchema), async (c) => {
 			},
 		})
 
-		const promises: Promise<R2Object | null>[]  = []
+		const promises: Promise<R2Object | null>[] = []
 		for (const { file } of files) {
 			const path = `${cid}/${file.name}`
 			promises.push(c.env.BUCKET.put(keyOf(path), file))

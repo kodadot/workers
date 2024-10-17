@@ -12,7 +12,7 @@ export function getObjectSize(obj: Record<string, unknown>) {
 }
 
 export async function hashOf(content: ImportContent | string): Promise<CID> {
-  // note: generating the hash.of from cid v1 and then converting it to cid v0 generates a wrong cid with big file sizes
+	// note: generating the hash.of from cid v1 and then converting it to cid v0 generates a wrong cid with big file sizes
 	return CID.parse(await Hash.of(content, { onlyHash: true, cidVersion: 0 }))
 }
 
