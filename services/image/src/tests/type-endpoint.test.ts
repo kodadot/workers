@@ -47,7 +47,7 @@ test('type-endpoint - 200 - json', async () => {
   `)
 })
 
-test.only('type-endpoint - 302 - image', async () => {
+test('type-endpoint - 200 - image', async () => {
   const res = await fetch(
     'https://image-beta.w.kodadot.xyz/type/endpoint/https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
     { redirect: 'manual' }
