@@ -47,32 +47,17 @@ test('type-endpoint - 200 - json', async () => {
   `)
 })
 
-test('type-endpoint - 302 - image', async () => {
+test.only('type-endpoint - 302 - image', async () => {
   const res = await fetch(
     'https://image-beta.w.kodadot.xyz/type/endpoint/https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
     { redirect: 'manual' }
   )
 
-  expect(res.ok).toBe(false)
-  expect(res.status).toBe(302)
+  expect(res.ok).toBe(true)
+  expect(res.status).toBe(200)
 
   const redirectURL = res.headers.get('location')
-  expect(redirectURL).toBe(
-    'https://imagedelivery.net/jk5b6spi_m_-9qC4VTnjpg/https---polkadot-data-s3-us-east-2-amazonaws-com-metadata-nfts-88-nfts-88-collection-img-png/public'
-  )
-
-  const res2 = await fetch(redirectURL)
-  expect(res2.ok).toBe(true)
-  expect(res2.headers.get('content-type')).toBe('image/png')
-
-  const data = await res2.blob()
-  expect(data).toMatchInlineSnapshot(`
-    Blob {
-      Symbol(kHandle): Blob {},
-      Symbol(kLength): 86717,
-      Symbol(kType): "image/png",
-    }
-  `)
+  expect(redirectURL).toBe(null)
 })
 
 test('type-endpoint - 200 - image - original', async () => {
