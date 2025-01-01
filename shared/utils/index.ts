@@ -4,6 +4,7 @@ const MATCHES: RegExp[] = [
   /deploy-preview-[0-9]+--nuxt-kodadot.netlify.app/,
   /deploy-preview-[0-9]+--koda-nuxt.netlify.app/,
   /deploy-preview-[0-9]+--koda-canary.netlify.app/,
+  /deploy-preview-[0-9]+--polkadot.netlify.app/,
   /deploy-preview-[0-9]+--koda-beta.netlify.app/,
   /kodaart-production.pages.dev/,
   /kodadot.xyz/,
