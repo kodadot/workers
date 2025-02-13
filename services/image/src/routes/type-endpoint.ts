@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { allowedOrigin, encodeEndpoint } from '@kodadot/workers-utils'
 import { CACHE_TTL_BY_STATUS, type Env } from '../utils/constants'
-import { getCFIFlexibleVariant, urlToCFI } from '../utils/cloudflare-images'
+import { deleteImageByPath, getCFIFlexibleVariant, urlToCFI } from '../utils/cloudflare-images'
 import { ResponseType } from '../utils/types'
 
 const app = new Hono<{ Bindings: Env }>()
@@ -101,9 +101,14 @@ app.delete('/*', async (c) => {
   console.log({ objectName })
 
   try {
-    await c.env.MY_BUCKET.delete(objectName)
+    const bucket = await c.env.MY_BUCKET.delete(objectName)
+    const image = await deleteImageByPath({
+      token: c.env.IMAGE_API_TOKEN,
+      imageAccount: c.env.CF_IMAGE_ACCOUNT,
+      path,
+    })
 
-    return c.json({ status: 'ok' })
+    return c.json({ status: 'ok', bucket, image, path })
   } catch (error) {
     return c.json({ status: 'error', error }, 500)
   }
