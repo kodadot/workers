@@ -16,6 +16,7 @@ async function resizeImage(url: string) {
   const wsrvnl = new URL('https://wsrv.nl')
   wsrvnl.searchParams.append('url', url)
   wsrvnl.searchParams.append('w', '1400')
+  wsrvnl.searchParams.append('data', new Date().toISOString())
 
   console.log(wsrvnl.toString())
 
@@ -118,6 +119,25 @@ export async function getImageByPath({
   }
 
   return ''
+}
+
+export async function deleteImageByPath({ token, imageAccount, path }: CFImages & { path: string }) {
+  const deleteImage = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${imageAccount}/images/v1/${path}`,
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  )
+
+  if (deleteImage.ok) {
+    return true
+  }
+
+  return false
 }
 
 const transformationParams = [
