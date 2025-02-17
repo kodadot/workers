@@ -49,7 +49,7 @@ test('type-endpoint - 200 - json', async () => {
 
 test('type-endpoint - 302 - image', async () => {
   const res = await fetch(
-    'https://image-beta.w.kodadot.xyz/type/endpoint/https://polkadot-data.s3.us-east-2.amazonaws.com/metadata/nfts-88/nfts-88_collection-img.png',
+    'https://image.w.kodadot.xyz/type/endpoint/https://dyndata.koda.art/v1/image/ahp/337/259197561',
     { redirect: 'manual' }
   )
 
@@ -58,19 +58,23 @@ test('type-endpoint - 302 - image', async () => {
 
   const redirectURL = res.headers.get('location')
   expect(redirectURL).toBe(
-    'https://imagedelivery.net/jk5b6spi_m_-9qC4VTnjpg/https---polkadot-data-s3-us-east-2-amazonaws-com-metadata-nfts-88-nfts-88-collection-img-png/public'
+    'https://imagedelivery.net/jk5b6spi_m_-9qC4VTnjpg/https---dyndata-koda-art-v1-image-ahp-337-259197561/public'
   )
+
+  if (!redirectURL) {
+    throw new Error('Redirect URL is null')
+  }
 
   const res2 = await fetch(redirectURL)
   expect(res2.ok).toBe(true)
-  expect(res2.headers.get('content-type')).toBe('image/png')
+  expect(res2.headers.get('content-type')).toBe('image/jpeg')
 
   const data = await res2.blob()
   expect(data).toMatchInlineSnapshot(`
     Blob {
       Symbol(kHandle): Blob {},
-      Symbol(kLength): 86717,
-      Symbol(kType): "image/png",
+      Symbol(kLength): 126132,
+      Symbol(kType): "image/jpeg",
     }
   `)
 })
