@@ -46,14 +46,17 @@ app.get('/*', async (c) => {
   // ----------------------------------------
   console.log('step 1')
   if (mimeType?.includes('image') && !isOriginal && !isHead) {
-    const publicUrl = await getImageByPath({
-      token: c.env.IMAGE_API_TOKEN,
-      imageAccount: c.env.CF_IMAGE_ACCOUNT,
-      path: fullPath,
+    // redirect to cf-images
+    let cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${fullPath}/public`
+    cfImage = getCFIFlexibleVariant(c.req.query(), cfImage)
+    const currentImage = await fetch(cfImage, {
+      cf: {
+        cacheTtl: 86400, // 1 day
+      },
     })
 
-    if (publicUrl) {
-      return c.redirect(getCFIFlexibleVariant(query, publicUrl), 301)
+    if (currentImage.ok) {
+      return c.redirect(cfImage, 301)
     }
   }
 
