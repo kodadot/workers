@@ -9,7 +9,7 @@ const MATCHES: RegExp[] = [
   /kodaart-production.pages.dev/,
   /kodadot.xyz/,
   /koda.art/,
-  /frontend-ex8.pages.dev/,
+  /app-bzd.pages.dev/,
   /chaotic-art.vercel.app/,
   /localhost:9090/,
 ]
