@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
-import { KODA_LOGO_URL } from '@/utils/constants'
+// import { KODA_LOGO_URL } from '@/utils/constants'
 
 defineOptions({
   inheritAttrs: false,
@@ -38,9 +38,9 @@ const cover: CSSProperties = {
     </div>
   </div>
 
-  <img
+  <!-- <img
     :src="KODA_LOGO_URL"
     alt="logo"
     class="absolute top-10 right-10 w-40"
-  />
+  /> -->
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
-import { KODA_LOGO_URL } from '@/utils/constants'
+// import { KODA_LOGO_URL } from '@/utils/constants'
 
 // inherited attrs can mess up the satori parser
 defineOptions({
@@ -55,6 +55,6 @@ const parsePrice = computed(() =>
     </div>
   </div>
 
-  <img :src="KODA_LOGO_URL" alt="logo"
-    class="absolute top-20 right-20 w-40" />
+  <!-- <img :src="KODA_LOGO_URL" alt="logo"
+    class="absolute top-20 right-20 w-40" /> -->
 </template>
