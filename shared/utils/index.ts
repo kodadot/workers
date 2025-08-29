@@ -12,6 +12,7 @@ const MATCHES: RegExp[] = [
   /app-bzd.pages.dev/,
   /chaotic-art.vercel.app/,
   /ff.chaotic.art/,
+  /beta.chaotic.art/,
   /localhost:9090/,
 ]
 
